@@ -9,6 +9,7 @@
           <Menu mnemonicParsing="false" text="%label.file_menu">
             <items>
                   <MenuItem mnemonicParsing="false" onAction="#handleNewWindows" text="%label.new_window" />
+                  <MenuItem mnemonicParsing="false" onAction="#handleChangeLanguage" text="%change_language.title" />
               <MenuItem mnemonicParsing="false" onAction="#handleCloseApp" text="%label.close" />
             </items>
           </Menu>
