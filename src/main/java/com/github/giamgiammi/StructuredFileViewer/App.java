@@ -17,10 +17,11 @@ import java.util.prefs.Preferences;
  * JavaFX App
  */
 public class App extends Application {
-
     private static ResourceBundle bundle;
-    private static Scene scene;
 
+    /**
+     * Get the resource bundle associated with this app
+     */
     public static ResourceBundle getBundle() {
         if (bundle == null) {
             bundle = ResourceBundle.getBundle(App.class.getPackageName() + ".messages");
@@ -28,15 +29,31 @@ public class App extends Application {
         return bundle;
     }
 
-    public void changeLocale(Locale locale) {
+    /**
+     * Change the locale for this app. The settings is persisted and requires a restart to be fully effective
+     * @param locale the new locale
+     */
+    public static void changeLocale(Locale locale) {
         Locale.setDefault(locale);
         bundle = null;
         Preferences.userNodeForPackage(App.class).put("locale", locale.toString());
     }
 
+    /**
+     * Opens a new window with the main view
+     */
+    public static void openNewWindow() throws IOException {
+        val stage = new Stage();
+        startMainStage(stage);
+    }
+
     @Override
     public void start(Stage stage) throws IOException {
-        scene = new Scene(FXUtils.loadFXML(MainViewController.class, "main", null));
+        startMainStage(stage);
+    }
+
+    private static void startMainStage(Stage stage) {
+        val scene = new Scene(FXUtils.loadFXML(MainViewController.class, "main", null));
         stage.setScene(scene);
         stage.setTitle(getBundle().getString("title"));
         stage.setOnCloseRequest(event -> {

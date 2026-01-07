@@ -6,6 +6,7 @@ import javafx.scene.Parent;
 import javafx.scene.control.Alert;
 import javafx.scene.control.ButtonBar;
 import javafx.scene.control.ButtonType;
+import javafx.stage.Stage;
 import javafx.stage.Window;
 import lombok.NonNull;
 import lombok.extern.slf4j.Slf4j;
@@ -53,7 +54,10 @@ public class FXUtils {
         alert.getButtonTypes().setAll(okButton, cancelButton);
 
         alert.showAndWait().ifPresent(btn -> {
-            if (btn == okButton) System.exit(0);
+            if (btn == okButton) {
+                if (owner instanceof Stage stage) stage.close();
+                else log.error("Tried to close non-stage window");
+            }
         });
     }
 }
