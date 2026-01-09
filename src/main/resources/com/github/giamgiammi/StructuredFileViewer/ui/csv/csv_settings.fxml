@@ -1,6 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-
 <?import javafx.geometry.Insets?>
 <?import javafx.scene.control.*?>
 <?import javafx.scene.layout.*?>
@@ -19,6 +18,7 @@
       <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
       <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
       <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+      <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
    </rowConstraints>
    <children>
       <Label text="%csv.settings.baseFormat" />
@@ -27,21 +27,21 @@
       <Label text="%csv.settings.recordSeparator" GridPane.rowIndex="3" />
       <Label text="%csv.settings.duplicateHeaderMode" GridPane.rowIndex="4" />
       <Label text="%csv.settings.quoteMode" GridPane.rowIndex="5" />
-      <Label text="%csv.settings.charset" GridPane.rowIndex="6" />
-      <ComboBox prefHeight="26.0" prefWidth="283.0" GridPane.columnIndex="1">
+      <Label text="%csv.settings.charset" GridPane.rowIndex="9" />
+      <ComboBox fx:id="baseFormatChoice" prefHeight="26.0" prefWidth="283.0" GridPane.columnIndex="1">
          <GridPane.margin>
             <Insets />
          </GridPane.margin>
       </ComboBox>
-      <TextField GridPane.columnIndex="1" GridPane.rowIndex="1" />
-      <TextField GridPane.columnIndex="1" GridPane.rowIndex="2" />
-      <TextField GridPane.columnIndex="1" GridPane.rowIndex="3" />
-      <CheckBox mnemonicParsing="false" text="%csv.settings.ignoreEmptyLines" GridPane.rowIndex="7" />
-      <ComboBox prefHeight="26.0" prefWidth="283.0" GridPane.columnIndex="1" GridPane.rowIndex="4" />
-      <CheckBox mnemonicParsing="false" text="%csv.settings.allowMissingColumnNames" GridPane.columnIndex="1" GridPane.rowIndex="7" />
-      <CheckBox mnemonicParsing="false" text="%csv.settings.trailingData" GridPane.rowIndex="8" />
-      <CheckBox mnemonicParsing="false" text="%csv.settings.lenientEof" GridPane.columnIndex="1" GridPane.rowIndex="8" />
-      <ComboBox prefHeight="26.0" prefWidth="282.0" GridPane.columnIndex="1" GridPane.rowIndex="5" />
-      <ComboBox prefHeight="26.0" prefWidth="283.0" GridPane.columnIndex="1" GridPane.rowIndex="6" />
+      <TextField fx:id="delimiter" GridPane.columnIndex="1" GridPane.rowIndex="1" />
+      <TextField fx:id="quote" GridPane.columnIndex="1" GridPane.rowIndex="2" />
+      <TextField fx:id="recordSeparator" GridPane.columnIndex="1" GridPane.rowIndex="3" />
+      <CheckBox fx:id="ignoreEmptyLines" allowIndeterminate="true" indeterminate="true" mnemonicParsing="false" text="%csv.settings.ignoreEmptyLines" GridPane.rowIndex="6" />
+      <ComboBox fx:id="duplicateHeaderMode" prefHeight="26.0" prefWidth="283.0" GridPane.columnIndex="1" GridPane.rowIndex="4" />
+      <CheckBox fx:id="allowMissingColumnNames" allowIndeterminate="true" indeterminate="true" mnemonicParsing="false" text="%csv.settings.allowMissingColumnNames" GridPane.columnIndex="1" GridPane.rowIndex="6" />
+      <CheckBox fx:id="trailingData" allowIndeterminate="true" indeterminate="true" mnemonicParsing="false" text="%csv.settings.trailingData" GridPane.rowIndex="7" />
+      <CheckBox fx:id="lenientEof" allowIndeterminate="true" indeterminate="true" mnemonicParsing="false" text="%csv.settings.lenientEof" GridPane.columnIndex="1" GridPane.rowIndex="7" />
+      <ComboBox fx:id="quoteMode" prefHeight="26.0" prefWidth="282.0" GridPane.columnIndex="1" GridPane.rowIndex="5" />
+      <ComboBox fx:id="charset" prefHeight="26.0" prefWidth="283.0" GridPane.columnIndex="1" GridPane.rowIndex="9" />
    </children>
 </GridPane>
