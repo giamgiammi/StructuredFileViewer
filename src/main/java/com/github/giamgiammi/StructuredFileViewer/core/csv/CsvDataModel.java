@@ -37,7 +37,7 @@ public class CsvDataModel implements DataModel<CsvSettings> {
     @Override
     public Node loadFile(Path file) throws IOException {
         final CsvData data;
-        try (val reader = Files.newBufferedReader(file, settings.getCharset())) {
+        try (val reader = Files.newBufferedReader(file, settings.charset())) {
             data = parse(reader);
         }
 

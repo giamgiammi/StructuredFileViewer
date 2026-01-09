@@ -26,17 +26,17 @@ public class CsvDataModelFactory implements DataModelFactory<CsvSettings> {
      * @return a CSVFormat instance customized based on the provided CsvSettings
      */
     private CSVFormat createFormat(CsvSettings s) {
-        val b = s.getBaseFormat().builder();
+        val b = s.baseFormat().builder();
 
-        if (s.getDelimiter() != null) b.setDelimiter(s.getDelimiter());
-        if (s.getQuote() != null) b.setQuote(s.getQuote());
-        if (s.getRecordSeparator() != null) b.setRecordSeparator(s.getRecordSeparator());
-        if (s.getIgnoreEmptyLines() != null) b.setIgnoreEmptyLines(s.getIgnoreEmptyLines());
-        if (s.getDuplicateHeaderMode() != null) b.setDuplicateHeaderMode(s.getDuplicateHeaderMode());
-        if (s.getAllowMissingColumnNames() != null) b.setAllowMissingColumnNames(s.getAllowMissingColumnNames());
-        if (s.getTrailingData() != null) b.setTrailingData(s.getTrailingData());
-        if (s.getLenientEof() != null) b.setLenientEof(s.getLenientEof());
-        if (s.getQuoteMode() != null) b.setQuoteMode(s.getQuoteMode());
+        if (s.delimiter() != null) b.setDelimiter(s.delimiter());
+        if (s.quote() != null) b.setQuote(s.quote());
+        if (s.recordSeparator() != null) b.setRecordSeparator(s.recordSeparator());
+        if (s.ignoreEmptyLines() != null) b.setIgnoreEmptyLines(s.ignoreEmptyLines());
+        if (s.duplicateHeaderMode() != null) b.setDuplicateHeaderMode(s.duplicateHeaderMode());
+        if (s.allowMissingColumnNames() != null) b.setAllowMissingColumnNames(s.allowMissingColumnNames());
+        if (s.trailingData() != null) b.setTrailingData(s.trailingData());
+        if (s.lenientEof() != null) b.setLenientEof(s.lenientEof());
+        if (s.quoteMode() != null) b.setQuoteMode(s.quoteMode());
 
         return b.get();
     }
