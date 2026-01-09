@@ -1,9 +1,47 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<?import javafx.scene.layout.AnchorPane?>
-<AnchorPane xmlns="http://javafx.com/javafx"
-            xmlns:fx="http://javafx.com/fxml"
-            fx:controller="com.github.giamgiammi.StructuredFileViewer.ui.csv.CsvSettingsController"
-            prefHeight="400.0" prefWidth="600.0">
 
-</AnchorPane>
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+<GridPane hgap="5.0" prefHeight="443.0" prefWidth="610.0" vgap="5.0" xmlns="http://javafx.com/javafx/25" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.github.giamgiammi.StructuredFileViewer.ui.csv.CsvSettingsController">
+   <columnConstraints>
+      <ColumnConstraints hgrow="SOMETIMES" maxWidth="293.0" minWidth="10.0" prefWidth="287.0" />
+      <ColumnConstraints hgrow="SOMETIMES" maxWidth="286.0" minWidth="10.0" prefWidth="217.0" />
+   </columnConstraints>
+   <rowConstraints>
+      <RowConstraints minHeight="10.0" vgrow="SOMETIMES" />
+      <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+      <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+      <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+      <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+      <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+      <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+      <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+      <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+   </rowConstraints>
+   <children>
+      <Label text="%csv.settings.baseFormat" />
+      <Label text="%csv.settings.delimiter" GridPane.rowIndex="1" />
+      <Label text="%csv.settings.quote" GridPane.rowIndex="2" />
+      <Label text="%csv.settings.recordSeparator" GridPane.rowIndex="3" />
+      <Label text="%csv.settings.duplicateHeaderMode" GridPane.rowIndex="4" />
+      <Label text="%csv.settings.quoteMode" GridPane.rowIndex="5" />
+      <Label text="%csv.settings.charset" GridPane.rowIndex="6" />
+      <ComboBox prefHeight="26.0" prefWidth="283.0" GridPane.columnIndex="1">
+         <GridPane.margin>
+            <Insets />
+         </GridPane.margin>
+      </ComboBox>
+      <TextField GridPane.columnIndex="1" GridPane.rowIndex="1" />
+      <TextField GridPane.columnIndex="1" GridPane.rowIndex="2" />
+      <TextField GridPane.columnIndex="1" GridPane.rowIndex="3" />
+      <CheckBox mnemonicParsing="false" text="%csv.settings.ignoreEmptyLines" GridPane.rowIndex="7" />
+      <ComboBox prefHeight="26.0" prefWidth="283.0" GridPane.columnIndex="1" GridPane.rowIndex="4" />
+      <CheckBox mnemonicParsing="false" text="%csv.settings.allowMissingColumnNames" GridPane.columnIndex="1" GridPane.rowIndex="7" />
+      <CheckBox mnemonicParsing="false" text="%csv.settings.trailingData" GridPane.rowIndex="8" />
+      <CheckBox mnemonicParsing="false" text="%csv.settings.lenientEof" GridPane.columnIndex="1" GridPane.rowIndex="8" />
+      <ComboBox prefHeight="26.0" prefWidth="282.0" GridPane.columnIndex="1" GridPane.rowIndex="5" />
+      <ComboBox prefHeight="26.0" prefWidth="283.0" GridPane.columnIndex="1" GridPane.rowIndex="6" />
+   </children>
+</GridPane>
