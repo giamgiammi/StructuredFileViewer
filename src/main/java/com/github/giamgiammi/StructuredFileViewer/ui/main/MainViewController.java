@@ -1,6 +1,7 @@
 package com.github.giamgiammi.StructuredFileViewer.ui.main;
 
 import com.github.giamgiammi.StructuredFileViewer.App;
+import com.github.giamgiammi.StructuredFileViewer.ui.about.AboutDialog;
 import com.github.giamgiammi.StructuredFileViewer.ui.lang.ChangeLanguageDialog;
 import com.github.giamgiammi.StructuredFileViewer.utils.FXUtils;
 import javafx.fxml.FXML;
@@ -42,5 +43,12 @@ public class MainViewController {
     public void handleChangeLanguage() {
         new ChangeLanguageDialog(rootPane.getScene().getWindow()).showAndWait()
                 .ifPresent(locale -> App.changeLocale(locale.value()));
+    }
+
+    /**
+     * Handler for the about menu item
+     */
+    public void handleAbout() {
+        new AboutDialog(rootPane.getScene().getWindow()).showAndWait();
     }
 }

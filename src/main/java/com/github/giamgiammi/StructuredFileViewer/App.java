@@ -3,6 +3,7 @@ package com.github.giamgiammi.StructuredFileViewer;
 import com.github.giamgiammi.StructuredFileViewer.ui.main.MainViewController;
 import com.github.giamgiammi.StructuredFileViewer.utils.FXUtils;
 import javafx.application.Application;
+import javafx.application.HostServices;
 import javafx.scene.Scene;
 import javafx.scene.image.Image;
 import javafx.stage.Stage;
@@ -18,6 +19,15 @@ import java.util.prefs.Preferences;
  */
 public class App extends Application {
     private static ResourceBundle bundle;
+    private static HostServices hostServices;
+
+    /**
+     * Open a link in the default browser
+     * @param url the URL to open
+     */
+    public static void openLink(String url) {
+        hostServices.showDocument(url);
+    }
 
     /**
      * Get the resource bundle associated with this app
@@ -50,6 +60,7 @@ public class App extends Application {
     @Override
     public void start(Stage stage) throws IOException {
         startMainStage(stage);
+        hostServices = getHostServices();
     }
 
     private static void startMainStage(Stage stage) {
