@@ -3,6 +3,7 @@ package com.github.giamgiammi.StructuredFileViewer.ui.main;
 import com.github.giamgiammi.StructuredFileViewer.App;
 import com.github.giamgiammi.StructuredFileViewer.ui.about.AboutDialog;
 import com.github.giamgiammi.StructuredFileViewer.ui.lang.ChangeLanguageDialog;
+import com.github.giamgiammi.StructuredFileViewer.ui.load.LoadFileDialog;
 import com.github.giamgiammi.StructuredFileViewer.ui.tab.CloseTabAlert;
 import com.github.giamgiammi.StructuredFileViewer.utils.FXUtils;
 import javafx.application.Platform;
@@ -35,7 +36,7 @@ public class MainViewController implements Initializable {
 
     @Override
     public void initialize(URL location, ResourceBundle resources) {
-        handleNewTab();
+//        Platform.runLater(this::handleNewTab);
     }
 
     /**
@@ -76,6 +77,8 @@ public class MainViewController implements Initializable {
      * Opens a new tab
      */
     public void handleNewTab() {
+        new LoadFileDialog(rootPane.getScene().getWindow()).showAndWait();
+
         //todo actual implementation
         val tab = new Tab("Test tab", new Label(LocalDateTime.now().toString()));
 
