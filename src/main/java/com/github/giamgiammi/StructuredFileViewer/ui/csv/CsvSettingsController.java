@@ -1,10 +1,8 @@
 package com.github.giamgiammi.StructuredFileViewer.ui.csv;
 
-import com.github.giamgiammi.StructuredFileViewer.core.csv.CsvDataModel;
+import com.github.giamgiammi.StructuredFileViewer.core.DataModel;
 import com.github.giamgiammi.StructuredFileViewer.core.csv.CsvDataModelFactory;
-import com.github.giamgiammi.StructuredFileViewer.model.csv.BaseFormatChoice;
-import com.github.giamgiammi.StructuredFileViewer.model.csv.DuplicateHeaderModeChoice;
-import com.github.giamgiammi.StructuredFileViewer.model.csv.QuoteModeChoice;
+import com.github.giamgiammi.StructuredFileViewer.model.csv.*;
 import com.github.giamgiammi.StructuredFileViewer.utils.TextUtils;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
@@ -16,6 +14,7 @@ import org.apache.commons.csv.DuplicateHeaderMode;
 import org.apache.commons.csv.QuoteMode;
 
 import java.net.URL;
+import java.nio.charset.Charset;
 import java.util.Arrays;
 import java.util.Optional;
 import java.util.ResourceBundle;
@@ -116,9 +115,26 @@ public class CsvSettingsController implements Initializable {
                 "UTF-16",
                 "cp1252"
         );
+        charset.getSelectionModel().select(0);
     }
 
-    public CsvDataModel getModel() {
-        return null;//todo
+    private CsvSettings getSettings() {
+        return new CsvSettings(
+                baseFormatChoice.getValue() == null ? null : baseFormatChoice.getValue().format(),
+                delimiter.getText().isEmpty() ? null : delimiter.getText(),
+                quote.getText().isEmpty() ? null : quote.getText().charAt(0),
+                recordSeparator.getText().isEmpty() ? null : recordSeparator.getText(),
+                ignoreEmptyLines.isIndeterminate() ? null : ignoreEmptyLines.isSelected(),
+                duplicateHeaderMode.getValue() == null ? null : duplicateHeaderMode.getValue().mode(),
+                allowMissingColumnNames.isIndeterminate() ? null : allowMissingColumnNames.isSelected(),
+                trailingData.isIndeterminate() ? null : trailingData.isSelected(),
+                lenientEof.isIndeterminate() ? null : lenientEof.isSelected(),
+                quoteMode.getValue() == null ? null : quoteMode.getValue().mode(),
+                Charset.forName(charset.getValue())
+        );
+    }
+
+    public DataModel<CsvSettings, CsvData> getModel() {
+        return factory.create(getSettings());
     }
 }
