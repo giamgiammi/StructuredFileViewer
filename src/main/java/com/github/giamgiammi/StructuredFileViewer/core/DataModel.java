@@ -18,7 +18,7 @@ public interface DataModel<T> {
      * Get the factory class associated with this data model
      * @return the factory class
      */
-    Class<DataModelFactory<T>> getFactoryClass();
+    Class<? extends DataModelFactory<T>> getFactoryClass();
 
     /**
      * Get the settings associated with this data model

@@ -5,6 +5,7 @@ module com.github.giamgiammi.StructuredFileViewer {
     requires java.prefs;
     requires org.slf4j;
     requires java.desktop;
+    requires org.apache.commons.csv;
 
     opens com.github.giamgiammi.StructuredFileViewer to javafx.fxml;
     opens com.github.giamgiammi.StructuredFileViewer.ui.main to javafx.fxml;
