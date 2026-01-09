@@ -23,6 +23,8 @@ public class LicenseArea extends TextArea {
         setText(loadText());
         setEditable(false);
         setFont(new Font("Monospaced", 12));
+        setPrefColumnCount(20);
+        setPrefRowCount(20);
     }
 
     private String loadText() {
