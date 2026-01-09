@@ -2,21 +2,34 @@ package com.github.giamgiammi.StructuredFileViewer.core.csv;
 
 import com.github.giamgiammi.StructuredFileViewer.core.DataModel;
 import com.github.giamgiammi.StructuredFileViewer.core.DataModelFactory;
+import com.github.giamgiammi.StructuredFileViewer.core.DataModelType;
+import com.github.giamgiammi.StructuredFileViewer.model.csv.CsvData;
 import com.github.giamgiammi.StructuredFileViewer.model.csv.CsvSettings;
-import javafx.scene.control.Dialog;
+import lombok.NonNull;
 import lombok.val;
 import org.apache.commons.csv.CSVFormat;
 
-public class CsvDataModelFactory implements DataModelFactory<CsvSettings> {
+import java.nio.charset.StandardCharsets;
+
+public class CsvDataModelFactory implements DataModelFactory<CsvSettings, CsvData> {
+    private static final CsvSettings DEFAULT_SETTINGS = CsvSettings.builder()
+            .baseFormat(CSVFormat.DEFAULT)
+            .charset(StandardCharsets.UTF_8)
+            .build();
+
     @Override
-    public Dialog<CsvSettings> getSettingsDialog(CsvSettings settings) {
-        //todo implementation
-        throw new UnsupportedOperationException("not implemented yet");
+    public @NonNull DataModelType getType() {
+        return DataModelType.CSV_LIKE;
     }
 
     @Override
-    public DataModel<CsvSettings> create(CsvSettings settings) {
-        return new CsvDataModel(settings, createFormat(settings));
+    public @NonNull CsvSettings getDefaultSettings() {
+        return DEFAULT_SETTINGS;
+    }
+
+    @Override
+    public @NonNull DataModel<CsvSettings, CsvData> create(@NonNull CsvSettings csvSettings) {
+        return new CsvDataModel(csvSettings, createFormat(csvSettings));
     }
 
     /**

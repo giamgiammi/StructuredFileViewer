@@ -1,27 +1,38 @@
 package com.github.giamgiammi.StructuredFileViewer.core;
 
-import javafx.scene.control.Dialog;
+import lombok.NonNull;
 
 /**
- * Factory interface for creating and configuring data models of a specific type.
- * Provides methods to construct a dialog for editing model settings and to create
- * a new data model instance based on specified settings.
+ * Represents a factory interface for creating instances of {@link DataModel}.
+ * This interface provides methods for retrieving a unique identifier for the
+ * data model type, obtaining default settings, and creating a new data model
+ * instance based on provided settings.
  *
- * @param <T> the type of the settings or data associated with the data model
+ * @param <SETTINGS> the type of the settings associated with the data model
+ * @param <DATA> the type of the data structure returned by the data model
  */
-public interface DataModelFactory<T> {
+public interface DataModelFactory<SETTINGS, DATA> {
     /**
-     * Returns a JavaFx dialog that allows the user to edit the settings of the data model.
-     * Accept an optional settings object to edit existing settings
-     * @param settings the settings to edit, might be null
-     * @return A dialog that returns the settings
+     * Retrieves the type of the data model associated with this factory.
+     *
+     * @return the {@link DataModelType} representing the type of the data model
      */
-    Dialog<T> getSettingsDialog(T settings);
+    @NonNull
+    DataModelType getType();
 
     /**
-     * Creates a new data model from the given settings
-     * @param settings the settings to use to create the data model, might be null
-     * @return A newly constructed data model
+     * Return the default settings for this data model type
+     * @return The default {@link SETTINGS} for this data model type
      */
-    DataModel<T> create(T settings);
+    @NonNull
+    SETTINGS getDefaultSettings();
+    
+    /**
+     * Creates a new data model from the given settings
+     * @param settings the settings to use to create the data model
+     * @return A newly constructed {@link DataModel} instance with the given settings.
+     * @throws NullPointerException if settings is null
+     */
+    @NonNull
+    DataModel<SETTINGS, DATA> create(@NonNull SETTINGS settings);
 }

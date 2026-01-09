@@ -6,7 +6,6 @@ import org.apache.commons.csv.DuplicateHeaderMode;
 import org.apache.commons.csv.QuoteMode;
 
 import java.nio.charset.Charset;
-import java.nio.charset.StandardCharsets;
 
 /**
  * Settings class for CSV-like files.
@@ -25,11 +24,4 @@ public final record CsvSettings(
         Boolean lenientEof,
         QuoteMode quoteMode,
         Charset charset
-) {
-    public static class CsvSettingsBuilder {
-        CsvSettingsBuilder() {
-            baseFormat = CSVFormat.DEFAULT;
-            charset = StandardCharsets.UTF_8;
-        }
-    }
-}
+) {}
