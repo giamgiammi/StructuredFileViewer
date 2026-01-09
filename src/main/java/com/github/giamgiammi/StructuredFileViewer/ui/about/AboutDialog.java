@@ -1,9 +1,7 @@
 package com.github.giamgiammi.StructuredFileViewer.ui.about;
 
 import com.github.giamgiammi.StructuredFileViewer.App;
-import javafx.scene.control.Alert;
-import javafx.scene.control.Hyperlink;
-import javafx.scene.control.Label;
+import javafx.scene.control.*;
 import javafx.scene.layout.GridPane;
 import javafx.stage.Window;
 import lombok.val;
@@ -54,6 +52,7 @@ public class AboutDialog extends Alert {
         getDialogPane().setContent(grid);
 
         getDialogPane().setExpandableContent(new LicenseArea());
+        getDialogPane().getButtonTypes().setAll(new ButtonType(bundle.getString("label.ok"), ButtonBar.ButtonData.OK_DONE));
     }
 
     private String getLink() {

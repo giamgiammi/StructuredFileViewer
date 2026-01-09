@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
 <?import javafx.scene.control.*?>
+<?import javafx.scene.input.KeyCodeCombination?>
 <?import javafx.scene.layout.BorderPane?>
 <BorderPane fx:id="rootPane" prefHeight="505.0" prefWidth="625.0" xmlns="http://javafx.com/javafx/25" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.github.giamgiammi.StructuredFileViewer.ui.main.MainViewController">
    <top>
@@ -8,7 +9,15 @@
         <menus>
           <Menu mnemonicParsing="false" text="%label.file_menu">
             <items>
-                  <MenuItem mnemonicParsing="false" onAction="#handleNewWindows" text="%label.new_window" />
+                  <MenuItem mnemonicParsing="false" onAction="#handleNewTab" text="%label.new_tab">
+                     <accelerator>
+                        <KeyCodeCombination alt="UP" code="T" control="DOWN" meta="UP" shift="UP" shortcut="UP" />
+                     </accelerator>
+                  </MenuItem>
+                  <MenuItem mnemonicParsing="false" onAction="#handleNewWindows" text="%label.new_window">
+                     <accelerator>
+                        <KeyCodeCombination alt="UP" code="W" control="DOWN" meta="UP" shift="UP" shortcut="UP" />
+                     </accelerator></MenuItem>
                   <MenuItem mnemonicParsing="false" onAction="#handleChangeLanguage" text="%change_language.title" />
               <MenuItem mnemonicParsing="false" onAction="#handleCloseApp" text="%label.close" />
             </items>
@@ -21,4 +30,7 @@
         </menus>
       </MenuBar>
    </top>
+   <center>
+      <TabPane fx:id="tabPane" prefHeight="200.0" prefWidth="200.0" tabClosingPolicy="ALL_TABS" BorderPane.alignment="CENTER" />
+   </center>
 </BorderPane>
