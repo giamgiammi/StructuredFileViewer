@@ -1,14 +1,14 @@
 package com.github.giamgiammi.StructuredFileViewer.ui.about;
 
 import com.github.giamgiammi.StructuredFileViewer.App;
+import com.github.giamgiammi.StructuredFileViewer.ui.exception.ExceptionAlert;
 import javafx.scene.control.*;
 import javafx.scene.layout.GridPane;
 import javafx.stage.Window;
+import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 
 import java.nio.charset.StandardCharsets;
-import java.nio.file.Files;
-import java.nio.file.Path;
 import java.util.ResourceBundle;
 
 /**
@@ -28,6 +28,7 @@ import java.util.ResourceBundle;
  * <br>
  * This class is typically invoked by calling {@code handleAbout()} from a controller or similar handler.
  */
+@Slf4j
 public class AboutDialog extends Alert {
     public AboutDialog(Window owner) {
         super(Alert.AlertType.INFORMATION);
@@ -51,16 +52,17 @@ public class AboutDialog extends Alert {
 
         getDialogPane().setContent(grid);
 
-        getDialogPane().setExpandableContent(new LicenseArea());
+        getDialogPane().setExpandableContent(new LicenseArea(getDialogPane().getScene().getWindow()));
         getDialogPane().getButtonTypes().setAll(new ButtonType(bundle.getString("label.ok"), ButtonBar.ButtonData.OK_DONE));
     }
 
     private String getLink() {
-        try {
-            val file = App.class.getResource("url.txt");
-            return Files.readString(Path.of(file.getPath()), StandardCharsets.UTF_8);
+        try (val in = App.class.getResourceAsStream("url.txt")) {
+            return new String(in.readAllBytes(), StandardCharsets.UTF_8);
         } catch (Exception e) {
-            throw new RuntimeException("Error reading url.txt", e);
+            log.error("Error reading url.txt", e);
+            new ExceptionAlert(getDialogPane().getScene().getWindow(), e).showAndWait();
+            return "";
         }
     }
 }

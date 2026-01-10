@@ -1,13 +1,14 @@
 package com.github.giamgiammi.StructuredFileViewer.ui.about;
 
 import com.github.giamgiammi.StructuredFileViewer.App;
+import com.github.giamgiammi.StructuredFileViewer.ui.exception.ExceptionAlert;
 import javafx.scene.control.TextArea;
 import javafx.scene.text.Font;
+import javafx.stage.Window;
+import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 
 import java.nio.charset.StandardCharsets;
-import java.nio.file.Files;
-import java.nio.file.Path;
 
 /**
  * A text area component specifically designed to display the content of a license file in a read-only format.
@@ -18,8 +19,12 @@ import java.nio.file.Path;
  * <br>
  * This component is not editable by the user.
  */
+@Slf4j
 public class LicenseArea extends TextArea {
-    public LicenseArea() {
+    private final Window owner;
+
+    public LicenseArea(Window owner) {
+        this.owner = owner;
         setText(loadText());
         setEditable(false);
         setFont(new Font("Monospaced", 12));
@@ -28,11 +33,12 @@ public class LicenseArea extends TextArea {
     }
 
     private String loadText() {
-        try {
-            val file = App.class.getResource("license.txt");
-            return Files.readString(Path.of(file.getPath()), StandardCharsets.UTF_8);
+        try (val in = App.class.getResourceAsStream("license.txt")) {
+            return new String(in.readAllBytes(), StandardCharsets.UTF_8);
         } catch (Exception e) {
-            throw new RuntimeException("Error reading license.txt", e);
+            log.error("Error reading license.txt", e);
+            new ExceptionAlert(owner, e).showAndWait();
+            return "";
         }
     }
 }
