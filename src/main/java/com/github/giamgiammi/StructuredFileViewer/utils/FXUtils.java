@@ -1,6 +1,7 @@
 package com.github.giamgiammi.StructuredFileViewer.utils;
 
 import com.github.giamgiammi.StructuredFileViewer.App;
+import com.github.giamgiammi.StructuredFileViewer.ui.exception.ExceptionAlert;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 import javafx.scene.control.Alert;
@@ -56,7 +57,10 @@ public class FXUtils {
         alert.showAndWait().ifPresent(btn -> {
             if (btn == okButton) {
                 if (owner instanceof Stage stage) stage.close();
-                else log.error("Tried to close non-stage window");
+                else {
+                    log.error("Tried to close non-stage window");
+                    new ExceptionAlert(owner, new IllegalStateException("Tried to close non-stage window")).showAndWait();
+                }
             }
         });
     }

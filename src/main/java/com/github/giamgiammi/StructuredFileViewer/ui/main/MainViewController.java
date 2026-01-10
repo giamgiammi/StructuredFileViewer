@@ -2,6 +2,7 @@ package com.github.giamgiammi.StructuredFileViewer.ui.main;
 
 import com.github.giamgiammi.StructuredFileViewer.App;
 import com.github.giamgiammi.StructuredFileViewer.ui.about.AboutDialog;
+import com.github.giamgiammi.StructuredFileViewer.ui.exception.ExceptionAlert;
 import com.github.giamgiammi.StructuredFileViewer.ui.lang.ChangeLanguageDialog;
 import com.github.giamgiammi.StructuredFileViewer.ui.load.LoadFileDialog;
 import com.github.giamgiammi.StructuredFileViewer.ui.tab.CloseTabAlert;
@@ -54,6 +55,7 @@ public class MainViewController implements Initializable {
             App.openNewWindow();
         } catch (IOException e) {
             log.error("Failed to open new window", e);
+            new ExceptionAlert(rootPane.getScene().getWindow(), e).showAndWait();
         }
     }
 
