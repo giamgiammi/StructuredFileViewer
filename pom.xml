@@ -74,6 +74,8 @@
                         <id>default-cli</id>
                         <configuration>
                             <mainClass>com.github.giamgiammi.StructuredFileViewer.App</mainClass>
+                            <launcher>StructuredFileViewer</launcher>
+                            <compress>2</compress>
                         </configuration>
                     </execution>
                 </executions>

@@ -1,0 +1,17 @@
+#!/bin/sh
+
+DIR="$(dirname "$0")"
+cd "$DIR" || exit 1
+
+set -e
+
+echo "Start image build"
+./mvnw clean javafx:jlink
+
+echo "Start packaging"
+jpackage -m com.github.giamgiammi.StructuredFileViewer/com.github.giamgiammi.StructuredFileViewer.App \
+             --runtime-image target/image \
+             --name 'Structured File Viewer' \
+             --dest target/ \
+             --type app-image \
+             --icon src/main/resources/com/github/giamgiammi/StructuredFileViewer/logo.png
