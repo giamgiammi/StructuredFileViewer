@@ -9,7 +9,6 @@ import com.github.giamgiammi.StructuredFileViewer.ui.tab.CloseTabAlert;
 import com.github.giamgiammi.StructuredFileViewer.utils.FXUtils;
 import javafx.application.Platform;
 import javafx.fxml.FXML;
-import javafx.fxml.Initializable;
 import javafx.scene.control.ButtonBar;
 import javafx.scene.control.Label;
 import javafx.scene.control.Tab;
@@ -19,26 +18,19 @@ import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 
 import java.io.IOException;
-import java.net.URL;
 import java.time.LocalDateTime;
-import java.util.ResourceBundle;
 
 /**
  * Controller for the main view
  * FXML: main.fxml
  */
 @Slf4j
-public class MainViewController implements Initializable {
+public class MainViewController {
     @FXML
     private BorderPane rootPane;
 
     @FXML
     private TabPane tabPane;
-
-    @Override
-    public void initialize(URL location, ResourceBundle resources) {
-//        Platform.runLater(this::handleNewTab);
-    }
 
     /**
      * Handler for the close item inside the File menu
