@@ -4,6 +4,7 @@ module com.github.giamgiammi.StructuredFileViewer {
     requires static lombok;
     requires java.prefs;
     requires org.slf4j;
+    requires ch.qos.logback.classic;
     requires java.desktop;
     requires org.apache.commons.csv;
     requires tools.jackson.databind;
