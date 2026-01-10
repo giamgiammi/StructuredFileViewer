@@ -1,5 +1,6 @@
 package com.github.giamgiammi.StructuredFileViewer;
 
+import com.github.giamgiammi.StructuredFileViewer.ui.exception.ExceptionAlert;
 import com.github.giamgiammi.StructuredFileViewer.ui.main.MainViewController;
 import com.github.giamgiammi.StructuredFileViewer.utils.FXUtils;
 import javafx.application.Application;
@@ -20,6 +21,7 @@ import java.util.prefs.Preferences;
 public class App extends Application {
     private static ResourceBundle bundle;
     private static HostServices hostServices;
+    private static Image logo;
 
     /**
      * Open a link in the default browser
@@ -71,8 +73,19 @@ public class App extends Application {
             event.consume();
             FXUtils.closeApp(stage);
         });
-        stage.getIcons().add(new Image(App.class.getResourceAsStream("logo.png")));
+        stage.getIcons().add(getLogo(stage));
         stage.show();
+    }
+
+    private static Image getLogo(Stage stage) {
+        if (logo == null) {
+            try (val in = App.class.getResourceAsStream("logo.png")) {
+                logo = new Image(in);
+            } catch (Exception e) {
+                new ExceptionAlert(stage, e).showAndWait();
+            }
+        }
+        return logo;
     }
 
     public static void main(String[] args) {
