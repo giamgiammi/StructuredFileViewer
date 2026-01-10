@@ -27,6 +27,20 @@ import java.nio.file.Path;
 import java.util.ResourceBundle;
 import java.util.prefs.Preferences;
 
+/**
+ * LoadFileDialog is a custom dialog window for loading or importing data files
+ * and managing related settings. This dialog allows the interactive selection of
+ * a data model type, loading settings from files, saving settings to files, and
+ * specifying the source of the data (local file or pasted text).
+ *
+ * The class interacts with a variety of helper components, including settings
+ * controllers, file choosers, and data model factories, to facilitate these operations.
+ * It also provides options to handle settings for different data model types.
+ *
+ * Thread Safety:
+ * This class is designed to be used within a JavaFX application thread
+ * and is not thread-safe.
+ */
 @Slf4j
 public class LoadFileDialog extends Dialog<LoadResult<?>> {
     private final ResourceBundle bundle = App.getBundle();
