@@ -11,6 +11,7 @@
         <logback.version>1.5.23</logback.version>
         <lombok.vesion>1.18.42</lombok.vesion>
         <apache-common.csv.version>1.14.1</apache-common.csv.version>
+        <jackson.version>3.0.0</jackson.version>
     </properties>
     <dependencies>
 <!--        <dependency>-->
@@ -38,6 +39,11 @@
             <groupId>org.apache.commons</groupId>
             <artifactId>commons-csv</artifactId>
             <version>${apache-common.csv.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>tools.jackson.core</groupId>
+            <artifactId>jackson-databind</artifactId>
+            <version>${jackson.version}</version>
         </dependency>
     </dependencies>
     <build>

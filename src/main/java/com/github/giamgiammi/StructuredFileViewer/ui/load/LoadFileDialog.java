@@ -7,19 +7,19 @@ import com.github.giamgiammi.StructuredFileViewer.core.csv.CsvDataModelFactory;
 import com.github.giamgiammi.StructuredFileViewer.model.LoadResult;
 import com.github.giamgiammi.StructuredFileViewer.model.ModelChoice;
 import com.github.giamgiammi.StructuredFileViewer.ui.csv.CsvSettingsController;
+import com.github.giamgiammi.StructuredFileViewer.ui.exception.ExceptionAlert;
 import com.github.giamgiammi.StructuredFileViewer.ui.inteface.SettingsController;
 import com.github.giamgiammi.StructuredFileViewer.utils.FXUtils;
+import com.github.giamgiammi.StructuredFileViewer.utils.SettingsUtils;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
-import javafx.geometry.Orientation;
-import javafx.scene.control.ButtonBar;
-import javafx.scene.control.ButtonType;
-import javafx.scene.control.ComboBox;
-import javafx.scene.control.Dialog;
-import javafx.scene.layout.FlowPane;
+import javafx.scene.Node;
+import javafx.scene.control.*;
+import javafx.scene.layout.GridPane;
 import javafx.stage.FileChooser;
 import javafx.stage.Window;
+import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 
 import java.io.File;
@@ -27,8 +27,11 @@ import java.nio.file.Path;
 import java.util.ResourceBundle;
 import java.util.prefs.Preferences;
 
+@Slf4j
 public class LoadFileDialog extends Dialog<LoadResult<?>> {
     private final ResourceBundle bundle = App.getBundle();
+
+    private Node settingsNode;
 
     private DataModelFactory<?, ?> factory;
     private SettingsController<?> settingsController;
@@ -45,15 +48,53 @@ public class LoadFileDialog extends Dialog<LoadResult<?>> {
         setTitle(bundle.getString("load_file.title"));
         setHeaderText(bundle.getString("load_file.header"));
 
-        val flow = new FlowPane(Orientation.HORIZONTAL);
+        val grid = new GridPane(5, 5);
 
-        val modelCombo = new ComboBox<ModelChoice>(getModelChoices());
-        flow.getChildren().add(modelCombo);
+        val modelCombo = new ComboBox<>(getModelChoices());
+        grid.add(modelCombo, 0, 0);
 
-        val settingsPane = new FlowPane(Orientation.HORIZONTAL);
-        flow.getChildren().add(settingsPane);
+        val loadSettingsFromFile = new Button(bundle.getString("label.load_from_file"));
+        loadSettingsFromFile.setOnAction(evt -> {
+            val fc = new FileChooser();
+            fc.setInitialDirectory(getModelInitialDirectory());
+            fc.setSelectedExtensionFilter(new FileChooser.ExtensionFilter("JSON", "*.json"));
+            val file = fc.showOpenDialog(getDialogPane().getScene().getWindow());
+            if (file != null) {
+                setModelInitialDirectory(file.getParentFile());
+                try {
+                    val settings = SettingsUtils.loadSettings(file.toPath());
+                    modelCombo.valueProperty().set(modelCombo.getItems().stream().filter(m -> m.type() == settings.type()).findFirst().orElseThrow());
+                    ((SettingsController<Object>) settingsController).setSettings(settings.settings());
+                } catch (Exception e) {
+                    log.error("Failed to load settings from file", e);
+                    new ExceptionAlert(getDialogPane().getScene().getWindow(), e).showAndWait();
+                }
+            }
+        });
+        grid.add(loadSettingsFromFile, 1, 0);
 
-        getDialogPane().setContent(flow);
+        val saveSettingsToFile = new Button(bundle.getString("label.save"));
+        saveSettingsToFile.setOnAction(evt -> {
+            val fc = new FileChooser();
+            fc.setInitialDirectory(getModelInitialDirectory());
+            fc.setSelectedExtensionFilter(new FileChooser.ExtensionFilter("JSON", "*.json"));
+            fc.setInitialFileName("model.json");
+            var file = fc.showSaveDialog(getDialogPane().getScene().getWindow());
+            if (file != null) {
+                if (!file.getName().toLowerCase().endsWith(".json")) file = new File(file.getPath() + ".json");
+                setModelInitialDirectory(file.getParentFile());
+                try {
+                    SettingsUtils.saveSettings(factory.getType(), settingsController.getSettings(), file.toPath());
+                } catch (Exception e) {
+                    log.error("Failed to save settings to file", e);
+                    new ExceptionAlert(getDialogPane().getScene().getWindow(), e).showAndWait();
+                }
+            }
+        });
+        saveSettingsToFile.setDisable(true);
+        grid.add(saveSettingsToFile, 2, 0);
+
+        getDialogPane().setContent(grid);
 
         val openFileBtn = new ButtonType(bundle.getString("label.open_file"), ButtonBar.ButtonData.OK_DONE);
         val pasteBtn = new ButtonType(bundle.getString("label.paste_text"), ButtonBar.ButtonData.OTHER);
@@ -66,22 +107,14 @@ public class LoadFileDialog extends Dialog<LoadResult<?>> {
         modelCombo.valueProperty().addListener((obs, oldVal, newVal) -> {
             getDialogPane().lookupButton(openFileBtn).setDisable(false);
             getDialogPane().lookupButton(pasteBtn).setDisable(!newVal.type().isCanLoadStrings());
+            saveSettingsToFile.setDisable(false);
 
             factory = null;
             settingsController = null;
             file = null;
             fileContent = null;
 
-
-            switch (newVal.type()) {
-                case CSV_LIKE -> {
-                    val pane = FXUtils.loadFXML(CsvSettingsController.class, "csv_settings", controller -> {
-                        this.settingsController = controller;
-                        this.factory = new CsvDataModelFactory();
-                    });
-                    settingsPane.getChildren().add(pane);
-                }
-            }
+            setSettingsNode(grid, getSettingsNodeByType(newVal.type()));
         });
 
         getDialogPane().lookupButton(openFileBtn).addEventFilter(ActionEvent.ACTION, evt -> {
@@ -126,6 +159,28 @@ public class LoadFileDialog extends Dialog<LoadResult<?>> {
         });
     }
 
+    private void setSettingsNode(GridPane grid, Node settingsNode) {
+        if (this.settingsNode != null) grid.getChildren().remove(this.settingsNode);
+        this.settingsNode = settingsNode;
+        grid.add(settingsNode, 0, 4, 4, 4);
+    }
+
+    private Node getSettingsNodeByType(DataModelType type) {
+        Node settingsNode;
+        switch (type) {
+            case CSV_LIKE -> {
+                settingsNode = FXUtils.loadFXML(CsvSettingsController.class, "csv_settings", controller -> {
+                    this.settingsController = controller;
+                    this.factory = new CsvDataModelFactory();
+                });
+            }
+            default -> {
+                throw new IllegalStateException("Unexpected value: " + type);
+            }
+        }
+        return settingsNode;
+    }
+
     private ObservableList<ModelChoice> getModelChoices() {
         return FXCollections.observableArrayList(
                 new ModelChoice(
@@ -143,5 +198,15 @@ public class LoadFileDialog extends Dialog<LoadResult<?>> {
 
     private void setInitialDirectory(File dir) {
         Preferences.userNodeForPackage(getClass()).put("last_dir", dir.getAbsolutePath());
+    }
+
+    private File getModelInitialDirectory() {
+        val path = Preferences.userNodeForPackage(getClass()).get("model_last_dir", null);
+        if (path != null) return new File(path);
+        return null;
+    }
+
+    private void setModelInitialDirectory(File dir) {
+        Preferences.userNodeForPackage(getClass()).put("model_last_dir", dir.getAbsolutePath());
     }
 }

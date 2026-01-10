@@ -1,6 +1,6 @@
 package com.github.giamgiammi.StructuredFileViewer.ui.csv;
 
-import com.github.giamgiammi.StructuredFileViewer.model.csv.BaseFormatChoice;
+import com.github.giamgiammi.StructuredFileViewer.core.csv.CsvBaseFormat;
 import com.github.giamgiammi.StructuredFileViewer.model.csv.CsvSettings;
 import com.github.giamgiammi.StructuredFileViewer.model.csv.DuplicateHeaderModeChoice;
 import com.github.giamgiammi.StructuredFileViewer.model.csv.QuoteModeChoice;
@@ -11,7 +11,7 @@ import javafx.fxml.Initializable;
 import javafx.scene.control.CheckBox;
 import javafx.scene.control.ComboBox;
 import javafx.scene.control.TextField;
-import org.apache.commons.csv.CSVFormat;
+import lombok.NonNull;
 import org.apache.commons.csv.DuplicateHeaderMode;
 import org.apache.commons.csv.QuoteMode;
 
@@ -26,7 +26,7 @@ public class CsvSettingsController implements Initializable, SettingsController<
     public static final String FX_FONT_WEIGHT_BOLD = "-fx-font-weight: bold;";
 
     @FXML
-    private ComboBox<BaseFormatChoice> baseFormatChoice;
+    private ComboBox<CsvBaseFormat> baseFormatChoice;
 
     @FXML
     private TextField delimiter;
@@ -60,47 +60,34 @@ public class CsvSettingsController implements Initializable, SettingsController<
 
     @Override
     public void initialize(URL location, ResourceBundle resources) {
-        baseFormatChoice.getItems().setAll(
-                new BaseFormatChoice(CSVFormat.DEFAULT, "DEFAULT"),
-                new BaseFormatChoice(CSVFormat.EXCEL, "EXCEL"),
-                new BaseFormatChoice(CSVFormat.INFORMIX_UNLOAD, "INFORMIX_UNLOAD"),
-                new BaseFormatChoice(CSVFormat.INFORMIX_UNLOAD_CSV, "INFORMIX_UNLOAD_CSV"),
-                new BaseFormatChoice(CSVFormat.MONGODB_CSV, "MONGODB_CSV"),
-                new BaseFormatChoice(CSVFormat.MONGODB_TSV, "MONGODB_TSV"),
-                new BaseFormatChoice(CSVFormat.MYSQL, "MYSQL"),
-                new BaseFormatChoice(CSVFormat.ORACLE, "ORACLE"),
-                new BaseFormatChoice(CSVFormat.POSTGRESQL_CSV, "POSTGRESQL_CSV"),
-                new BaseFormatChoice(CSVFormat.POSTGRESQL_TEXT, "POSTGRESQL_TEXT"),
-                new BaseFormatChoice(CSVFormat.RFC4180, "RFC4180"),
-                new BaseFormatChoice(CSVFormat.TDF, "TDF")
-        );
+        baseFormatChoice.getItems().setAll(CsvBaseFormat.values());
         baseFormatChoice.valueProperty().addListener((observable, oldValue, newValue) -> {
-            delimiter.setPromptText(TextUtils.quoteSpace(newValue.format().getDelimiterString()));
-            quote.setPromptText(TextUtils.quoteSpace(Optional.ofNullable(newValue.format().getQuoteCharacter()).map(String::valueOf).orElse("")));
-            recordSeparator.setPromptText(TextUtils.quoteSpace(newValue.format().getRecordSeparator()));
-            duplicateHeaderMode.setPromptText(Optional.ofNullable(newValue.format().getDuplicateHeaderMode()).map(DuplicateHeaderMode::name).orElse(""));
-            quoteMode.setPromptText(Optional.ofNullable(newValue.format().getQuoteMode()).map(QuoteMode::name).orElse(""));
+            delimiter.setPromptText(TextUtils.quoteSpace(newValue.getFormat().getDelimiterString()));
+            quote.setPromptText(TextUtils.quoteSpace(Optional.ofNullable(newValue.getFormat().getQuoteCharacter()).map(String::valueOf).orElse("")));
+            recordSeparator.setPromptText(TextUtils.quoteSpace(newValue.getFormat().getRecordSeparator()));
+            duplicateHeaderMode.setPromptText(Optional.ofNullable(newValue.getFormat().getDuplicateHeaderMode()).map(DuplicateHeaderMode::name).orElse(""));
+            quoteMode.setPromptText(Optional.ofNullable(newValue.getFormat().getQuoteMode()).map(QuoteMode::name).orElse(""));
 
-            if (newValue.format().getIgnoreEmptyLines())
+            if (newValue.getFormat().getIgnoreEmptyLines())
                 ignoreEmptyLines.setStyle(FX_FONT_WEIGHT_BOLD);
             else
                 ignoreEmptyLines.setStyle("");
-            if (newValue.format().getAllowMissingColumnNames())
+            if (newValue.getFormat().getAllowMissingColumnNames())
                 allowMissingColumnNames.setStyle(FX_FONT_WEIGHT_BOLD);
             else
                 allowMissingColumnNames.setStyle("");
-            if (newValue.format().getTrailingData())
+            if (newValue.getFormat().getTrailingData())
                 trailingData.setStyle(FX_FONT_WEIGHT_BOLD);
             else
                 trailingData.setStyle("");
-            if (newValue.format().getLenientEof())
+            if (newValue.getFormat().getLenientEof())
                 lenientEof.setStyle(FX_FONT_WEIGHT_BOLD);
             else
                 lenientEof.setStyle("");
         });
         quote.textProperty().addListener((observable, oldValue, newValue) -> {
             var text = TextUtils.unquoteSpace(newValue);
-            if (text.length() > 1) {
+            if (text != null && text.length() > 1) {
                 text = text.substring(0, 1);
                 quote.setText(TextUtils.quoteSpace(text));
             }
@@ -120,9 +107,9 @@ public class CsvSettingsController implements Initializable, SettingsController<
     }
 
     @Override
-    public CsvSettings getSettings() {
+    public @NonNull CsvSettings getSettings() {
         return new CsvSettings(
-                baseFormatChoice.getValue() == null ? null : baseFormatChoice.getValue().format(),
+                baseFormatChoice.getValue() == null ? null : baseFormatChoice.getValue(),
                 delimiter.getText().isEmpty() ? null : TextUtils.unquoteSpace(delimiter.getText()),
                 quote.getText().isEmpty() ? null : TextUtils.unquoteSpace(quote.getText()).charAt(0),
                 recordSeparator.getText().isEmpty() ? null : TextUtils.unquoteSpace(recordSeparator.getText()),
@@ -151,15 +138,34 @@ public class CsvSettingsController implements Initializable, SettingsController<
             quoteMode.setValue(null);
             charset.setValue("UTF-8");
         } else {
-            baseFormatChoice.setValue(baseFormatChoice.getItems().stream().filter(choice -> choice.format().equals(settings.baseFormat())).findFirst().orElse(null));
+            baseFormatChoice.setValue(baseFormatChoice.getItems().stream().filter(choice -> choice.equals(settings.baseFormat())).findFirst().orElse(null));
             delimiter.setText(settings.delimiter());
             quote.setText(settings.quote() != null ? String.valueOf(settings.quote()) : null);
             recordSeparator.setText(settings.recordSeparator());
-            ignoreEmptyLines.setSelected(settings.ignoreEmptyLines());
+            if (settings.ignoreEmptyLines() != null) {
+                ignoreEmptyLines.setIndeterminate(false);
+                ignoreEmptyLines.setSelected(settings.ignoreEmptyLines());
+            } else {
+                ignoreEmptyLines.setIndeterminate(true);
+            }
             duplicateHeaderMode.setValue(settings.duplicateHeaderMode() != null ? new DuplicateHeaderModeChoice(settings.duplicateHeaderMode()) : null);
-            allowMissingColumnNames.setSelected(settings.allowMissingColumnNames());
-            trailingData.setSelected(settings.trailingData());
-            lenientEof.setSelected(settings.lenientEof());
+            if (settings.allowMissingColumnNames() != null) {
+                allowMissingColumnNames.setIndeterminate(false);
+                allowMissingColumnNames.setSelected(settings.allowMissingColumnNames());
+            } else {
+                allowMissingColumnNames.setIndeterminate(true);
+            }
+            if (settings.trailingData() != null) {
+                trailingData.setSelected(settings.trailingData());
+            } else {
+                trailingData.setIndeterminate(true);
+            }
+            if (settings.lenientEof() != null) {
+                lenientEof.setIndeterminate(false);
+                lenientEof.setSelected(settings.lenientEof());
+            } else {
+                lenientEof.setIndeterminate(true);
+            }
             quoteMode.setValue(settings.quoteMode() != null ? new QuoteModeChoice(settings.quoteMode()) : null);
             charset.setValue(settings.charset().name());
         }

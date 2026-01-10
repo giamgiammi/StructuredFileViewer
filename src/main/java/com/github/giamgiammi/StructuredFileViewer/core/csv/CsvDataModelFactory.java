@@ -13,7 +13,7 @@ import java.nio.charset.StandardCharsets;
 
 public class CsvDataModelFactory implements DataModelFactory<CsvSettings, CsvData> {
     private static final CsvSettings DEFAULT_SETTINGS = CsvSettings.builder()
-            .baseFormat(CSVFormat.DEFAULT)
+            .baseFormat(CsvBaseFormat.DEFAULT)
             .charset(StandardCharsets.UTF_8)
             .build();
 
@@ -39,7 +39,7 @@ public class CsvDataModelFactory implements DataModelFactory<CsvSettings, CsvDat
      * @return a CSVFormat instance customized based on the provided CsvSettings
      */
     private CSVFormat createFormat(CsvSettings s) {
-        val b = s.baseFormat().builder();
+        val b = s.baseFormat().getFormat().builder();
 
         if (s.delimiter() != null) b.setDelimiter(s.delimiter());
         if (s.quote() != null) b.setQuote(s.quote());

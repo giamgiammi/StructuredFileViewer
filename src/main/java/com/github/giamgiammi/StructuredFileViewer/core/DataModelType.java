@@ -1,5 +1,6 @@
 package com.github.giamgiammi.StructuredFileViewer.core;
 
+import com.github.giamgiammi.StructuredFileViewer.model.csv.CsvSettings;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 
@@ -18,7 +19,8 @@ public enum DataModelType {
      * Represent a CSV-LIKE structured data.
      * CSV, TSV, and other character-separated formats can be parsed with this
      */
-    CSV_LIKE(true);
+    CSV_LIKE(CsvSettings.class, true);
 
+    private final Class<?> settingsClass;
     private final boolean canLoadStrings;
 }

@@ -1,9 +1,9 @@
 package com.github.giamgiammi.StructuredFileViewer.model.csv;
 
-import org.apache.commons.csv.CSVFormat;
+import com.github.giamgiammi.StructuredFileViewer.core.csv.CsvBaseFormat;
 
 public record BaseFormatChoice(
-        CSVFormat format,
+        CsvBaseFormat format,
         String text
 ) {
     @Override

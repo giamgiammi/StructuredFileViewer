@@ -1,7 +1,7 @@
 package com.github.giamgiammi.StructuredFileViewer.model.csv;
 
+import com.github.giamgiammi.StructuredFileViewer.core.csv.CsvBaseFormat;
 import lombok.Builder;
-import org.apache.commons.csv.CSVFormat;
 import org.apache.commons.csv.DuplicateHeaderMode;
 import org.apache.commons.csv.QuoteMode;
 
@@ -13,7 +13,7 @@ import java.nio.charset.Charset;
  */
 @Builder(toBuilder = true)
 public final record CsvSettings(
-        CSVFormat baseFormat,
+        CsvBaseFormat baseFormat,
         String delimiter,
         Character quote,
         String recordSeparator,

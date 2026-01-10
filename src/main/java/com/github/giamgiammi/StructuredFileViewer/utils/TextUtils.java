@@ -10,6 +10,7 @@ public class TextUtils {
      * @return a string with the special characters replaced by their escaped representations
      */
     public static String quoteSpace(String text) {
+        if (text == null) return null;
         return text
                 .replace("\\", "\\\\")
                 .replace("\n", "\\n")
@@ -26,6 +27,7 @@ public class TextUtils {
      * @return a string with escaped sequences replaced by their original special characters
      */
     public static String unquoteSpace(String text) {
+        if (text == null) return null;
         return text
                 .replace("\\n", "\n")
                 .replace("\\r", "\r")
