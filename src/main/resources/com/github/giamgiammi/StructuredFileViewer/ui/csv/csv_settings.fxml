@@ -6,7 +6,7 @@
 <GridPane hgap="5.0" prefHeight="443.0" prefWidth="610.0" vgap="5.0" xmlns="http://javafx.com/javafx/25" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.github.giamgiammi.StructuredFileViewer.ui.csv.CsvSettingsController">
    <columnConstraints>
       <ColumnConstraints hgrow="SOMETIMES" maxWidth="293.0" minWidth="10.0" prefWidth="287.0" />
-      <ColumnConstraints hgrow="SOMETIMES" maxWidth="286.0" minWidth="10.0" prefWidth="217.0" />
+      <ColumnConstraints hgrow="ALWAYS" maxWidth="286.0" minWidth="10.0" prefWidth="217.0" />
    </columnConstraints>
    <rowConstraints>
       <RowConstraints minHeight="10.0" vgrow="SOMETIMES" />
@@ -28,7 +28,7 @@
       <Label text="%csv.settings.duplicateHeaderMode" GridPane.rowIndex="4" />
       <Label text="%csv.settings.quoteMode" GridPane.rowIndex="5" />
       <Label text="%csv.settings.charset" GridPane.rowIndex="9" />
-      <ComboBox fx:id="baseFormatChoice" prefHeight="26.0" prefWidth="283.0" GridPane.columnIndex="1">
+      <ComboBox fx:id="baseFormatChoice" maxWidth="1.7976931348623157E308" prefHeight="26.0" prefWidth="223.0" GridPane.columnIndex="1">
          <GridPane.margin>
             <Insets />
          </GridPane.margin>
@@ -37,11 +37,11 @@
       <TextField fx:id="quote" GridPane.columnIndex="1" GridPane.rowIndex="2" />
       <TextField fx:id="recordSeparator" GridPane.columnIndex="1" GridPane.rowIndex="3" />
       <CheckBox fx:id="ignoreEmptyLines" allowIndeterminate="true" indeterminate="true" mnemonicParsing="false" text="%csv.settings.ignoreEmptyLines" GridPane.rowIndex="6" />
-      <ComboBox fx:id="duplicateHeaderMode" prefHeight="26.0" prefWidth="283.0" GridPane.columnIndex="1" GridPane.rowIndex="4" />
+      <ComboBox fx:id="duplicateHeaderMode" maxWidth="1.7976931348623157E308" prefHeight="26.0" prefWidth="231.0" GridPane.columnIndex="1" GridPane.rowIndex="4" />
       <CheckBox fx:id="allowMissingColumnNames" allowIndeterminate="true" indeterminate="true" mnemonicParsing="false" text="%csv.settings.allowMissingColumnNames" GridPane.columnIndex="1" GridPane.rowIndex="6" />
       <CheckBox fx:id="trailingData" allowIndeterminate="true" indeterminate="true" mnemonicParsing="false" text="%csv.settings.trailingData" GridPane.rowIndex="7" />
       <CheckBox fx:id="lenientEof" allowIndeterminate="true" indeterminate="true" mnemonicParsing="false" text="%csv.settings.lenientEof" GridPane.columnIndex="1" GridPane.rowIndex="7" />
-      <ComboBox fx:id="quoteMode" prefHeight="26.0" prefWidth="282.0" GridPane.columnIndex="1" GridPane.rowIndex="5" />
-      <ComboBox fx:id="charset" prefHeight="26.0" prefWidth="283.0" GridPane.columnIndex="1" GridPane.rowIndex="9" />
+      <ComboBox fx:id="quoteMode" maxWidth="1.7976931348623157E308" prefHeight="26.0" prefWidth="282.0" GridPane.columnIndex="1" GridPane.rowIndex="5" />
+      <ComboBox fx:id="charset" maxWidth="1.7976931348623157E308" prefHeight="26.0" prefWidth="283.0" GridPane.columnIndex="1" GridPane.rowIndex="9" />
    </children>
 </GridPane>
