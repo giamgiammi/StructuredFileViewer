@@ -1,8 +1,10 @@
 package com.github.giamgiammi.StructuredFileViewer.ui.csv;
 
-import com.github.giamgiammi.StructuredFileViewer.core.DataModel;
-import com.github.giamgiammi.StructuredFileViewer.core.csv.CsvDataModelFactory;
-import com.github.giamgiammi.StructuredFileViewer.model.csv.*;
+import com.github.giamgiammi.StructuredFileViewer.model.csv.BaseFormatChoice;
+import com.github.giamgiammi.StructuredFileViewer.model.csv.CsvSettings;
+import com.github.giamgiammi.StructuredFileViewer.model.csv.DuplicateHeaderModeChoice;
+import com.github.giamgiammi.StructuredFileViewer.model.csv.QuoteModeChoice;
+import com.github.giamgiammi.StructuredFileViewer.ui.inteface.SettingsController;
 import com.github.giamgiammi.StructuredFileViewer.utils.TextUtils;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
@@ -20,9 +22,8 @@ import java.util.Optional;
 import java.util.ResourceBundle;
 import java.util.stream.Stream;
 
-public class CsvSettingsController implements Initializable {
+public class CsvSettingsController implements Initializable, SettingsController<CsvSettings> {
     public static final String FX_FONT_WEIGHT_BOLD = "-fx-font-weight: bold;";
-    private final CsvDataModelFactory factory = new CsvDataModelFactory();
 
     @FXML
     private ComboBox<BaseFormatChoice> baseFormatChoice;
@@ -98,7 +99,11 @@ public class CsvSettingsController implements Initializable {
                 lenientEof.setStyle("");
         });
         quote.textProperty().addListener((observable, oldValue, newValue) -> {
-            if (newValue.length() > 1) quote.setText(newValue.substring(0, 1));
+            var text = TextUtils.unquoteSpace(newValue);
+            if (text.length() > 1) {
+                text = text.substring(0, 1);
+                quote.setText(TextUtils.quoteSpace(text));
+            }
         });
         duplicateHeaderMode.getItems().setAll(Stream.concat(Stream.of(new DuplicateHeaderModeChoice(null)), Arrays.stream(DuplicateHeaderMode.values()).map(DuplicateHeaderModeChoice::new)).toList());
         duplicateHeaderMode.valueProperty().addListener((observable, oldValue, newValue) -> {
@@ -110,20 +115,17 @@ public class CsvSettingsController implements Initializable {
         });
 
         charset.setEditable(true);
-        charset.getItems().setAll(
-                "UTF-8",
-                "UTF-16",
-                "cp1252"
-        );
+        charset.getItems().setAll(TextUtils.commonCharsets());
         charset.getSelectionModel().select(0);
     }
 
-    private CsvSettings getSettings() {
+    @Override
+    public CsvSettings getSettings() {
         return new CsvSettings(
                 baseFormatChoice.getValue() == null ? null : baseFormatChoice.getValue().format(),
-                delimiter.getText().isEmpty() ? null : delimiter.getText(),
-                quote.getText().isEmpty() ? null : quote.getText().charAt(0),
-                recordSeparator.getText().isEmpty() ? null : recordSeparator.getText(),
+                delimiter.getText().isEmpty() ? null : TextUtils.unquoteSpace(delimiter.getText()),
+                quote.getText().isEmpty() ? null : TextUtils.unquoteSpace(quote.getText()).charAt(0),
+                recordSeparator.getText().isEmpty() ? null : TextUtils.unquoteSpace(recordSeparator.getText()),
                 ignoreEmptyLines.isIndeterminate() ? null : ignoreEmptyLines.isSelected(),
                 duplicateHeaderMode.getValue() == null ? null : duplicateHeaderMode.getValue().mode(),
                 allowMissingColumnNames.isIndeterminate() ? null : allowMissingColumnNames.isSelected(),
@@ -134,7 +136,32 @@ public class CsvSettingsController implements Initializable {
         );
     }
 
-    public DataModel<CsvSettings, CsvData> getModel() {
-        return factory.create(getSettings());
+    @Override
+    public void setSettings(CsvSettings settings) {
+        if (settings == null) {
+            baseFormatChoice.setValue(null);
+            delimiter.setText(null);
+            quote.setText(null);
+            recordSeparator.setText(null);
+            ignoreEmptyLines.setIndeterminate(true);
+            duplicateHeaderMode.setValue(null);
+            allowMissingColumnNames.setIndeterminate(true);
+            trailingData.setIndeterminate(true);
+            lenientEof.setIndeterminate(true);
+            quoteMode.setValue(null);
+            charset.setValue("UTF-8");
+        } else {
+            baseFormatChoice.setValue(baseFormatChoice.getItems().stream().filter(choice -> choice.format().equals(settings.baseFormat())).findFirst().orElse(null));
+            delimiter.setText(settings.delimiter());
+            quote.setText(settings.quote() != null ? String.valueOf(settings.quote()) : null);
+            recordSeparator.setText(settings.recordSeparator());
+            ignoreEmptyLines.setSelected(settings.ignoreEmptyLines());
+            duplicateHeaderMode.setValue(settings.duplicateHeaderMode() != null ? new DuplicateHeaderModeChoice(settings.duplicateHeaderMode()) : null);
+            allowMissingColumnNames.setSelected(settings.allowMissingColumnNames());
+            trailingData.setSelected(settings.trailingData());
+            lenientEof.setSelected(settings.lenientEof());
+            quoteMode.setValue(settings.quoteMode() != null ? new QuoteModeChoice(settings.quoteMode()) : null);
+            charset.setValue(settings.charset().name());
+        }
     }
 }

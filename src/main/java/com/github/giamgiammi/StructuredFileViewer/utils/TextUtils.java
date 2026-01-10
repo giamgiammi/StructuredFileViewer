@@ -32,4 +32,18 @@ public class TextUtils {
                 .replace("\\t", "\t")
                 .replace("\\\\", "\\");
     }
+
+    /**
+     * Provides a list of commonly used character encodings.
+     *
+     * @return an array of strings representing common charset names,
+     *         such as "UTF-8", "UTF-16", and "cp1252"
+     */
+    public static String[] commonCharsets() {
+        return new String[]{
+                "UTF-8",
+                "UTF-16",
+                "cp1252"
+        };
+    }
 }

@@ -1,14 +1,17 @@
 package com.github.giamgiammi.StructuredFileViewer.ui.load;
 
 import com.github.giamgiammi.StructuredFileViewer.App;
-import com.github.giamgiammi.StructuredFileViewer.core.DataModel;
+import com.github.giamgiammi.StructuredFileViewer.core.DataModelFactory;
 import com.github.giamgiammi.StructuredFileViewer.core.DataModelType;
+import com.github.giamgiammi.StructuredFileViewer.core.csv.CsvDataModelFactory;
 import com.github.giamgiammi.StructuredFileViewer.model.LoadResult;
 import com.github.giamgiammi.StructuredFileViewer.model.ModelChoice;
 import com.github.giamgiammi.StructuredFileViewer.ui.csv.CsvSettingsController;
+import com.github.giamgiammi.StructuredFileViewer.ui.inteface.SettingsController;
 import com.github.giamgiammi.StructuredFileViewer.utils.FXUtils;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
+import javafx.event.ActionEvent;
 import javafx.geometry.Orientation;
 import javafx.scene.control.ButtonBar;
 import javafx.scene.control.ButtonType;
@@ -20,14 +23,17 @@ import javafx.stage.Window;
 import lombok.val;
 
 import java.io.File;
+import java.nio.file.Path;
 import java.util.ResourceBundle;
-import java.util.function.Supplier;
 import java.util.prefs.Preferences;
 
 public class LoadFileDialog extends Dialog<LoadResult<?>> {
     private final ResourceBundle bundle = App.getBundle();
 
-    private Supplier<DataModel<?, ?>> modelSupplier;
+    private DataModelFactory<?, ?> factory;
+    private SettingsController<?> settingsController;
+    private Path file;
+    private String fileContent;
 
     public LoadFileDialog(Window owner) {
         initOwner(owner);
@@ -61,41 +67,60 @@ public class LoadFileDialog extends Dialog<LoadResult<?>> {
             getDialogPane().lookupButton(openFileBtn).setDisable(false);
             getDialogPane().lookupButton(pasteBtn).setDisable(!newVal.type().isCanLoadStrings());
 
+            factory = null;
+            settingsController = null;
+            file = null;
+            fileContent = null;
+
+
             switch (newVal.type()) {
                 case CSV_LIKE -> {
                     val pane = FXUtils.loadFXML(CsvSettingsController.class, "csv_settings", controller -> {
-                        this.modelSupplier = controller::getModel;
+                        this.settingsController = controller;
+                        this.factory = new CsvDataModelFactory();
                     });
                     settingsPane.getChildren().add(pane);
                 }
             }
         });
 
+        getDialogPane().lookupButton(openFileBtn).addEventFilter(ActionEvent.ACTION, evt -> {
+            val fc = new FileChooser();
+            fc.setInitialDirectory(getInitialDirectory());
+            val file = fc.showOpenDialog(getDialogPane().getScene().getWindow());
+            if (file != null) {
+                setInitialDirectory(file.getParentFile());
+                this.file = file.toPath();
+            } else {
+                evt.consume();
+            }
+        });
+
+        getDialogPane().lookupButton(pasteBtn).addEventFilter(ActionEvent.ACTION, evt -> {
+            val text = new PasteAreaDialog(getDialogPane().getScene().getWindow()).showAndWait().orElse(null);
+            if (text != null) {
+                fileContent = text;
+            } else {
+                evt.consume();
+            }
+        });
+
 
         setResultConverter(btn -> {
             if (btn == openFileBtn) {
-                val fc = new FileChooser();
-                fc.setInitialDirectory(getInitialDirectory());
-                val file = fc.showOpenDialog(getDialogPane().getScene().getWindow());
-                if (file != null) {
-                    setInitialDirectory(file.getParentFile());
-                    return new LoadResult<Object>(
-                            modelCombo.getValue().type(),
-                            (DataModel<?, Object>) modelSupplier.get(),
-                            file.toPath(),
-                            null
-                    );
-                }
+                return new LoadResult<>(
+                        modelCombo.getValue().type(),
+                        DataModelFactory.create(factory, settingsController.getSettings()),
+                        file,
+                        null
+                );
             } else if (btn == pasteBtn) {
-                val text = new PasteAreaDialog(getDialogPane().getScene().getWindow()).showAndWait().orElse(null);
-                if (text != null) {
-                    return new LoadResult<Object>(
-                            modelCombo.getValue().type(),
-                            (DataModel<?, Object>) modelSupplier.get(),
-                            null,
-                            text
-                    );
-                }
+                return new LoadResult<>(
+                        modelCombo.getValue().type(),
+                        DataModelFactory.create(factory, settingsController.getSettings()),
+                        null,
+                        fileContent
+                );
             }
             return null;
         });
