@@ -20,4 +20,4 @@ jpackage -m com.github.giamgiammi.StructuredFileViewer/com.github.giamgiammi.Str
 
 echo "Copying license files"
 cp -r target/legal "target/Structured File Viewer/"
-cp target/classes/LICENSE.txt "target/Structured File Viewer/legal/"
+cp target/classes/LICENSE.txt "target/Structured File Viewer/legal/LICENSE.txt"

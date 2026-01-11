@@ -7,4 +7,4 @@ call jpackage -m com.github.giamgiammi.StructuredFileViewer/com.github.giamgiamm
 
 echo Copying license files
 robocopy "target\legal" "target\Structured File Viewer\legal" /E
-copy "target\classes\LICENSE.txt" "target\Structured File Viewer\legal\" /Y
+copy "target\classes\LICENSE.txt" "target\Structured File Viewer\legal\LICENSE.txt" /Y
