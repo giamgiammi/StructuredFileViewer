@@ -1,14 +1,12 @@
 package com.github.giamgiammi.StructuredFileViewer.ui.about;
 
 import com.github.giamgiammi.StructuredFileViewer.App;
-import com.github.giamgiammi.StructuredFileViewer.ui.exception.ExceptionAlert;
 import javafx.scene.control.*;
 import javafx.scene.layout.GridPane;
 import javafx.stage.Window;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 
-import java.nio.charset.StandardCharsets;
 import java.util.ResourceBundle;
 
 /**
@@ -30,6 +28,8 @@ import java.util.ResourceBundle;
  */
 @Slf4j
 public class AboutDialog extends Alert {
+    private static final String SOURCE_URL = "https://github.com/giamgiammi/StructuredFileViewer";
+
     public AboutDialog(Window owner) {
         super(Alert.AlertType.INFORMATION);
         initOwner(owner);
@@ -44,25 +44,15 @@ public class AboutDialog extends Alert {
         grid.setVgap(5);
         grid.add(new Label(bundle.getString("about.content")), 0, 0);
 
-        val link = new Hyperlink(getLink());
+        val link = new Hyperlink(SOURCE_URL);
         link.setOnAction(evt -> {
             App.openLink(link.getText());
         });
         grid.add(link, 0, 1);
+        grid.add(new Label(bundle.getString("about.notice")), 0, 2);
 
         getDialogPane().setContent(grid);
 
-        getDialogPane().setExpandableContent(new LicenseArea(getDialogPane().getScene().getWindow()));
         getDialogPane().getButtonTypes().setAll(new ButtonType(bundle.getString("label.ok"), ButtonBar.ButtonData.OK_DONE));
-    }
-
-    private String getLink() {
-        try (val in = App.class.getResourceAsStream("url.txt")) {
-            return new String(in.readAllBytes(), StandardCharsets.UTF_8);
-        } catch (Exception e) {
-            log.error("Error reading url.txt", e);
-            new ExceptionAlert(getDialogPane().getScene().getWindow(), e).showAndWait();
-            return "";
-        }
     }
 }

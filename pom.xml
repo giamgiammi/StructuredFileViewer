@@ -115,9 +115,37 @@
                 <executions>
                     <execution>
                         <id>download-licenses</id>
+                        <phase>generate-resources</phase>
                         <goals>
                             <goal>download-licenses</goal>
                         </goals>
+                        <configuration>
+                            <licensesOutputDirectory>target/legal</licensesOutputDirectory>
+                        </configuration>
+                    </execution>
+                    <execution>
+                        <id>add-third-party</id>
+                        <phase>generate-resources</phase>
+                        <goals>
+                            <goal>add-third-party</goal>
+                        </goals>
+                        <configuration>
+                            <outputDirectory>target/legal</outputDirectory>
+                        </configuration>
+                    </execution>
+                    <execution>
+                        <id>update-project-license</id>
+                        <phase>generate-resources</phase>
+                        <goals>
+                            <goal>update-project-license</goal>
+                        </goals>
+                        <configuration>
+                            <licenseName>bsd_2</licenseName>
+                            <inceptionYear>2026</inceptionYear>
+                            <organizationName>Gianmarco Carraretto</organizationName>
+                            <projectName>Structured File Viewer</projectName>
+                            <licenseFile>LICENSE</licenseFile>
+                        </configuration>
                     </execution>
                 </executions>
             </plugin>

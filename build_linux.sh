@@ -16,3 +16,8 @@ jpackage -m com.github.giamgiammi.StructuredFileViewer/com.github.giamgiammi.Str
              --type app-image \
              --icon src/main/resources/com/github/giamgiammi/StructuredFileViewer/logo.png \
              --java-options "--enable-native-access=javafx.graphics"
+
+
+echo "Copying license files"
+cp -r target/legal "target/Structured File Viewer/"
+cp target/classes/LICENSE.txt "target/Structured File Viewer/legal/"
