@@ -4,6 +4,7 @@ import lombok.NonNull;
 
 import java.io.IOException;
 import java.io.Reader;
+import java.nio.charset.Charset;
 
 /**
  * Represents a generic interface for a data model capable of loading and parsing
@@ -28,6 +29,16 @@ public interface DataModel<SETTINGS, DATA> {
      */
     @NonNull
     SETTINGS getSettings();
+
+    /**
+     * Retrieves the character set associated with this data model.
+     * The returned {@link Charset} is used for interpreting and encoding text data
+     * processed by the data model.
+     *
+     * @return the character set used by this data model
+     */
+    @NonNull
+    Charset getCharset();
 
     /**
      * Load data using this data model from the given reader

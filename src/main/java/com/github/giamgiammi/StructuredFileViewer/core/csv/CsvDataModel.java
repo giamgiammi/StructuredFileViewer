@@ -11,6 +11,7 @@ import org.apache.commons.csv.CSVFormat;
 
 import java.io.IOException;
 import java.io.Reader;
+import java.nio.charset.Charset;
 import java.util.ArrayList;
 
 @RequiredArgsConstructor
@@ -46,5 +47,10 @@ public class CsvDataModel implements DataModel<CsvSettings, CsvData> {
         }
 
         return new CsvData(columns, items.toArray(String[][]::new));
+    }
+
+    @Override
+    public @NonNull Charset getCharset() {
+        return settings.charset();
     }
 }
