@@ -72,7 +72,8 @@ public class MainViewController {
      */
     public void handleNewTab() {
         new LoadFileDialog(rootPane.getScene().getWindow()).showAndWait().ifPresent(result -> {
-            val task = result.file() != null ? new ParseFileTask<>(result.model(), result.file()) : new ParseFileTask<>(result.model(), result.fileContent());
+            //todo string parse
+            val task = result.file() != null ? new ParseFileTask<>(result.model(), result.file()) : null;
             val name = result.file() != null ? result.file().getFileName().toString() : bundle.getString("label.pasted_content");
             val tab = new Tab(name, new ProgressIndicator(ProgressIndicator.INDETERMINATE_PROGRESS));
             tab.setOnCloseRequest(evt -> new CloseTabAlert(tabPane.getScene().getWindow(), tab.getText()).showAndWait()

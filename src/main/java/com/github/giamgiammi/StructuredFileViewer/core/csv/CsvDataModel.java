@@ -10,8 +10,8 @@ import lombok.val;
 import org.apache.commons.csv.CSVFormat;
 
 import java.io.IOException;
-import java.io.Reader;
-import java.nio.charset.Charset;
+import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.util.ArrayList;
 
 @RequiredArgsConstructor
@@ -32,7 +32,8 @@ public class CsvDataModel implements DataModel<CsvSettings, CsvData> {
     }
 
     @Override
-    public @NonNull CsvData parse(@NonNull Reader reader) throws IOException {
+    public @NonNull CsvData parse(@NonNull InputStream stream) throws IOException {
+        try (val reader = new InputStreamReader(stream, settings.charset())) {
         val parser = format.parse(reader);
 
         val columns = parser.getHeaderNames().toArray(String[]::new);
@@ -47,10 +48,7 @@ public class CsvDataModel implements DataModel<CsvSettings, CsvData> {
         }
 
         return new CsvData(columns, items.toArray(String[][]::new));
+        }
     }
 
-    @Override
-    public @NonNull Charset getCharset() {
-        return settings.charset();
-    }
 }

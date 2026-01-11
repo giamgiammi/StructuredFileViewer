@@ -3,8 +3,7 @@ package com.github.giamgiammi.StructuredFileViewer.core;
 import lombok.NonNull;
 
 import java.io.IOException;
-import java.io.Reader;
-import java.nio.charset.Charset;
+import java.io.InputStream;
 
 /**
  * Represents a generic interface for a data model capable of loading and parsing
@@ -31,21 +30,14 @@ public interface DataModel<SETTINGS, DATA> {
     SETTINGS getSettings();
 
     /**
-     * Retrieves the character set associated with this data model.
-     * The returned {@link Charset} is used for interpreting and encoding text data
-     * processed by the data model.
+     * Parses data from the provided input stream and returns a data structure
+     * of type {@code DATA}.
      *
-     * @return the character set used by this data model
+     * @param stream the input stream containing the data to be parsed; must not be null
+     * @return the parsed data structure of type {@code DATA}; never null
+     * @throws IOException if an I/O error occurs while reading from the input stream
+     * @throws NullPointerException if the input stream is null
      */
     @NonNull
-    Charset getCharset();
-
-    /**
-     * Load data using this data model from the given reader
-     * @param reader the reader to read from
-     * @return the parsed data
-     * @throws IOException if an error occurs while reading from the reader
-     */
-    @NonNull
-    DATA parse(@NonNull Reader reader) throws IOException;
+    DATA parse(@NonNull InputStream stream) throws IOException;
 }
