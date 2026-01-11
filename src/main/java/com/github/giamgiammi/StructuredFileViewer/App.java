@@ -8,16 +8,19 @@ import javafx.application.HostServices;
 import javafx.scene.Scene;
 import javafx.scene.image.Image;
 import javafx.stage.Stage;
+import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 
 import java.io.IOException;
 import java.util.Locale;
 import java.util.ResourceBundle;
+import java.util.logging.LogManager;
 import java.util.prefs.Preferences;
 
 /**
  * JavaFX App
  */
+@Slf4j
 public class App extends Application {
     private static ResourceBundle bundle;
     private static HostServices hostServices;
@@ -66,6 +69,7 @@ public class App extends Application {
     }
 
     private static void startMainStage(Stage stage) {
+        log.info("Starting main stage");
         val scene = new Scene(FXUtils.loadFXML(MainViewController.class, "main", null));
         stage.setScene(scene);
         stage.setTitle(getBundle().getString("title"));
@@ -88,7 +92,16 @@ public class App extends Application {
         return logo;
     }
 
+    private static void loadLoggingProperties() {
+        try (val in = App.class.getResourceAsStream("logging.properties")) {
+            LogManager.getLogManager().readConfiguration(in);
+        } catch (Exception e) {
+            log.error("Failed to load logging.properties", e);
+        }
+    }
+
     public static void main(String[] args) {
+        loadLoggingProperties();
         val pref = Preferences.userNodeForPackage(App.class);
         if (pref.get("locale", null) != null) {
             val locale = Locale.of(pref.get("locale", null));
