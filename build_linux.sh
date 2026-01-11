@@ -14,4 +14,5 @@ jpackage -m com.github.giamgiammi.StructuredFileViewer/com.github.giamgiammi.Str
              --name 'Structured File Viewer' \
              --dest target/ \
              --type app-image \
-             --icon src/main/resources/com/github/giamgiammi/StructuredFileViewer/logo.png
+             --icon src/main/resources/com/github/giamgiammi/StructuredFileViewer/logo.png \
+             --java-options "--enable-native-access=javafx.graphics"

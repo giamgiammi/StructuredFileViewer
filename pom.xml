@@ -81,6 +81,7 @@
                             <mainClass>com.github.giamgiammi.StructuredFileViewer.App</mainClass>
                             <launcher>StructuredFileViewer</launcher>
                             <compress>2</compress>
+                            <options>--enable-native-access=javafx.graphics</options>
                         </configuration>
                     </execution>
                 </executions>
