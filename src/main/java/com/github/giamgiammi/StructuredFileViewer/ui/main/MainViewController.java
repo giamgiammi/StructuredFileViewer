@@ -2,6 +2,7 @@ package com.github.giamgiammi.StructuredFileViewer.ui.main;
 
 import com.github.giamgiammi.StructuredFileViewer.App;
 import com.github.giamgiammi.StructuredFileViewer.task.ParseFileTask;
+import com.github.giamgiammi.StructuredFileViewer.task.ParseStringTask;
 import com.github.giamgiammi.StructuredFileViewer.ui.about.AboutDialog;
 import com.github.giamgiammi.StructuredFileViewer.ui.exception.ExceptionAlert;
 import com.github.giamgiammi.StructuredFileViewer.ui.lang.ChangeLanguageDialog;
@@ -9,6 +10,7 @@ import com.github.giamgiammi.StructuredFileViewer.ui.load.LoadFileDialog;
 import com.github.giamgiammi.StructuredFileViewer.ui.tab.CloseTabAlert;
 import com.github.giamgiammi.StructuredFileViewer.utils.FXUtils;
 import javafx.application.Platform;
+import javafx.concurrent.Task;
 import javafx.fxml.FXML;
 import javafx.scene.control.*;
 import javafx.scene.layout.BorderPane;
@@ -72,8 +74,10 @@ public class MainViewController {
      */
     public void handleNewTab() {
         new LoadFileDialog(rootPane.getScene().getWindow()).showAndWait().ifPresent(result -> {
-            //todo string parse
-            val task = result.file() != null ? new ParseFileTask<>(result.model(), result.file()) : null;
+            final Task<?> task;
+            if (result.file() != null) task = new ParseFileTask<>(result.model(), result.file());
+            else task = new ParseStringTask<>(result.model(), result.fileContent());
+
             val name = result.file() != null ? result.file().getFileName().toString() : bundle.getString("label.pasted_content");
             val tab = new Tab(name, new ProgressIndicator(ProgressIndicator.INDETERMINATE_PROGRESS));
             tab.setOnCloseRequest(evt -> new CloseTabAlert(tabPane.getScene().getWindow(), tab.getText()).showAndWait()

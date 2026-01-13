@@ -3,6 +3,7 @@ package com.github.giamgiammi.StructuredFileViewer.task;
 import com.github.giamgiammi.StructuredFileViewer.core.DataModel;
 import javafx.concurrent.Task;
 import lombok.NonNull;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 
@@ -20,14 +21,12 @@ import java.nio.file.Path;
  * @param <DATA> the type of the data structure produced by the parsing operation
  */
 @Slf4j
+@RequiredArgsConstructor
 public class ParseFileTask<DATA> extends Task<DATA> {
+    @NonNull
     private final DataModel<?, DATA> model;
+    @NonNull
     private final Path file;
-
-    public ParseFileTask(@NonNull DataModel<?, DATA> model, @NonNull Path file) {
-        this.model = model;
-        this.file = file;
-    }
 
     @Override
     protected DATA call() throws Exception {
