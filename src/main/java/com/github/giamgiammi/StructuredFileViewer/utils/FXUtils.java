@@ -96,4 +96,23 @@ public class FXUtils {
         log.info("Starting task {}", task);
         THREAD_FACTORY.newThread(task).start();
     }
+
+    /**
+     * Schedules the specified {@code Runnable} to run after a delay of the specified number of milliseconds.
+     *
+     * @param runnable the task to execute; must not be null
+     * @param milliseconds the delay in milliseconds before the runnable is executed
+     * @throws NullPointerException if the {@code runnable} is null
+     */
+    public static void runLater(@NonNull Runnable runnable, long milliseconds) {
+        val task = new Task<Void>() {
+            @Override
+            protected Void call() throws InterruptedException {
+                Thread.sleep(milliseconds);
+                return null;
+            }
+        };
+        task.setOnSucceeded(e -> runnable.run());
+        start(task);
+    }
 }

@@ -1,13 +1,18 @@
 package com.github.giamgiammi.StructuredFileViewer.ui.about;
 
 import com.github.giamgiammi.StructuredFileViewer.App;
-import javafx.scene.control.*;
+import javafx.scene.control.Alert;
+import javafx.scene.control.ButtonBar;
+import javafx.scene.control.ButtonType;
+import javafx.scene.control.Hyperlink;
 import javafx.scene.layout.GridPane;
+import javafx.scene.text.Text;
 import javafx.stage.Window;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 
 import java.util.ResourceBundle;
+import java.util.prefs.Preferences;
 
 /**
  * A custom dialog for displaying application-related information such as title, header, license, and links.
@@ -31,6 +36,10 @@ public class AboutDialog extends Alert {
     private static final String SOURCE_URL = "https://github.com/giamgiammi/StructuredFileViewer";
 
     public AboutDialog(Window owner) {
+        this(owner, false);
+    }
+
+    public AboutDialog(Window owner, boolean acceptLicense) {
         super(Alert.AlertType.INFORMATION);
         initOwner(owner);
 
@@ -42,17 +51,34 @@ public class AboutDialog extends Alert {
         val grid = new GridPane();
         grid.setHgap(5);
         grid.setVgap(5);
-        grid.add(new Label(bundle.getString("about.content")), 0, 0);
+        grid.add(new Text(bundle.getString("about.content")), 0, 0);
 
         val link = new Hyperlink(SOURCE_URL);
         link.setOnAction(evt -> {
             App.openLink(link.getText());
         });
         grid.add(link, 0, 1);
-        grid.add(new Label(bundle.getString("about.notice")), 0, 2);
+        grid.add(new Text(bundle.getString("about.notice")), 0, 2);
 
         getDialogPane().setContent(grid);
+        getDialogPane().setExpandableContent(new LicenseArea());
 
-        getDialogPane().getButtonTypes().setAll(new ButtonType(bundle.getString("label.ok"), ButtonBar.ButtonData.OK_DONE));
+        if (acceptLicense) {
+            getDialogPane().setExpanded(true);
+            getDialogPane().getButtonTypes().setAll(new ButtonType(bundle.getString("label.accept"), ButtonBar.ButtonData.OK_DONE), new ButtonType(bundle.getString("label.close"), ButtonBar.ButtonData.CANCEL_CLOSE));
+        } else {
+            getDialogPane().getButtonTypes().setAll(new ButtonType(bundle.getString("label.ok"), ButtonBar.ButtonData.OK_DONE));
+        }
+
+        setResultConverter(btn -> {
+            if (acceptLicense) {
+                if (btn.getButtonData() == ButtonBar.ButtonData.OK_DONE) {
+                    Preferences.userNodeForPackage(App.class).putBoolean(App.ACCEPTED_LICENSE_KEY, true);
+                } else {
+                    System.exit(0);
+                }
+            }
+            return btn;
+        });
     }
 }
