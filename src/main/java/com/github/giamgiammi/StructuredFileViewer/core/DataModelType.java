@@ -13,7 +13,6 @@ import lombok.RequiredArgsConstructor;
  * to identify and create specific types of data models and their settings.
  */
 @RequiredArgsConstructor
-@Getter
 public enum DataModelType {
     /**
      * Represent a CSV-LIKE structured data.
@@ -21,6 +20,14 @@ public enum DataModelType {
      */
     CSV_LIKE(CsvSettings.class, true);
 
+    @Getter
     private final Class<?> settingsClass;
     private final boolean canLoadStrings;
+
+    /**
+     * Returns true if this data model type can load strings directly.
+     */
+    public boolean canLoadStrings() {
+        return canLoadStrings;
+    }
 }

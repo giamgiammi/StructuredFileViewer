@@ -9,9 +9,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.val;
 import org.apache.commons.csv.CSVFormat;
 
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
+import java.io.*;
 import java.util.ArrayList;
 
 @RequiredArgsConstructor
@@ -34,6 +32,25 @@ public class CsvDataModel implements DataModel<CsvSettings, CsvData> {
     @Override
     public @NonNull CsvData parse(@NonNull InputStream stream) throws IOException {
         try (val reader = new InputStreamReader(stream, settings.charset())) {
+            return parse(reader);
+        }
+    }
+
+    @Override
+    public @NonNull CsvData parse(@NonNull String text) throws IOException, UnsupportedOperationException {
+        try (val reader = new StringReader(text)) {
+            return parse(reader);
+        }
+    }
+
+
+    /**
+     * Parse data from the provided reader
+     * @param reader the reader to read from
+     * @return the parsed data
+     * @throws IOException if an I/O error occurs while reading
+     */
+    private CsvData parse(Reader reader) throws IOException {
         val parser = format.parse(reader);
 
         val columns = parser.getHeaderNames().toArray(String[]::new);
@@ -48,7 +65,5 @@ public class CsvDataModel implements DataModel<CsvSettings, CsvData> {
         }
 
         return new CsvData(columns, items.toArray(String[][]::new));
-        }
     }
-
 }

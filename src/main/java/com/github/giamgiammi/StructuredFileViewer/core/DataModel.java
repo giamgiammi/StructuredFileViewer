@@ -40,4 +40,19 @@ public interface DataModel<SETTINGS, DATA> {
      */
     @NonNull
     DATA parse(@NonNull InputStream stream) throws IOException;
+
+    /**
+     * Parses data from the provided text and returns a data structure of type {@code DATA}.
+     * Implementations are allowed to throw {@link UnsupportedOperationException} if they do not
+     * support parsing text. However, implementation should honor the {@link DataModelType} canLoadStrings property
+     *
+     * @param text The text to parse
+     * @return The parsed data structure of type {@code DATA}; never null
+     * @throws IOException if an I/O error occurs while reading
+     * @throws UnsupportedOperationException If the data model does not support parsing text
+     */
+    @NonNull
+    default DATA parse(@NonNull String text) throws IOException, UnsupportedOperationException {
+        throw new UnsupportedOperationException();
+    }
 }
