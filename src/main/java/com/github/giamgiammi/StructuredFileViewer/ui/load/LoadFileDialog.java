@@ -132,7 +132,7 @@ public class LoadFileDialog extends Dialog<LoadResult<?>> {
         // Listener to swap the settings UI when the data model type changes (e.g., switching to CSV)
         modelCombo.valueProperty().addListener((obs, oldVal, newVal) -> {
             getDialogPane().lookupButton(openFileBtn).setDisable(false);
-            getDialogPane().lookupButton(pasteBtn).setDisable(!newVal.type().isCanLoadStrings());
+            getDialogPane().lookupButton(pasteBtn).setDisable(!newVal.type().canLoadStrings());
             saveSettingsToFile.setDisable(false);
 
             factory = null;
