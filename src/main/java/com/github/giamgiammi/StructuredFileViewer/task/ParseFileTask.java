@@ -50,4 +50,9 @@ public class ParseFileTask<DATA> extends Task<DATA> {
     private InputStream getInputStream() throws IOException {
         return new BufferedInputStream(Files.newInputStream(file));
     }
+
+    @Override
+    public String toString() {
+        return "ParseFileTask{model=%s, file=%s}".formatted(model, file);
+    }
 }

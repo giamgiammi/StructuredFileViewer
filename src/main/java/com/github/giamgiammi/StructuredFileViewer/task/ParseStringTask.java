@@ -35,4 +35,9 @@ public class ParseStringTask<DATA> extends Task<DATA> {
             throw new ParsingFileException("Failed to parse text", e);
         }
     }
+
+    @Override
+    public String toString() {
+        return "ParseStringTask{model=%s, text=%s}".formatted(model, text.substring(0, Math.min(20, text.length())));
+    }
 }

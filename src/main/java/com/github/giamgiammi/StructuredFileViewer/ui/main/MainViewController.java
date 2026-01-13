@@ -97,7 +97,7 @@ public class MainViewController {
                 tab.setContent(new Label("Loading succeeded"));
             });
 
-            Thread.ofVirtual().name("parse-task").start(task);
+            FXUtils.start(task);
         });
     }
 }

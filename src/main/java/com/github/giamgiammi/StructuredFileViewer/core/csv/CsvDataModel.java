@@ -66,4 +66,9 @@ public class CsvDataModel implements DataModel<CsvSettings, CsvData> {
 
         return new CsvData(columns, items.toArray(String[][]::new));
     }
+
+    @Override
+    public String toString() {
+        return "CsvDataModel{settings=%s}".formatted(settings);
+    }
 }
