@@ -95,6 +95,7 @@ public class TableDataController {
     }
 
     private void updateByFilter() {
+        tableView.setDisable(true);
         val task = new Task<ObservableList<TableLikeData.Record>>() {
             @Override
             protected ObservableList<TableLikeData.Record> call() throws Exception {
@@ -105,10 +106,12 @@ public class TableDataController {
         };
         task.setOnSucceeded(evt -> {
             tableView.setItems(task.getValue());
+            tableView.setDisable(false);
         });
         task.setOnFailed(evt -> {
             log.error("Failed to update table data by filter", task.getException());
             new ExceptionAlert(tableView.getScene().getWindow(), task.getException()).showAndWait();
+            tableView.setDisable(false);
         });
         FXUtils.start(task);
     }
@@ -127,6 +130,7 @@ public class TableDataController {
     }
 
     private void refreshData() {
+        tableView.setDisable(true);
         record TaskResult(List<TableColumn<TableLikeData.Record, String>> columns, ObservableList<TableLikeData.Record> records) {}
         val task = new Task<TaskResult>() {
             @Override
@@ -222,10 +226,12 @@ public class TableDataController {
         task.setOnSucceeded(evt -> {
             tableView.getColumns().setAll(task.getValue().columns);
             tableView.setItems(task.getValue().records);
+            tableView.setDisable(false);
         });
         task.setOnFailed(evt -> {
             log.error("Failed to load table data", task.getException());
             new ExceptionAlert(tableView.getScene().getWindow(), task.getException()).showAndWait();
+            tableView.setDisable(false);
         });
         FXUtils.start(task);
     }
