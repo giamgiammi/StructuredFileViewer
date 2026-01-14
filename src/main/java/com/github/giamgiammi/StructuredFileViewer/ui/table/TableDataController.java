@@ -123,13 +123,18 @@ public class TableDataController {
                                             addFilter(i, FilterType.CONTAINS, value);
                                             updateByFilter();
                                         });
+                                        val filterDiff = new MenuItem(bundle.getString("table.filter_diff"));
+                                        filterDiff.setOnAction(evt -> {
+                                            addFilter(i, FilterType.DIFFERS, value);
+                                            updateByFilter();
+                                        });
 
                                         val reset = new MenuItem(bundle.getString("table.reset_columns"));
                                         reset.setOnAction(evt -> resetColumns());
 
                                         val menu = new ContextMenu();
                                         menu.getItems().setAll(copy, new SeparatorMenuItem(), filterEq,
-                                                filterContains, new SeparatorMenuItem(), reset);
+                                                filterContains, filterDiff, new SeparatorMenuItem(), reset);
                                         field.setContextMenu(menu);
 
                                         setGraphic(field);

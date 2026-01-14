@@ -16,6 +16,12 @@ public enum FilterType {
             if (pattern == null) return false;
             return value.contains(pattern);
         }
+    },
+    DIFFERS {
+        @Override
+        public boolean test(String pattern, String value) {
+            return !Objects.equals(pattern, value);
+        }
     }
     ;
 
