@@ -138,10 +138,17 @@ public class TableDataController {
                             });
 
                             val menu = new ContextMenu();
+                            val copy = new MenuItem(bundle.getString("label.copy"));
+                            copy.setOnAction(evt -> {
+                                val clip = Clipboard.getSystemClipboard();
+                                val content = new ClipboardContent();
+                                content.putString(col.getText());
+                                clip.setContent(content);
+                            });
                             val reset = new MenuItem(bundle.getString("table.reset_columns"));
                             reset.setOnAction(evt -> resetColumns());
 
-                            menu.getItems().setAll(reset);
+                            menu.getItems().setAll(copy, reset);
 
                             col.setContextMenu(menu);
                             return col;
