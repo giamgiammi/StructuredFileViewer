@@ -141,6 +141,7 @@ public class LoadFileDialog extends Dialog<LoadResult<?>> {
             fileContent = null;
 
             setSettingsNode(grid, getSettingsNodeByType(newVal.type()));
+            ((SettingsController<Object>) settingsController).setSettings(factory.getDefaultSettings());
         });
 
         // Action for selecting a file from the local filesystem
