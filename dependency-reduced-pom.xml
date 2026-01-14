@@ -93,7 +93,7 @@
               <inceptionYear>2026</inceptionYear>
               <organizationName>Gianmarco Carraretto</organizationName>
               <projectName>Structured File Viewer</projectName>
-              <licenseFile>LICENSE</licenseFile>
+              <licenseFile>LICENSE.txt</licenseFile>
             </configuration>
           </execution>
         </executions>
