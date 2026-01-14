@@ -97,40 +97,44 @@ public class TableDataController {
                                 val value = cell.getValue().get(i);
                                 return new SimpleStringProperty(value);
                             });
-                            col.setCellFactory(param -> {
-                                val cell = new TableCell<TableLikeData.Record, String>() {
-                                    @Override
-                                    protected void updateItem(String item, boolean empty) {
-                                        setText(empty ? null : item);
+                            col.setCellFactory(param -> new TableCell<TableLikeData.Record, String>() {
+                                @Override
+                                protected void updateItem(String value, boolean empty) {
+                                    if (empty) setText(null);
+                                    else {
+                                        val field = new TextField(value);
+                                        field.setEditable(false);
+                                        field.setPrefColumnCount(value.length());
+
+                                        val copy = new MenuItem(bundle.getString("label.copy"));
+                                        copy.setOnAction(evt -> {
+                                            val clip = Clipboard.getSystemClipboard();
+                                            val content = new ClipboardContent();
+                                            content.putString(value);
+                                            clip.setContent(content);
+                                        });
+                                        val filterEq = new MenuItem(bundle.getString("table.filter_eq"));
+                                        filterEq.setOnAction(evt -> {
+                                            addFilter(i, FilterType.EQUALS, value);
+                                            updateByFilter();
+                                        });
+                                        val filterContains = new MenuItem(bundle.getString("table.filter_contains"));
+                                        filterContains.setOnAction(evt -> {
+                                            addFilter(i, FilterType.CONTAINS, value);
+                                            updateByFilter();
+                                        });
+
+                                        val reset = new MenuItem(bundle.getString("table.reset_columns"));
+                                        reset.setOnAction(evt -> resetColumns());
+
+                                        val menu = new ContextMenu();
+                                        menu.getItems().setAll(copy, new SeparatorMenuItem(), filterEq,
+                                                filterContains, new SeparatorMenuItem(), reset);
+                                        field.setContextMenu(menu);
+
+                                        setGraphic(field);
                                     }
-                                };
-
-                                val menu = new ContextMenu();
-                                val copy = new MenuItem(bundle.getString("label.copy"));
-                                copy.setOnAction(evt -> {
-                                    val clip = Clipboard.getSystemClipboard();
-                                    val content = new ClipboardContent();
-                                    content.putString(cell.getText());
-                                    clip.setContent(content);
-                                });
-                                val filterEq = new MenuItem(bundle.getString("table.filter_eq"));
-                                filterEq.setOnAction(evt -> {
-                                    addFilter(i, FilterType.EQUALS, cell.getText());
-                                    updateByFilter();
-                                });
-                                val filterContains = new MenuItem(bundle.getString("table.filter_contains"));
-                                filterContains.setOnAction(evt -> {
-                                    addFilter(i, FilterType.CONTAINS, cell.getText());
-                                    updateByFilter();
-                                });
-
-                                val reset = new MenuItem(bundle.getString("table.reset_columns"));
-                                reset.setOnAction(evt -> resetColumns());
-
-                                menu.getItems().setAll(copy, new SeparatorMenuItem(), filterEq,
-                                        filterContains, new SeparatorMenuItem(), reset);
-                                cell.setContextMenu(menu);
-                                return cell;
+                                }
                             });
 
                             val menu = new ContextMenu();
