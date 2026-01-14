@@ -48,4 +48,14 @@ public class TextUtils {
                 "cp1252"
         };
     }
+
+    /**
+     * Checks if the provided string is null or empty.
+     *
+     * @param text the string to check for nullity or emptiness
+     * @return {@code true} if the string is null or its length is zero, otherwise {@code false}
+     */
+    public static boolean isEmpty(String text) {
+        return text == null || text.isEmpty();
+    }
 }

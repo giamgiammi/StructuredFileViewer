@@ -110,9 +110,9 @@ public class CsvSettingsController implements Initializable, SettingsController<
     public @NonNull CsvSettings getSettings() {
         return new CsvSettings(
                 baseFormatChoice.getValue() == null ? null : baseFormatChoice.getValue(),
-                delimiter.getText().isEmpty() ? null : TextUtils.unquoteSpace(delimiter.getText()),
-                quote.getText().isEmpty() ? null : TextUtils.unquoteSpace(quote.getText()).charAt(0),
-                recordSeparator.getText().isEmpty() ? null : TextUtils.unquoteSpace(recordSeparator.getText()),
+                TextUtils.isEmpty(delimiter.getText()) ? null : TextUtils.unquoteSpace(delimiter.getText()),
+                TextUtils.isEmpty(quote.getText()) ? null : TextUtils.unquoteSpace(quote.getText()).charAt(0),
+                TextUtils.isEmpty(recordSeparator.getText()) ? null : TextUtils.unquoteSpace(recordSeparator.getText()),
                 ignoreEmptyLines.isIndeterminate() ? null : ignoreEmptyLines.isSelected(),
                 duplicateHeaderMode.getValue() == null ? null : duplicateHeaderMode.getValue().mode(),
                 allowMissingColumnNames.isIndeterminate() ? null : allowMissingColumnNames.isSelected(),
