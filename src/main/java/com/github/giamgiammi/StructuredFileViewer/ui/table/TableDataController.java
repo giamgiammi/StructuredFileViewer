@@ -103,7 +103,9 @@ public class TableDataController {
                 }
             }
         };
-        task.setOnSucceeded(evt -> tableView.getItems().setAll(task.getValue()));
+        task.setOnSucceeded(evt -> {
+            tableView.setItems(task.getValue());
+        });
         task.setOnFailed(evt -> {
             log.error("Failed to update table data by filter", task.getException());
             new ExceptionAlert(tableView.getScene().getWindow(), task.getException()).showAndWait();
