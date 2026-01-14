@@ -73,28 +73,28 @@ public class CsvDataModel implements DataModel<CsvSettings, TableLikeData> {
         val columns = parser.getHeaderNames();
         val items = new ArrayList<String[]>();
 
-        for (val record : parser) {
-            if (!columns.isEmpty()) {
-                val item = new String[columns.size()];
-                for (int i = 0; i < columns.size(); i++) {
-                    item[i] = record.get(i);
-                }
-                items.add(item);
-            } else {
+        if (columns.isEmpty()) {
+            for (val record : parser) {
                 val item = new ArrayList<String>();
                 for (val value : record) {
                     item.add(value);
                 }
                 items.add(item.toArray(String[]::new));
             }
-        }
 
-        if (columns.isEmpty()) {
             val n = items.stream().mapToInt(a -> a.length).max().orElse(0);
             return new CsvTableData(IntStream.range(0, n).mapToObj(i -> "").toList(), items);
-        }
+        } else {
+            for (val record : parser) {
+                val item = new String[columns.size()];
+                for (int i = 0; i < columns.size(); i++) {
+                    item[i] = record.get(i);
+                }
+                items.add(item);
+            }
 
-        return new CsvTableData(columns, items);
+            return new CsvTableData(columns, items);
+        }
     }
 
     @Override
