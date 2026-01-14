@@ -2,8 +2,9 @@ package com.github.giamgiammi.StructuredFileViewer.core.csv;
 
 import com.github.giamgiammi.StructuredFileViewer.core.DataModel;
 import com.github.giamgiammi.StructuredFileViewer.core.DataModelFactory;
-import com.github.giamgiammi.StructuredFileViewer.model.csv.CsvData;
+import com.github.giamgiammi.StructuredFileViewer.core.TableLikeData;
 import com.github.giamgiammi.StructuredFileViewer.model.csv.CsvSettings;
+import com.github.giamgiammi.StructuredFileViewer.model.csv.CsvTableData;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 import lombok.val;
@@ -12,15 +13,30 @@ import org.apache.commons.csv.CSVFormat;
 import java.io.*;
 import java.util.ArrayList;
 
+/**
+ * A concrete implementation of the {@link DataModel} interface designed
+ * for parsing and managing CSV (Comma-Separated Values) files. This class
+ * uses {@link CsvSettings} for configuration and produces table-like data
+ * represented by {@link TableLikeData}.
+ *
+ * The parsing logic leverages the Apache Commons CSV library to read and
+ * process CSV data streams or string inputs while adhering to the settings
+ * provided. The resulting data is structured into a table format with
+ * column names and rows.
+ *
+ * This class encapsulates:
+ * - CSV format and processing rules defined by {@link CsvSettings} and {@link CSVFormat}.
+ * - An implementation to map parsed data into table-like structures.
+ */
 @RequiredArgsConstructor
-public class CsvDataModel implements DataModel<CsvSettings, CsvData> {
+public class CsvDataModel implements DataModel<CsvSettings, TableLikeData> {
     @NonNull
     private final CsvSettings settings;
     @NonNull
     private final CSVFormat format;
 
     @Override
-    public @NonNull Class<? extends DataModelFactory<CsvSettings, CsvData>> getFactoryClass() {
+    public @NonNull Class<? extends DataModelFactory<CsvSettings, TableLikeData>> getFactoryClass() {
         return CsvDataModelFactory.class;
     }
 
@@ -30,14 +46,14 @@ public class CsvDataModel implements DataModel<CsvSettings, CsvData> {
     }
 
     @Override
-    public @NonNull CsvData parse(@NonNull InputStream stream) throws IOException {
+    public @NonNull TableLikeData parse(@NonNull InputStream stream) throws IOException {
         try (val reader = new InputStreamReader(stream, settings.charset())) {
             return parse(reader);
         }
     }
 
     @Override
-    public @NonNull CsvData parse(@NonNull String text) throws IOException, UnsupportedOperationException {
+    public @NonNull TableLikeData parse(@NonNull String text) throws IOException, UnsupportedOperationException {
         try (val reader = new StringReader(text)) {
             return parse(reader);
         }
@@ -50,21 +66,21 @@ public class CsvDataModel implements DataModel<CsvSettings, CsvData> {
      * @return the parsed data
      * @throws IOException if an I/O error occurs while reading
      */
-    private CsvData parse(Reader reader) throws IOException {
+    private TableLikeData parse(Reader reader) throws IOException {
         val parser = format.parse(reader);
 
-        val columns = parser.getHeaderNames().toArray(String[]::new);
+        val columns = parser.getHeaderNames();
         val items = new ArrayList<String[]>();
 
         for (val record : parser) {
-            val item = new String[columns.length];
-            for (int i = 0; i < columns.length; i++) {
+            val item = new String[columns.size()];
+            for (int i = 0; i < columns.size(); i++) {
                 item[i] = record.get(i);
             }
             items.add(item);
         }
 
-        return new CsvData(columns, items.toArray(String[][]::new));
+        return new CsvTableData(columns, items);
     }
 
     @Override

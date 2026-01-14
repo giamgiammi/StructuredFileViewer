@@ -3,7 +3,7 @@ package com.github.giamgiammi.StructuredFileViewer.core.csv;
 import com.github.giamgiammi.StructuredFileViewer.core.DataModel;
 import com.github.giamgiammi.StructuredFileViewer.core.DataModelFactory;
 import com.github.giamgiammi.StructuredFileViewer.core.DataModelType;
-import com.github.giamgiammi.StructuredFileViewer.model.csv.CsvData;
+import com.github.giamgiammi.StructuredFileViewer.core.TableLikeData;
 import com.github.giamgiammi.StructuredFileViewer.model.csv.CsvSettings;
 import lombok.NonNull;
 import lombok.val;
@@ -11,7 +11,7 @@ import org.apache.commons.csv.CSVFormat;
 
 import java.nio.charset.StandardCharsets;
 
-public class CsvDataModelFactory implements DataModelFactory<CsvSettings, CsvData> {
+public class CsvDataModelFactory implements DataModelFactory<CsvSettings, TableLikeData> {
     private static final CsvSettings DEFAULT_SETTINGS = CsvSettings.builder()
             .baseFormat(CsvBaseFormat.DEFAULT)
             .charset(StandardCharsets.UTF_8)
@@ -28,7 +28,7 @@ public class CsvDataModelFactory implements DataModelFactory<CsvSettings, CsvDat
     }
 
     @Override
-    public @NonNull DataModel<CsvSettings, CsvData> create(@NonNull CsvSettings csvSettings) {
+    public @NonNull DataModel<CsvSettings, TableLikeData> create(@NonNull CsvSettings csvSettings) {
         return new CsvDataModel(csvSettings, createFormat(csvSettings));
     }
 
