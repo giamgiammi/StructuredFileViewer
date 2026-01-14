@@ -62,7 +62,6 @@ public class TableDataController {
         alert.getDialogPane().getButtonTypes().setAll(okButton, cancelButton);
         alert.showAndWait().ifPresent(btn -> {
             if (btn == okButton) {
-                filters = null;
                 refreshData();
             }
         });
@@ -75,6 +74,24 @@ public class TableDataController {
             var filter = new Filter(type, pattern);
             filters.set(column, filter);
         }
+    }
+
+    private void clearFilters() {
+        val alert = new Alert(Alert.AlertType.CONFIRMATION);
+        alert.initOwner(tableView.getScene().getWindow());
+        alert.setTitle(bundle.getString("table.reset_filters"));
+        alert.setHeaderText(bundle.getString("table.reset_filters.header"));
+        val okButton = new ButtonType(bundle.getString("label.ok"), ButtonBar.ButtonData.OK_DONE);
+        val cancelButton = new ButtonType(bundle.getString("label.cancel"), ButtonBar.ButtonData.CANCEL_CLOSE);
+        alert.getDialogPane().getButtonTypes().setAll(okButton, cancelButton);
+        alert.showAndWait().ifPresent(btn -> {
+            if (btn == okButton) {
+                synchronized (lock) {
+                    filters = null;
+                }
+                updateByFilter();
+            }
+        });
     }
 
     private void updateByFilter() {
@@ -113,6 +130,7 @@ public class TableDataController {
             @Override
             protected TaskResult call() throws Exception {
                 synchronized (lock) {
+                    filters = null;
                     val columns = IntStream.range(0, data.getColumnNames().size())
                             .mapToObj(i -> {
                                 var name = data.getColumnNames().get(i);
@@ -154,12 +172,17 @@ public class TableDataController {
                                                 updateByFilter();
                                             });
 
+                                            val clearFilters = new MenuItem(bundle.getString("table.reset_filters"));
+                                            clearFilters.setOnAction(evt -> {
+                                                clearFilters();
+                                            });
                                             val reset = new MenuItem(bundle.getString("table.reset_columns"));
                                             reset.setOnAction(evt -> resetColumns());
 
                                             val menu = new ContextMenu();
                                             menu.getItems().setAll(copy, new SeparatorMenuItem(), filterEq,
-                                                    filterContains, filterDiff, new SeparatorMenuItem(), reset);
+                                                    filterContains, filterDiff, new SeparatorMenuItem(),
+                                                    clearFilters, reset);
                                             field.setContextMenu(menu);
 
                                             setGraphic(field);
@@ -175,10 +198,14 @@ public class TableDataController {
                                     content.putString(col.getText());
                                     clip.setContent(content);
                                 });
+                                val clearFilters = new MenuItem(bundle.getString("table.reset_filters"));
+                                clearFilters.setOnAction(evt -> {
+                                    clearFilters();
+                                });
                                 val reset = new MenuItem(bundle.getString("table.reset_columns"));
                                 reset.setOnAction(evt -> resetColumns());
 
-                                menu.getItems().setAll(copy, reset);
+                                menu.getItems().setAll(copy, clearFilters, reset);
 
                                 col.setContextMenu(menu);
                                 return col;
