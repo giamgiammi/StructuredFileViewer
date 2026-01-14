@@ -43,14 +43,5 @@ public interface TableLikeData {
          * @throws IndexOutOfBoundsException if the specified column index is outside the valid range
          */
         String get(int column);
-
-        /**
-         * Retrieves the value of the record for the specified column name.
-         *
-         * @param column the name of the column for which the value is to be retrieved
-         * @return the value associated with the specified column name, or null if the column does not exist
-         * @throws NullPointerException if the column name is null
-         */
-        String get(@NonNull String column);
     }
 }

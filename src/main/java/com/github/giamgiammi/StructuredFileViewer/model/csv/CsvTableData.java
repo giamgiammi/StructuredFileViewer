@@ -51,14 +51,6 @@ public final class CsvTableData implements TableLikeData {
         }
 
         @Override
-        public String get(@NonNull String column) {
-            for (int i = 0; i < columnNames.size(); i++) {
-                if (columnNames.get(i).equals(column)) return get(i);
-            }
-            return null;
-        }
-
-        @Override
         public String toString() {
             val b = new StringBuilder()
                     .append(getClass().getSimpleName())
