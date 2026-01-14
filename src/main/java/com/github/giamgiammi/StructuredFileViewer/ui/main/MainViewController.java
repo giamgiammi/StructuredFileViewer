@@ -108,8 +108,7 @@ public class MainViewController {
 
                 if (data instanceof TableLikeData tableLikeData) {
                     tab.setContent(FXUtils.loadFXML(TableDataController.class, "table", controller -> {
-                        controller.setData(tableLikeData);
-                        controller.setModel((DataModel<?, TableLikeData>) result.model());
+                        controller.setData(tableLikeData, (DataModel<?, TableLikeData>) result.model());
                     }));
                 } else {
                     log.error("Failed to load file: unexpected data type {}", data.getClass());
