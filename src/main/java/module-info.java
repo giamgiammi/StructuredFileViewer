@@ -13,6 +13,7 @@ module com.github.giamgiammi.StructuredFileViewer {
     opens com.github.giamgiammi.StructuredFileViewer to javafx.fxml;
     opens com.github.giamgiammi.StructuredFileViewer.ui.main to javafx.fxml;
     opens com.github.giamgiammi.StructuredFileViewer.ui.csv to javafx.fxml;
+    opens com.github.giamgiammi.StructuredFileViewer.ui.table to javafx.fxml;
 
     opens com.github.giamgiammi.StructuredFileViewer.model to tools.jackson.databind;
     opens com.github.giamgiammi.StructuredFileViewer.model.csv to tools.jackson.databind;

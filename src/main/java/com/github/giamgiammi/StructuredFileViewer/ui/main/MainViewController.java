@@ -1,6 +1,8 @@
 package com.github.giamgiammi.StructuredFileViewer.ui.main;
 
 import com.github.giamgiammi.StructuredFileViewer.App;
+import com.github.giamgiammi.StructuredFileViewer.core.DataModel;
+import com.github.giamgiammi.StructuredFileViewer.core.TableLikeData;
 import com.github.giamgiammi.StructuredFileViewer.task.ParseFileTask;
 import com.github.giamgiammi.StructuredFileViewer.task.ParseStringTask;
 import com.github.giamgiammi.StructuredFileViewer.ui.about.AboutDialog;
@@ -8,6 +10,7 @@ import com.github.giamgiammi.StructuredFileViewer.ui.exception.ExceptionAlert;
 import com.github.giamgiammi.StructuredFileViewer.ui.lang.ChangeLanguageDialog;
 import com.github.giamgiammi.StructuredFileViewer.ui.load.LoadFileDialog;
 import com.github.giamgiammi.StructuredFileViewer.ui.tab.CloseTabAlert;
+import com.github.giamgiammi.StructuredFileViewer.ui.table.TableDataController;
 import com.github.giamgiammi.StructuredFileViewer.utils.FXUtils;
 import javafx.application.Platform;
 import javafx.concurrent.Task;
@@ -89,12 +92,30 @@ public class MainViewController {
             tabPane.getSelectionModel().select(tab);
 
             task.setOnFailed(evt -> {
+                log.error("Failed to load file", task.getException());
                 tab.setContent(new Label(bundle.getString("label.failed_load_file")));
+                new ExceptionAlert(rootPane.getScene().getWindow(), task.getException()).showAndWait();
             });
 
             task.setOnSucceeded(evt -> {
-                //todo create actual show component
-                tab.setContent(new Label("Loading succeeded"));
+                val data = task.getValue();
+
+                if (data == null) {
+                    log.error("Failed to load file: null data");
+                    tab.setContent(new Label(bundle.getString("label.failed_load_file")));
+                    new ExceptionAlert(rootPane.getScene().getWindow(), new NullPointerException("Null data")).showAndWait();
+                }
+
+                if (data instanceof TableLikeData tableLikeData) {
+                    tab.setContent(FXUtils.loadFXML(TableDataController.class, "table", controller -> {
+                        controller.setData(tableLikeData);
+                        controller.setModel((DataModel<?, TableLikeData>) result.model());
+                    }));
+                } else {
+                    log.error("Failed to load file: unexpected data type {}", data.getClass());
+                    tab.setContent(new Label(bundle.getString("label.failed_load_file")));
+                    new ExceptionAlert(rootPane.getScene().getWindow(), new IllegalStateException("Unexpected data type: " + data.getClass())).showAndWait();
+                }
             });
 
             FXUtils.start(task);
