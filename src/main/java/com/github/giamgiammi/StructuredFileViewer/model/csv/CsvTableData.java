@@ -46,13 +46,14 @@ public final class CsvTableData implements TableLikeData {
 
         @Override
         public String get(int column) {
+            if (column < 0 || column >= values.length) return null;
             return values[column];
         }
 
         @Override
         public String get(@NonNull String column) {
             for (int i = 0; i < columnNames.size(); i++) {
-                if (columnNames.get(i).equals(column)) return values[i];
+                if (columnNames.get(i).equals(column)) return get(i);
             }
             return null;
         }

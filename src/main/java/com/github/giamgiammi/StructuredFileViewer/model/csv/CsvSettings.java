@@ -23,5 +23,6 @@ public final record CsvSettings(
         Boolean trailingData,
         Boolean lenientEof,
         QuoteMode quoteMode,
+        Boolean skipHeaderRecord,
         Charset charset
 ) {}

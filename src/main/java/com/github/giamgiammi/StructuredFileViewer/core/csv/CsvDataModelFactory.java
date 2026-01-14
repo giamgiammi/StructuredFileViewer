@@ -50,6 +50,10 @@ public class CsvDataModelFactory implements DataModelFactory<CsvSettings, TableL
         if (s.trailingData() != null) b.setTrailingData(s.trailingData());
         if (s.lenientEof() != null) b.setLenientEof(s.lenientEof());
         if (s.quoteMode() != null) b.setQuoteMode(s.quoteMode());
+        if (s.skipHeaderRecord() != null) {
+            b.setSkipHeaderRecord(s.skipHeaderRecord());
+            if (s.skipHeaderRecord()) b.setHeader();
+        }
 
         return b.get();
     }

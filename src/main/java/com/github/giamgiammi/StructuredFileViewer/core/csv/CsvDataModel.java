@@ -12,6 +12,7 @@ import org.apache.commons.csv.CSVFormat;
 
 import java.io.*;
 import java.util.ArrayList;
+import java.util.stream.IntStream;
 
 /**
  * A concrete implementation of the {@link DataModel} interface designed
@@ -73,11 +74,24 @@ public class CsvDataModel implements DataModel<CsvSettings, TableLikeData> {
         val items = new ArrayList<String[]>();
 
         for (val record : parser) {
-            val item = new String[columns.size()];
-            for (int i = 0; i < columns.size(); i++) {
-                item[i] = record.get(i);
+            if (!columns.isEmpty()) {
+                val item = new String[columns.size()];
+                for (int i = 0; i < columns.size(); i++) {
+                    item[i] = record.get(i);
+                }
+                items.add(item);
+            } else {
+                val item = new ArrayList<String>();
+                for (val value : record) {
+                    item.add(value);
+                }
+                items.add(item.toArray(String[]::new));
             }
-            items.add(item);
+        }
+
+        if (columns.isEmpty()) {
+            val n = items.stream().mapToInt(a -> a.length).max().orElse(0);
+            return new CsvTableData(IntStream.range(0, n).mapToObj(i -> "").toList(), items);
         }
 
         return new CsvTableData(columns, items);

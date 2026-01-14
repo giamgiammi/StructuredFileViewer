@@ -58,6 +58,9 @@ public class CsvSettingsController implements Initializable, SettingsController<
     @FXML
     private CheckBox lenientEof;
 
+    @FXML
+    private CheckBox skipHeaderRecord;
+
     @Override
     public void initialize(URL location, ResourceBundle resources) {
         baseFormatChoice.getItems().setAll(CsvBaseFormat.values());
@@ -84,6 +87,10 @@ public class CsvSettingsController implements Initializable, SettingsController<
                 lenientEof.setStyle(FX_FONT_WEIGHT_BOLD);
             else
                 lenientEof.setStyle("");
+            if (newValue.getFormat().getSkipHeaderRecord())
+                skipHeaderRecord.setStyle(FX_FONT_WEIGHT_BOLD);
+            else
+                skipHeaderRecord.setStyle("");
         });
         quote.textProperty().addListener((observable, oldValue, newValue) -> {
             var text = TextUtils.unquoteSpace(newValue);
@@ -119,6 +126,7 @@ public class CsvSettingsController implements Initializable, SettingsController<
                 trailingData.isIndeterminate() ? null : trailingData.isSelected(),
                 lenientEof.isIndeterminate() ? null : lenientEof.isSelected(),
                 quoteMode.getValue() == null ? null : quoteMode.getValue().mode(),
+                skipHeaderRecord.isIndeterminate() ? null : skipHeaderRecord.isSelected(),
                 Charset.forName(charset.getValue())
         );
     }
@@ -136,6 +144,7 @@ public class CsvSettingsController implements Initializable, SettingsController<
             trailingData.setIndeterminate(true);
             lenientEof.setIndeterminate(true);
             quoteMode.setValue(null);
+            skipHeaderRecord.setIndeterminate(true);
             charset.setValue("UTF-8");
         } else {
             baseFormatChoice.setValue(baseFormatChoice.getItems().stream().filter(choice -> choice.equals(settings.baseFormat())).findFirst().orElse(null));
@@ -167,6 +176,12 @@ public class CsvSettingsController implements Initializable, SettingsController<
                 lenientEof.setIndeterminate(true);
             }
             quoteMode.setValue(settings.quoteMode() != null ? new QuoteModeChoice(settings.quoteMode()) : null);
+            if (settings.skipHeaderRecord() != null) {
+                skipHeaderRecord.setIndeterminate(false);
+                skipHeaderRecord.setSelected(settings.skipHeaderRecord());
+            } else {
+                skipHeaderRecord.setIndeterminate(true);
+            }
             charset.setValue(settings.charset().name());
         }
     }
