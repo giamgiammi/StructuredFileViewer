@@ -70,6 +70,10 @@ public class TableDataController {
         filters.set(column, filter);
     }
 
+    private void updateByFilter() {
+        tableView.getItems().setAll(getFilteredRecords());
+    }
+
     private ObservableList<TableLikeData.Record> getFilteredRecords() {
         if (filters == null) return FXCollections.observableArrayList(data.getRecords());
         var stream = data.getRecords().stream();
@@ -112,12 +116,12 @@ public class TableDataController {
                                 val filterEq = new MenuItem(bundle.getString("table.filter_eq"));
                                 filterEq.setOnAction(evt -> {
                                     addFilter(i, FilterType.EQUALS, cell.getText());
-                                    refreshData();
+                                    updateByFilter();
                                 });
                                 val filterContains = new MenuItem(bundle.getString("table.filter_contains"));
                                 filterContains.setOnAction(evt -> {
                                     addFilter(i, FilterType.CONTAINS, cell.getText());
-                                    refreshData();
+                                    updateByFilter();
                                 });
 
                                 val reset = new MenuItem(bundle.getString("table.reset_columns"));
