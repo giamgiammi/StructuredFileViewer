@@ -145,8 +145,10 @@ public class TableDataController {
                                 col.setCellFactory(param -> new TableCell<TableLikeData.Record, String>() {
                                     @Override
                                     protected void updateItem(String value, boolean empty) {
-                                        if (empty) setText(null);
-                                        else {
+                                        if (empty) {
+                                            setText(null);
+                                            setGraphic(null);
+                                        } else {
                                             val field = new TextField(value);
                                             field.setEditable(false);
                                             field.setPrefColumnCount(value.length());
