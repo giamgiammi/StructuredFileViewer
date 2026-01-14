@@ -1,7 +1,9 @@
 package com.github.giamgiammi.StructuredFileViewer.ui.table;
 
+import com.github.giamgiammi.StructuredFileViewer.App;
 import com.github.giamgiammi.StructuredFileViewer.core.DataModel;
 import com.github.giamgiammi.StructuredFileViewer.core.TableLikeData;
+import com.github.giamgiammi.StructuredFileViewer.utils.TextUtils;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.collections.FXCollections;
 import javafx.fxml.FXML;
@@ -11,10 +13,13 @@ import lombok.NonNull;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 
+import java.text.MessageFormat;
+import java.util.ResourceBundle;
 import java.util.stream.IntStream;
 
 @Slf4j
 public class TableDataController {
+    private final ResourceBundle bundle = App.getBundle();
     private DataModel<?, TableLikeData> model;
     private TableLikeData data;
 
@@ -37,7 +42,8 @@ public class TableDataController {
     private void refreshData() {
         val columns = IntStream.range(0, data.getColumnNames().size())
                         .mapToObj(i -> {
-                            val name = data.getColumnNames().get(i);
+                            var name = data.getColumnNames().get(i);
+                            if (TextUtils.isEmpty(name)) name = new MessageFormat(bundle.getString("table.column_n")).format(new Object[]{i + 1});
                             val col = new TableColumn<TableLikeData.Record, String>(name);
                             col.setCellValueFactory(cell -> {
                                 val value = cell.getValue().get(i);
