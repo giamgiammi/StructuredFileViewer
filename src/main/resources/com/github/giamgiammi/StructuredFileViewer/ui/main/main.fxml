@@ -22,6 +22,11 @@
               <MenuItem mnemonicParsing="false" onAction="#handleCloseApp" text="%label.close" />
             </items>
           </Menu>
+            <Menu fx:id="dataMenu" mnemonicParsing="false" text="Data menu" visible="false">
+              <items>
+                <MenuItem mnemonicParsing="false" text="Action 1" />
+              </items>
+            </Menu>
           <Menu mnemonicParsing="false" text="%label.help_menu">
             <items>
               <MenuItem mnemonicParsing="false" onAction="#handleAbout" text="%label.about_menu_item" />

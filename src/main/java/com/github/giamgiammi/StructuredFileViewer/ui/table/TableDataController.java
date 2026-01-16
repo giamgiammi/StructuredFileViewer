@@ -1,11 +1,11 @@
 package com.github.giamgiammi.StructuredFileViewer.ui.table;
 
 import com.github.giamgiammi.StructuredFileViewer.App;
-import com.github.giamgiammi.StructuredFileViewer.core.DataModel;
 import com.github.giamgiammi.StructuredFileViewer.core.TableLikeData;
 import com.github.giamgiammi.StructuredFileViewer.model.Filter;
 import com.github.giamgiammi.StructuredFileViewer.model.FilterType;
 import com.github.giamgiammi.StructuredFileViewer.ui.exception.ExceptionAlert;
+import com.github.giamgiammi.StructuredFileViewer.ui.inteface.DataController;
 import com.github.giamgiammi.StructuredFileViewer.utils.FXUtils;
 import com.github.giamgiammi.StructuredFileViewer.utils.ListUtils;
 import com.github.giamgiammi.StructuredFileViewer.utils.SimpleLock;
@@ -31,10 +31,9 @@ import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
 @Slf4j
-public class TableDataController {
+public class TableDataController implements DataController {
     private final ResourceBundle bundle = App.getBundle();
     private final SimpleLock lock = new SimpleLock();
-    private DataModel<?, TableLikeData> model;
     private TableLikeData data;
 
     private List<Filter> filters;
@@ -42,16 +41,9 @@ public class TableDataController {
     @FXML
     private TableView<TableLikeData.Record> tableView;
 
-    /**
-     * Sets the data and data model for the table, then refreshes the table view with the new data.
-     *
-     * @param data the table-like data structure to be displayed; must not be null
-     * @param model the data model associated with the provided table-like data; must not be null
-     */
-    public void setData(@NonNull TableLikeData data, @NonNull DataModel<?, TableLikeData> model) {
-        log.info("Loading table data: data={}, model={}", data, model);
+    public void setData(@NonNull TableLikeData data) {
+        log.info("Loading table data: data={}", data);
         this.data = data;
-        this.model = model;
         refreshData();
     }
 

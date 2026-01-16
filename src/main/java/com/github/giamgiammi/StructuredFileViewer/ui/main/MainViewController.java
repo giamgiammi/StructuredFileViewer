@@ -1,8 +1,8 @@
 package com.github.giamgiammi.StructuredFileViewer.ui.main;
 
 import com.github.giamgiammi.StructuredFileViewer.App;
-import com.github.giamgiammi.StructuredFileViewer.core.DataModel;
 import com.github.giamgiammi.StructuredFileViewer.core.TableLikeData;
+import com.github.giamgiammi.StructuredFileViewer.model.TabData;
 import com.github.giamgiammi.StructuredFileViewer.task.ParseFileTask;
 import com.github.giamgiammi.StructuredFileViewer.task.ParseStringTask;
 import com.github.giamgiammi.StructuredFileViewer.ui.about.AboutDialog;
@@ -12,15 +12,18 @@ import com.github.giamgiammi.StructuredFileViewer.ui.load.LoadFileDialog;
 import com.github.giamgiammi.StructuredFileViewer.ui.tab.CloseTabAlert;
 import com.github.giamgiammi.StructuredFileViewer.ui.table.TableDataController;
 import com.github.giamgiammi.StructuredFileViewer.utils.FXUtils;
-import javafx.application.Platform;
 import javafx.concurrent.Task;
 import javafx.fxml.FXML;
+import javafx.fxml.Initializable;
 import javafx.scene.control.*;
 import javafx.scene.layout.BorderPane;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 
 import java.io.IOException;
+import java.net.URL;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.ResourceBundle;
 
 /**
@@ -28,14 +31,25 @@ import java.util.ResourceBundle;
  * FXML: main.fxml
  */
 @Slf4j
-public class MainViewController {
+public class MainViewController implements Initializable {
     private final ResourceBundle bundle = App.getBundle();
+    private final Map<Tab, TabData> tabDataMap = new HashMap<>();
 
     @FXML
     private BorderPane rootPane;
 
     @FXML
     private TabPane tabPane;
+
+    @FXML
+    private Menu dataMenu;
+
+    @Override
+    public void initialize(URL location, ResourceBundle resources) {
+        tabPane.getSelectionModel().selectedItemProperty().addListener((obs, oldTab, newTab) -> {
+            dataMenu.setVisible(newTab != null);
+        });
+    }
 
     /**
      * Handler for the close item inside the File menu
@@ -85,8 +99,11 @@ public class MainViewController {
             val tab = new Tab(name, new ProgressIndicator(ProgressIndicator.INDETERMINATE_PROGRESS));
             tab.setOnCloseRequest(evt -> new CloseTabAlert(tabPane.getScene().getWindow(), tab.getText()).showAndWait()
                     .ifPresent(btn -> {
-                        if (btn.getButtonData() != ButtonBar.ButtonData.OK_DONE) evt.consume();
-                        else if (tabPane.getTabs().size() == 1) Platform.runLater(this::handleNewTab);
+                        if (btn.getButtonData() == ButtonBar.ButtonData.OK_DONE) {
+                            tabDataMap.remove(tab);
+                        } else {
+                            evt.consume();
+                        }
                     }));
             tabPane.getTabs().add(tab);
             tabPane.getSelectionModel().select(tab);
@@ -106,9 +123,14 @@ public class MainViewController {
                     new ExceptionAlert(rootPane.getScene().getWindow(), new NullPointerException("Null data")).showAndWait();
                 }
 
+                val context = new TabData();
+                context.setModel(result.model());
+                tabDataMap.put(tab, context);
+
                 if (data instanceof TableLikeData tableLikeData) {
                     tab.setContent(FXUtils.loadFXML(TableDataController.class, "table", controller -> {
-                        controller.setData(tableLikeData, (DataModel<?, TableLikeData>) result.model());
+                        controller.setData(tableLikeData);
+                        context.setController(controller);
                     }));
                 } else {
                     log.error("Failed to load file: unexpected data type {}", data.getClass());
