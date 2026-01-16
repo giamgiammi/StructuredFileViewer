@@ -223,6 +223,8 @@ public class TableDataController {
                 menu.getItems().addAll(getDefaultMenuItems());
                 setContextMenu(menu);
             } else if (obj instanceof String value) {
+                setText(null);
+
                 val field = new TextField(value);
                 field.setEditable(false);
                 field.setPrefColumnCount(value.length());
@@ -264,6 +266,9 @@ public class TableDataController {
                 field.setContextMenu(menu);
 
                 setGraphic(field);
+            } else {
+                // type-specific view not implemented
+                setText(obj.toString());
             }
         }
     }
