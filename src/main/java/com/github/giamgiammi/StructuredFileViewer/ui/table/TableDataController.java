@@ -7,6 +7,7 @@ import com.github.giamgiammi.StructuredFileViewer.model.Filter;
 import com.github.giamgiammi.StructuredFileViewer.model.FilterType;
 import com.github.giamgiammi.StructuredFileViewer.ui.exception.ExceptionAlert;
 import com.github.giamgiammi.StructuredFileViewer.utils.FXUtils;
+import com.github.giamgiammi.StructuredFileViewer.utils.SimpleLock;
 import com.github.giamgiammi.StructuredFileViewer.utils.TextUtils;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.collections.FXCollections;
@@ -30,7 +31,7 @@ import java.util.stream.IntStream;
 @Slf4j
 public class TableDataController {
     private final ResourceBundle bundle = App.getBundle();
-    private final Object lock = new Object();
+    private final SimpleLock lock = new SimpleLock();
     private DataModel<?, TableLikeData> model;
     private TableLikeData data;
 
@@ -69,12 +70,10 @@ public class TableDataController {
     }
 
     private void addFilter(int column, FilterType type, String pattern) {
-        synchronized (lock){
-            if (filters == null)
-                filters = IntStream.range(0, data.getColumnNames().size()).mapToObj(i -> (Filter) null).collect(Collectors.toList());
-            var filter = new Filter(type, pattern);
-            filters.set(column, filter);
-        }
+        if (filters == null)
+            filters = IntStream.range(0, data.getColumnNames().size()).mapToObj(i -> (Filter) null).collect(Collectors.toList());
+        var filter = new Filter(type, pattern);
+        filters.set(column, filter);
     }
 
     private void clearFilters() {
@@ -87,9 +86,9 @@ public class TableDataController {
         alert.getDialogPane().getButtonTypes().setAll(okButton, cancelButton);
         alert.showAndWait().ifPresent(btn -> {
             if (btn == okButton) {
-                synchronized (lock) {
+                lock.execute(() -> {
                     filters = null;
-                }
+                });
                 updateByFilter();
             }
         });
@@ -100,9 +99,7 @@ public class TableDataController {
         val task = new Task<ObservableList<TableLikeData.Record>>() {
             @Override
             protected ObservableList<TableLikeData.Record> call() throws Exception {
-                synchronized (lock){
-                    return getFilteredRecords();
-                }
+                return lock.execute(() -> getFilteredRecords());
             }
         };
         task.setOnSucceeded(evt -> {
@@ -136,7 +133,7 @@ public class TableDataController {
         val task = new Task<TaskResult>() {
             @Override
             protected TaskResult call() throws Exception {
-                synchronized (lock) {
+                return lock.execute(() -> {
                     filters = null;
                     val columns = IntStream.range(0, data.getColumnNames().size())
                             .mapToObj(i -> {
@@ -221,7 +218,7 @@ public class TableDataController {
                             }).toList();
                     val records = getFilteredRecords();
                     return new TaskResult(columns, records);
-                }
+                });
             }
         };
         task.setOnSucceeded(evt -> {
