@@ -7,6 +7,7 @@ import com.github.giamgiammi.StructuredFileViewer.model.Filter;
 import com.github.giamgiammi.StructuredFileViewer.model.FilterType;
 import com.github.giamgiammi.StructuredFileViewer.ui.exception.ExceptionAlert;
 import com.github.giamgiammi.StructuredFileViewer.utils.FXUtils;
+import com.github.giamgiammi.StructuredFileViewer.utils.ListUtils;
 import com.github.giamgiammi.StructuredFileViewer.utils.SimpleLock;
 import com.github.giamgiammi.StructuredFileViewer.utils.TextUtils;
 import javafx.beans.property.SimpleObjectProperty;
@@ -140,8 +141,10 @@ public class TableDataController {
                             .mapToObj(columnIndex -> {
                                 return getTableColumn(columnIndex);
                             }).toList();
+                    val indexColumn = new TableColumn<TableLikeData.Record, Object>("");
+                    indexColumn.setCellFactory(param -> new IndexCell());
                     val records = getFilteredRecords();
-                    return new TaskResult(columns, records);
+                    return new TaskResult(ListUtils.concat(List.of(indexColumn), columns), records);
                 });
             }
         };
@@ -261,6 +264,18 @@ public class TableDataController {
                 field.setContextMenu(menu);
 
                 setGraphic(field);
+            }
+        }
+    }
+
+    private static class IndexCell extends TableCell<TableLikeData.Record, Object> {
+        @Override
+        protected void updateItem(Object o, boolean empty) {
+            //Note: o will always be null
+            if (empty) {
+                setText(null);
+            } else {
+                setText(String.valueOf(getTableRow().getIndex() + 1));
             }
         }
     }
