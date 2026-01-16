@@ -22,6 +22,7 @@ import lombok.val;
 
 import java.text.MessageFormat;
 import java.util.List;
+import java.util.Objects;
 import java.util.ResourceBundle;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
@@ -123,7 +124,7 @@ public class TableDataController {
             val filter = filters.get(i);
             if (filter != null) {
                 int finalI = i;
-                stream = stream.filter(record -> filter.type().test(filter.pattern(), record.get(finalI)));
+                stream = stream.filter(record -> filter.type().test(filter.pattern(), Objects.toString(record.get(finalI), null)));
             }
         }
         return stream.collect(Collectors.toCollection(FXCollections::observableArrayList));
@@ -144,7 +145,7 @@ public class TableDataController {
                                 val col = new TableColumn<TableLikeData.Record, String>(name);
                                 col.setCellValueFactory(cell -> {
                                     val value = cell.getValue().get(i);
-                                    return new SimpleStringProperty(value);
+                                    return new SimpleStringProperty(Objects.toString(value, null));
                                 });
                                 col.setCellFactory(param -> new TableCell<TableLikeData.Record, String>() {
                                     @Override

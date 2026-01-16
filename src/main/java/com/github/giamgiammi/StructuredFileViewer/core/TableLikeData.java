@@ -42,6 +42,6 @@ public interface TableLikeData {
          * @return the value of the record at the specified column index
          * @throws IndexOutOfBoundsException if the specified column index is outside the valid range
          */
-        String get(int column);
+        Object get(int column);
     }
 }
