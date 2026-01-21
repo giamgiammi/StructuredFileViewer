@@ -15,9 +15,6 @@ jpackage -m com.github.giamgiammi.StructuredFileViewer/com.github.giamgiammi.Str
              --dest target/ \
              --type dmg \
              --icon logo.icns \
-             --java-options "--enable-native-access=javafx.graphics"
+             --java-options "--enable-native-access=javafx.graphics" \
+             --mac-dmg-content target/legal,target/classes/LICENSE.txt
 
-
-#echo "Copying license files"
-#cp -r target/legal "target/Structured File Viewer/"
-#cp target/classes/LICENSE.txt "target/Structured File Viewer/legal/LICENSE.txt"
