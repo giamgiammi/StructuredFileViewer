@@ -23,35 +23,8 @@ import java.util.Scanner;
  * The fixed-width data model assumes a set of columns with predefined widths. It processes
  * data either with or without a new line delimiter between records, depending on the settings.
  *
- * Responsibilities:
- * - Retrieve and return the associated data model factory class.
- * - Provide access to its configuration settings.
- * - Parse input streams or text following the fixed-width rules defined in the settings.
- *
- * Behavior:
- * - Column trimming can be enabled or disabled on a per-column basis.
- * - Supports configuration of character sets for reading input data.
- * - Handles both cases where records are explicitly terminated by new lines or have no line delimiters.
- *
  * Thread safety:
  * - This class is immutable and inherently thread-safe.
- *
- * Implementation details:
- * - If the records end with new lines, the input is parsed line by line.
- * - If there are no new lines, the input is read as a fixed-length stream and processed accordingly.
- *
- * Parsing strategies:
- * - Uses Scanner for line-delimited input.
- * - Uses a fixed-length character reader for stream-delimited input.
- *
- * Exceptions:
- * - Throws {@link IOException} for errors during input reading.
- * - Throws {@link UnsupportedOperationException} if parsing from text is not supported by the implementation.
- *
- * Associated components:
- * - {@link FixedWidthSettings}: Provides the configuration required for parsing.
- * - {@link SimpleTableData}: Represents the parsed output as a tabular data structure.
- * - {@link FixedWidthDataModelFactory}: The factory responsible for creating instances of this data model.
  */
 @RequiredArgsConstructor
 public class FixedWidthDataModel implements DataModel<FixedWidthSettings, SimpleTableData> {
