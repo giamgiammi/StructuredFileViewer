@@ -3,8 +3,8 @@ package com.github.giamgiammi.StructuredFileViewer.core.csv;
 import com.github.giamgiammi.StructuredFileViewer.core.DataModel;
 import com.github.giamgiammi.StructuredFileViewer.core.DataModelFactory;
 import com.github.giamgiammi.StructuredFileViewer.core.TableLikeData;
+import com.github.giamgiammi.StructuredFileViewer.model.SimpleTableData;
 import com.github.giamgiammi.StructuredFileViewer.model.csv.CsvSettings;
-import com.github.giamgiammi.StructuredFileViewer.model.csv.CsvTableData;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 import lombok.val;
@@ -83,7 +83,7 @@ public class CsvDataModel implements DataModel<CsvSettings, TableLikeData> {
             }
 
             val n = items.stream().mapToInt(a -> a.length).max().orElse(0);
-            return new CsvTableData(IntStream.range(0, n).mapToObj(i -> "").toList(), items);
+            return new SimpleTableData(IntStream.range(0, n).mapToObj(i -> "").toList(), items);
         } else {
             for (val record : parser) {
                 val item = new String[columns.size()];
@@ -93,7 +93,7 @@ public class CsvDataModel implements DataModel<CsvSettings, TableLikeData> {
                 items.add(item);
             }
 
-            return new CsvTableData(columns, items);
+            return new SimpleTableData(columns, items);
         }
     }
 

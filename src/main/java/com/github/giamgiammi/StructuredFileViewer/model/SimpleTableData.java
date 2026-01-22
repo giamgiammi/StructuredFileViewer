@@ -1,4 +1,4 @@
-package com.github.giamgiammi.StructuredFileViewer.model.csv;
+package com.github.giamgiammi.StructuredFileViewer.model;
 
 import com.github.giamgiammi.StructuredFileViewer.core.TableLikeData;
 import lombok.EqualsAndHashCode;
@@ -9,20 +9,32 @@ import lombok.val;
 import java.util.List;
 
 /**
- * Represents a table-like data structure specifically designed for handling data in CSV format.
- * This class provides functionality to store and access column names and corresponding records
- * while ensuring immutability of the data. Records within this table-like structure are individual rows
- * of the CSV, where each cell corresponds to a value for a specific column.
+ * Represents a simple table-like data structure that supports column-based and record-based data manipulation.
+ * This implementation is immutable and ensures that the column names and records are preserved as read-only lists.
+ * Each record in the table is represented as an instance of the inner CsvRecord class, which implements the
+ * {@link TableLikeData.Record} interface.
  *
- * This implementation guarantees that the column names and record list are unmodifiable after creation.
+ * The table consists of a fixed list of column names and a corresponding list of data records. Each record contains
+ * an array of values that align with the specified column names.
+ *
+ * Immutable properties:
+ * - {@code columnNames}: The list of column names in the table.
+ * - {@code records}: The list of records in the table, with each record corresponding to a row of data.
+ *
+ * Thread safety:
+ * - The class is thread-safe as it is immutable.
+ *
+ * Responsibility:
+ * - Provide access to column names and table records.
+ * - Ensure data integrity and immutability across the table.
  */
 @Getter
 @EqualsAndHashCode
-public final class CsvTableData implements TableLikeData {
+public final class SimpleTableData implements TableLikeData {
     private final List<String> columnNames;
     private final List<TableLikeData.Record> records;
 
-    public CsvTableData(@NonNull List<String> columnNames, @NonNull List<String[]> records) {
+    public SimpleTableData(@NonNull List<String> columnNames, @NonNull List<String[]> records) {
         this.columnNames = List.copyOf(columnNames);
         this.records = records.stream()
                 .map(CsvRecord::new)
