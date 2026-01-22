@@ -7,7 +7,6 @@ import com.github.giamgiammi.StructuredFileViewer.model.fixed.FixedWidthColumn;
 import com.github.giamgiammi.StructuredFileViewer.model.fixed.FixedWidthSettings;
 import com.github.giamgiammi.StructuredFileViewer.utils.TextUtils;
 import lombok.NonNull;
-import lombok.RequiredArgsConstructor;
 import lombok.val;
 
 import java.io.*;
@@ -26,9 +25,16 @@ import java.util.Scanner;
  * Thread safety:
  * - This class is immutable and inherently thread-safe.
  */
-@RequiredArgsConstructor
 public class FixedWidthDataModel implements DataModel<FixedWidthSettings, SimpleTableData> {
     private final FixedWidthSettings settings;
+    private final int lineLength;
+    private final int recordSize;
+
+    public FixedWidthDataModel(@NonNull FixedWidthSettings settings) {
+        this.settings = settings;
+        this.lineLength = settings.columns().stream().mapToInt(FixedWidthColumn::length).sum();
+        this.recordSize = settings.columns().size();
+    }
 
     @Override
     public @NonNull Class<? extends DataModelFactory<FixedWidthSettings, SimpleTableData>> getFactoryClass() {
@@ -107,8 +113,6 @@ public class FixedWidthDataModel implements DataModel<FixedWidthSettings, Simple
      * @throws IOException if an I/O error occurs during reading from the {@link Reader}.
      */
     private SimpleTableData parseNoNewLine(Reader reader) throws IOException {
-        val lineLength = settings.columns().stream().mapToInt(FixedWidthColumn::length).sum();
-
         val list = new ArrayList<String[]>();
         while (true) {
             val buffer = new char[lineLength];
@@ -133,10 +137,9 @@ public class FixedWidthDataModel implements DataModel<FixedWidthSettings, Simple
      * @param str the input line containing fixed-width data to be parsed
      */
     private void parseLine(List<String[]> list, String str) {
-        val size = settings.columns().size();
-        val record = new String[size];
+        val record = new String[recordSize];
         int index = 0;
-        for (int i = 0; i < size; i++) {
+        for (int i = 0; i < recordSize; i++) {
             val col = settings.columns().get(i);
             var data = TextUtils.substring(str, index, index + col.length());
             if (col.trim() && data != null) data = data.trim();
