@@ -139,7 +139,7 @@ public class FixedWidthDataModel implements DataModel<FixedWidthSettings, Simple
         for (int i = 0; i < size; i++) {
             val col = settings.columns().get(i);
             var data = TextUtils.substring(str, index, index + col.length());
-            if (col.trim()) data = data.trim();
+            if (col.trim() && data != null) data = data.trim();
             record[i] = data;
             index += col.length();
         }
