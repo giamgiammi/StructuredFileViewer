@@ -121,6 +121,9 @@
                         </goals>
                         <configuration>
                             <licensesOutputDirectory>target/legal</licensesOutputDirectory>
+                            <errorRemedy>warn</errorRemedy>
+                            <forceDownload>true</forceDownload>
+                            <includeTransitiveDependencies>true</includeTransitiveDependencies>
                         </configuration>
                     </execution>
                     <execution>
@@ -131,6 +134,7 @@
                         </goals>
                         <configuration>
                             <outputDirectory>target/legal</outputDirectory>
+                            <includeTransitiveDependencies>true</includeTransitiveDependencies>
                         </configuration>
                     </execution>
                     <execution>

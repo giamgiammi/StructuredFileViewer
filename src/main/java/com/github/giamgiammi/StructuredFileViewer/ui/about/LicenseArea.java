@@ -18,9 +18,7 @@ public class LicenseArea extends TabPane {
 
         getTabs().addAll(
                 new Tab(bundle.getString("label.license"), getTextArea("LICENSE.txt")),
-                new Tab(bundle.getString("label.third_party_license"), getTextArea("THIRD-PARTY.txt")),
-                new Tab("MIT", getTextArea("the mit license - license.txt")),
-                new Tab("APACHE 2.0", getTextArea("the apache software license, version 2.0 - license-2.0.txt"))
+                new Tab(bundle.getString("label.third_party_license"), getTextArea("THIRD-PARTY.txt"))
         );
     }
 
