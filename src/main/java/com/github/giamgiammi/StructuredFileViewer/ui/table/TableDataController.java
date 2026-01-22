@@ -8,7 +8,6 @@ import com.github.giamgiammi.StructuredFileViewer.ui.exception.ExceptionAlert;
 import com.github.giamgiammi.StructuredFileViewer.ui.inteface.DataController;
 import com.github.giamgiammi.StructuredFileViewer.utils.FXUtils;
 import com.github.giamgiammi.StructuredFileViewer.utils.ListUtils;
-import com.github.giamgiammi.StructuredFileViewer.utils.SimpleLock;
 import com.github.giamgiammi.StructuredFileViewer.utils.TextUtils;
 import javafx.beans.property.SimpleObjectProperty;
 import javafx.collections.FXCollections;
@@ -33,7 +32,6 @@ import java.util.stream.IntStream;
 @Slf4j
 public class TableDataController implements DataController {
     private final ResourceBundle bundle = App.getBundle();
-    private final SimpleLock lock = new SimpleLock();
     private TableLikeData data;
 
     private List<Filter> filters;
@@ -80,9 +78,7 @@ public class TableDataController implements DataController {
         alert.getDialogPane().getButtonTypes().setAll(okButton, cancelButton);
         alert.showAndWait().ifPresent(btn -> {
             if (btn == okButton) {
-                lock.execute(() -> {
-                    filters = null;
-                });
+                filters = null;
                 updateByFilter();
             }
         });
@@ -93,7 +89,7 @@ public class TableDataController implements DataController {
         val task = new Task<ObservableList<TableLikeData.Record>>() {
             @Override
             protected ObservableList<TableLikeData.Record> call() throws Exception {
-                return lock.execute(() -> getFilteredRecords());
+                return getFilteredRecords();
             }
         };
         task.setOnSucceeded(evt -> {
@@ -127,17 +123,15 @@ public class TableDataController implements DataController {
         val task = new Task<TaskResult>() {
             @Override
             protected TaskResult call() throws Exception {
-                return lock.execute(() -> {
-                    filters = null;
-                    val columns = IntStream.range(0, data.getColumnNames().size())
-                            .mapToObj(columnIndex -> {
-                                return getTableColumn(columnIndex);
-                            }).toList();
-                    val indexColumn = new TableColumn<TableLikeData.Record, Object>("");
-                    indexColumn.setCellFactory(param -> new IndexCell());
-                    val records = getFilteredRecords();
-                    return new TaskResult(ListUtils.concat(List.of(indexColumn), columns), records);
-                });
+                filters = null;
+                val columns = IntStream.range(0, data.getColumnNames().size())
+                        .mapToObj(columnIndex -> {
+                            return getTableColumn(columnIndex);
+                        }).toList();
+                val indexColumn = new TableColumn<TableLikeData.Record, Object>("");
+                indexColumn.setCellFactory(param -> new IndexCell());
+                val records = getFilteredRecords();
+                return new TaskResult(ListUtils.concat(List.of(indexColumn), columns), records);
             }
         };
         task.setOnSucceeded(evt -> {
