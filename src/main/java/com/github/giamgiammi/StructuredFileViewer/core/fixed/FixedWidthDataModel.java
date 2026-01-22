@@ -117,8 +117,8 @@ public class FixedWidthDataModel implements DataModel<FixedWidthSettings, Simple
         while (true) {
             val buffer = new char[lineLength];
             val n = reader.read(buffer);
-            val str = new String(buffer, 0, n);
             if (n == -1) break;
+            val str = new String(buffer, 0, n);
 
             parseLine(list, str);
         }
