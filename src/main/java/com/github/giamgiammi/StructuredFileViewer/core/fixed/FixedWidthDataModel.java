@@ -150,6 +150,6 @@ public class FixedWidthDataModel implements DataModel<FixedWidthSettings, Simple
 
     @Override
     public String toString() {
-        return "FixedWidthDataModel{settings=%s}".formatted(settings);
+        return "%s{settings=%s}".formatted(getClass().getSimpleName(), settings);
     }
 }
