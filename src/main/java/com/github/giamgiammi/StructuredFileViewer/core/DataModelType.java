@@ -1,6 +1,7 @@
 package com.github.giamgiammi.StructuredFileViewer.core;
 
 import com.github.giamgiammi.StructuredFileViewer.model.csv.CsvSettings;
+import com.github.giamgiammi.StructuredFileViewer.model.fixed.FixedWidthSettings;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 
@@ -18,7 +19,8 @@ public enum DataModelType {
      * Represent a CSV-LIKE structured data.
      * CSV, TSV, and other character-separated formats can be parsed with this
      */
-    CSV_LIKE(CsvSettings.class, true);
+    CSV_LIKE(CsvSettings.class, true),
+    FIXED_WIDTH(FixedWidthSettings.class, true);
 
     @Getter
     private final Class<?> settingsClass;
