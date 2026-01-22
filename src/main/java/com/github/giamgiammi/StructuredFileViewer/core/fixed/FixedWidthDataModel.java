@@ -82,12 +82,11 @@ public class FixedWidthDataModel implements DataModel<FixedWidthSettings, Simple
      * @throws IOException if an I/O error occurs during parsing
      */
     private SimpleTableData parseNewLine(Scanner sc) throws IOException {
-        val columns = settings.columns().size();
         val list = new ArrayList<String[]>();
 
         while (sc.hasNextLine()) {
             val str = sc.nextLine();
-            parseLine(columns, list, str);
+            parseLine(list, str);
         }
 
         return new SimpleTableData(
@@ -109,7 +108,6 @@ public class FixedWidthDataModel implements DataModel<FixedWidthSettings, Simple
      */
     private SimpleTableData parseNoNewLine(Reader reader) throws IOException {
         val lineLength = settings.columns().stream().mapToInt(FixedWidthColumn::length).sum();
-        val columns = settings.columns().size();
 
         val list = new ArrayList<String[]>();
         while (true) {
@@ -118,7 +116,7 @@ public class FixedWidthDataModel implements DataModel<FixedWidthSettings, Simple
             val str = new String(buffer, 0, n);
             if (n == -1) break;
 
-            parseLine(columns, list, str);
+            parseLine(list, str);
         }
 
         return new SimpleTableData(
@@ -135,10 +133,11 @@ public class FixedWidthDataModel implements DataModel<FixedWidthSettings, Simple
      * @param list the list to which the parsed column values will be added; each entry in the list represents a record
      * @param str the input line containing fixed-width data to be parsed
      */
-    private void parseLine(int columns, List<String[]> list, String str) {
-        val record = new String[columns];
+    private void parseLine(List<String[]> list, String str) {
+        val size = settings.columns().size();
+        val record = new String[size];
         int index = 0;
-        for (int i = 0; i < columns; i++) {
+        for (int i = 0; i < size; i++) {
             val col = settings.columns().get(i);
             var data = TextUtils.substring(str, index, index + col.length());
             if (col.trim()) data = data.trim();
