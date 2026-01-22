@@ -5,6 +5,7 @@ import com.github.giamgiammi.StructuredFileViewer.core.DataModelFactory;
 import com.github.giamgiammi.StructuredFileViewer.model.SimpleTableData;
 import com.github.giamgiammi.StructuredFileViewer.model.fixed.FixedWidthColumn;
 import com.github.giamgiammi.StructuredFileViewer.model.fixed.FixedWidthSettings;
+import com.github.giamgiammi.StructuredFileViewer.utils.TextUtils;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 import lombok.val;
@@ -166,7 +167,7 @@ public class FixedWidthDataModel implements DataModel<FixedWidthSettings, Simple
         int index = 0;
         for (int i = 0; i < columns; i++) {
             val col = settings.columns().get(i);
-            var data = str.substring(index, Math.min(index + col.length(), str.length()));
+            var data = TextUtils.substring(str, index, index + col.length());
             if (col.trim()) data = data.trim();
             record[i] = data;
             index += col.length();

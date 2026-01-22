@@ -58,4 +58,24 @@ public class TextUtils {
     public static boolean isEmpty(String text) {
         return text == null || text.isEmpty();
     }
+
+    /**
+     * Extracts a substring from the specified string, starting at the given
+     * start index and ending at the given end index. If the input string is
+     * {@code null}, returns {@code null}. If the start index is greater than
+     * the length of the input string, an empty string is returned. If the end
+     * index exceeds the length of the input string, it is adjusted to the
+     * string's length.
+     *
+     * @param string the input string from which to extract the substring
+     * @param start the starting index (inclusive) of the substring
+     * @param end the ending index (exclusive) of the substring
+     * @return the extracted substring, or {@code null} if the input string is {@code null}
+     */
+    public static String substring(String string, int start, int end) {
+        if (string == null) return null;
+        if (start > string.length()) return "";
+        if (end > string.length()) end = string.length();
+        return string.substring(start, end);
+    }
 }
