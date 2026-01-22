@@ -129,7 +129,6 @@ public class FixedWidthDataModel implements DataModel<FixedWidthSettings, Simple
      * Parses a single line of fixed-width input data into an array of column values and adds it to the provided list.
      * The method uses column definitions from the settings to determine the length and trimming behavior for each column.
      *
-     * @param columns the number of columns expected in the input line
      * @param list the list to which the parsed column values will be added; each entry in the list represents a record
      * @param str the input line containing fixed-width data to be parsed
      */
