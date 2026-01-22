@@ -147,4 +147,9 @@ public class FixedWidthDataModel implements DataModel<FixedWidthSettings, Simple
         }
         list.add(record);
     }
+
+    @Override
+    public String toString() {
+        return "FixedWidthDataModel{settings=%s}".formatted(settings);
+    }
 }
