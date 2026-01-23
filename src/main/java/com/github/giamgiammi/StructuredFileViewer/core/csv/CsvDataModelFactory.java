@@ -54,6 +54,9 @@ public class CsvDataModelFactory implements DataModelFactory<CsvSettings, TableL
             b.setSkipHeaderRecord(s.skipHeaderRecord());
             if (s.skipHeaderRecord()) b.setHeader();
         }
+        if (s.customHeaderNames() != null && !s.customHeaderNames().isEmpty()) {
+            b.setHeader(s.customHeaderNames().toArray(String[]::new));
+        }
 
         return b.get();
     }

@@ -6,6 +6,7 @@ import org.apache.commons.csv.DuplicateHeaderMode;
 import org.apache.commons.csv.QuoteMode;
 
 import java.nio.charset.Charset;
+import java.util.List;
 
 /**
  * Settings class for CSV-like files.
@@ -24,5 +25,6 @@ public final record CsvSettings(
         Boolean lenientEof,
         QuoteMode quoteMode,
         Boolean skipHeaderRecord,
+        List<String> customHeaderNames,
         Charset charset
 ) {}

@@ -18,6 +18,7 @@ import org.apache.commons.csv.QuoteMode;
 import java.net.URL;
 import java.nio.charset.Charset;
 import java.util.Arrays;
+import java.util.List;
 import java.util.Optional;
 import java.util.ResourceBundle;
 import java.util.stream.Stream;
@@ -60,6 +61,9 @@ public class CsvSettingsController implements Initializable, SettingsController<
 
     @FXML
     private CheckBox skipHeaderRecord;
+
+    @FXML
+    private TextField customHeaderNames;
 
     @Override
     public void initialize(URL location, ResourceBundle resources) {
@@ -127,6 +131,7 @@ public class CsvSettingsController implements Initializable, SettingsController<
                 lenientEof.isIndeterminate() ? null : lenientEof.isSelected(),
                 quoteMode.getValue() == null ? null : quoteMode.getValue().mode(),
                 skipHeaderRecord.isIndeterminate() ? null : skipHeaderRecord.isSelected(),
+                TextUtils.isEmpty(customHeaderNames.getText()) ? null : List.of(customHeaderNames.getText().split(",")),
                 Charset.forName(charset.getValue())
         );
     }
@@ -145,6 +150,7 @@ public class CsvSettingsController implements Initializable, SettingsController<
             lenientEof.setIndeterminate(true);
             quoteMode.setValue(null);
             skipHeaderRecord.setIndeterminate(true);
+            customHeaderNames.setText(null);
             charset.setValue("UTF-8");
         } else {
             baseFormatChoice.setValue(baseFormatChoice.getItems().stream().filter(choice -> choice.equals(settings.baseFormat())).findFirst().orElse(null));
@@ -182,6 +188,10 @@ public class CsvSettingsController implements Initializable, SettingsController<
             } else {
                 skipHeaderRecord.setIndeterminate(true);
             }
+            if (settings.customHeaderNames() != null)
+                customHeaderNames.setText(String.join(",", settings.customHeaderNames()));
+            else
+                customHeaderNames.setText(null);
             charset.setValue(settings.charset().name());
         }
     }
