@@ -12,6 +12,7 @@ import com.github.giamgiammi.StructuredFileViewer.ui.load.LoadFileDialog;
 import com.github.giamgiammi.StructuredFileViewer.ui.tab.CloseTabAlert;
 import com.github.giamgiammi.StructuredFileViewer.ui.table.TableDataController;
 import com.github.giamgiammi.StructuredFileViewer.utils.FXUtils;
+import com.github.giamgiammi.StructuredFileViewer.utils.OSUtils;
 import javafx.concurrent.Task;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
@@ -42,6 +43,9 @@ public class MainViewController implements Initializable {
     private TabPane tabPane;
 
     @FXML
+    private MenuBar menuBar;
+
+    @FXML
     private Menu dataMenu;
 
     @Override
@@ -49,6 +53,8 @@ public class MainViewController implements Initializable {
         tabPane.getSelectionModel().selectedItemProperty().addListener((obs, oldTab, newTab) -> {
             dataMenu.setVisible(newTab != null);
         });
+
+        if (OSUtils.isMac()) menuBar.useSystemMenuBarProperty().set(true);
     }
 
     /**
