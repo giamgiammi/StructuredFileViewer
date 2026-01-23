@@ -20,10 +20,8 @@ import javafx.stage.Window;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 
-import java.io.File;
 import java.nio.file.Path;
 import java.util.ResourceBundle;
-import java.util.prefs.Preferences;
 
 /**
  * LoadFileDialog is a custom dialog window for loading or importing data files
@@ -42,6 +40,7 @@ import java.util.prefs.Preferences;
 @Slf4j
 public class LoadFileDialog extends Dialog<LoadResult<?>> {
     private final ResourceBundle bundle = App.getBundle();
+    private final LoadCommon common = new LoadCommon();
 
     /** Container for the dynamic settings UI specific to the selected data model */
     private Node settingsNode;
@@ -75,12 +74,7 @@ public class LoadFileDialog extends Dialog<LoadResult<?>> {
         // Button to import model settings (delimiters, charsets, etc.) from a JSON file
         val loadSettingsFromFile = new Button(bundle.getString("label.load_from_file"));
         loadSettingsFromFile.setOnAction(evt -> {
-            val fc = new FileChooser();
-            fc.setInitialDirectory(getModelInitialDirectory());
-            fc.setSelectedExtensionFilter(new FileChooser.ExtensionFilter("JSON", "*.json"));
-            val file = fc.showOpenDialog(getDialogPane().getScene().getWindow());
-            if (file != null) {
-                setModelInitialDirectory(file.getParentFile());
+            common.loadSettingsTofile(getDialogPane().getScene().getWindow(), file -> {
                 try {
                     val settings = SettingsUtils.loadSettings(file.toPath());
                     // Update UI to match the loaded settings type
@@ -90,28 +84,21 @@ public class LoadFileDialog extends Dialog<LoadResult<?>> {
                     log.error("Failed to load settings from file", e);
                     new ExceptionAlert(getDialogPane().getScene().getWindow(), e).showAndWait();
                 }
-            }
+            });
         });
         grid.add(loadSettingsFromFile, 1, 0);
 
         // Button to export current configuration settings to a JSON file
         val saveSettingsToFile = new Button(bundle.getString("label.save"));
         saveSettingsToFile.setOnAction(evt -> {
-            val fc = new FileChooser();
-            fc.setInitialDirectory(getModelInitialDirectory());
-            fc.setSelectedExtensionFilter(new FileChooser.ExtensionFilter("JSON", "*.json"));
-            fc.setInitialFileName("model.json");
-            var file = fc.showSaveDialog(getDialogPane().getScene().getWindow());
-            if (file != null) {
-                if (!file.getName().toLowerCase().endsWith(".json")) file = new File(file.getPath() + ".json");
-                setModelInitialDirectory(file.getParentFile());
+            common.saveSettingsTofile(getDialogPane().getScene().getWindow(), file -> {
                 try {
                     SettingsUtils.saveSettings(factory.getType(), settingsController.getSettings(), file.toPath());
                 } catch (Exception e) {
                     log.error("Failed to save settings to file", e);
                     new ExceptionAlert(getDialogPane().getScene().getWindow(), e).showAndWait();
                 }
-            }
+            });
         });
         saveSettingsToFile.setDisable(true);
         grid.add(saveSettingsToFile, 2, 0);
@@ -145,10 +132,10 @@ public class LoadFileDialog extends Dialog<LoadResult<?>> {
         // Action for selecting a file from the local filesystem
         getDialogPane().lookupButton(openFileBtn).addEventFilter(ActionEvent.ACTION, evt -> {
             val fc = new FileChooser();
-            fc.setInitialDirectory(getInitialDirectory());
+            fc.setInitialDirectory(common.getInitialDirectory());
             val file = fc.showOpenDialog(getDialogPane().getScene().getWindow());
             if (file != null) {
-                setInitialDirectory(file.getParentFile());
+                common.setInitialDirectory(file.getParentFile());
                 this.file = file.toPath();
             } else {
                 evt.consume();
@@ -219,61 +206,5 @@ public class LoadFileDialog extends Dialog<LoadResult<?>> {
                         bundle.getString("model.csv")
                 )
         );
-    }
-
-    /**
-     * Retrieves the initial directory for file selection based on the stored user preference.
-     * If a previously saved directory path exists and is valid (i.e., the path exists and is a directory),
-     * it returns the corresponding File instance. Otherwise, it returns null.
-     *
-     * @return The initial directory as a {@code File} object if a valid path exists, or {@code null} if no valid path is found.
-     */
-    private File getInitialDirectory() {
-        val path = Preferences.userNodeForPackage(getClass()).get("last_dir", null);
-        if (path != null) {
-            val file =  new File(path);
-            if (file.exists() && file.isDirectory()) return file;
-        }
-        return null;
-    }
-
-    /**
-     * Sets the initial directory for file selection by storing the provided directory path
-     * in the user's preferences node. This allows the directory to be remembered and reused
-     * in future sessions of the application.
-     *
-     * @param dir The directory to set as the initial directory for file selection.
-     *            Must be a valid {@code File} instance representing a directory.
-     */
-    private void setInitialDirectory(File dir) {
-        Preferences.userNodeForPackage(getClass()).put("last_dir", dir.getAbsolutePath());
-    }
-
-    /**
-     * Retrieves the initial directory for the model file selection based on the stored user preference.
-     * If a previously saved directory path exists, is valid (i.e., the path exists and is a directory),
-     * it returns the corresponding File instance. Otherwise, it returns null.
-     *
-     * @return The initial directory as a {@code File} object if a valid path exists, or {@code null} if no valid path is found.
-     */
-    private File getModelInitialDirectory() {
-        val path = Preferences.userNodeForPackage(getClass()).get("model_last_dir", null);
-        if (path != null) {
-            val file = new File(path);
-            if (file.exists() && file.isDirectory()) return file;
-        };
-        return null;
-    }
-
-    /**
-     * Sets the initial directory for model file selection by storing the provided directory path
-     * in the user's preferences node. This allows the directory to be remembered and reused
-     * in future sessions of the application.
-     *
-     * @param dir The directory to set as the initial directory for model file selection.
-     *            Must be a valid {@code File} instance representing a directory.
-     */
-    private void setModelInitialDirectory(File dir) {
-        Preferences.userNodeForPackage(getClass()).put("model_last_dir", dir.getAbsolutePath());
     }
 }
