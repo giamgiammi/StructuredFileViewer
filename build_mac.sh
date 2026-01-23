@@ -16,6 +16,5 @@ jpackage -m com.github.giamgiammi.StructuredFileViewer/com.github.giamgiammi.Str
              --type dmg \
              --icon logo.icns \
              --java-options "--enable-native-access=javafx.graphics" \
-             --mac-dmg-content target/legal,target/classes/LICENSE.txt \
-             --license-file target/classes/LICENSE.txt
+             --mac-dmg-content target/legal,target/classes/LICENSE.txt
 
