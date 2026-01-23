@@ -2,10 +2,12 @@ package com.github.giamgiammi.StructuredFileViewer.ui.main;
 
 import com.github.giamgiammi.StructuredFileViewer.App;
 import com.github.giamgiammi.StructuredFileViewer.core.TableLikeData;
+import com.github.giamgiammi.StructuredFileViewer.model.LoadResult;
 import com.github.giamgiammi.StructuredFileViewer.model.TabData;
 import com.github.giamgiammi.StructuredFileViewer.task.ParseFileTask;
 import com.github.giamgiammi.StructuredFileViewer.task.ParseStringTask;
 import com.github.giamgiammi.StructuredFileViewer.ui.about.AboutDialog;
+import com.github.giamgiammi.StructuredFileViewer.ui.editsettings.EditSettingsDialog;
 import com.github.giamgiammi.StructuredFileViewer.ui.exception.ExceptionAlert;
 import com.github.giamgiammi.StructuredFileViewer.ui.lang.ChangeLanguageDialog;
 import com.github.giamgiammi.StructuredFileViewer.ui.load.LoadFileDialog;
@@ -96,56 +98,69 @@ public class MainViewController implements Initializable {
      * Opens a new tab
      */
     public void handleNewTab() {
-        new LoadFileDialog(rootPane.getScene().getWindow()).showAndWait().ifPresent(result -> {
-            final Task<?> task;
-            if (result.file() != null) task = new ParseFileTask<>(result.model(), result.file());
-            else task = new ParseStringTask<>(result.model(), result.fileContent());
+        new LoadFileDialog(rootPane.getScene().getWindow()).showAndWait().ifPresent(this::loadTab);
+    }
 
-            val name = result.file() != null ? result.file().getFileName().toString() : bundle.getString("label.pasted_content");
-            val tab = new Tab(name, new ProgressIndicator(ProgressIndicator.INDETERMINATE_PROGRESS));
-            tab.setOnCloseRequest(evt -> new CloseTabAlert(tabPane.getScene().getWindow(), tab.getText()).showAndWait()
-                    .ifPresent(btn -> {
-                        if (btn.getButtonData() == ButtonBar.ButtonData.OK_DONE) {
-                            tabDataMap.remove(tab);
-                        } else {
-                            evt.consume();
-                        }
-                    }));
-            tabPane.getTabs().add(tab);
-            tabPane.getSelectionModel().select(tab);
+    private void loadTab(LoadResult<?> result) {
+        final Task<?> task;
+        if (result.file() != null) task = new ParseFileTask<>(result.model(), result.file());
+        else task = new ParseStringTask<>(result.model(), result.fileContent());
 
-            task.setOnFailed(evt -> {
-                log.error("Failed to load file", task.getException());
-                tab.setContent(new Label(bundle.getString("label.failed_load_file")));
-                new ExceptionAlert(rootPane.getScene().getWindow(), task.getException()).showAndWait();
-            });
+        val name = result.file() != null ? result.file().getFileName().toString() : bundle.getString("label.pasted_content");
+        val tab = new Tab(name, new ProgressIndicator(ProgressIndicator.INDETERMINATE_PROGRESS));
+        tab.setOnCloseRequest(evt -> new CloseTabAlert(tabPane.getScene().getWindow(), tab.getText()).showAndWait()
+                .ifPresent(btn -> {
+                    if (btn.getButtonData() == ButtonBar.ButtonData.OK_DONE) {
+                        tabDataMap.remove(tab);
+                    } else {
+                        evt.consume();
+                    }
+                }));
+        tabPane.getTabs().add(tab);
+        tabPane.getSelectionModel().select(tab);
 
-            task.setOnSucceeded(evt -> {
-                val data = task.getValue();
-
-                if (data == null) {
-                    log.error("Failed to load file: null data");
-                    tab.setContent(new Label(bundle.getString("label.failed_load_file")));
-                    new ExceptionAlert(rootPane.getScene().getWindow(), new NullPointerException("Null data")).showAndWait();
-                }
-
-                val context = new TabData();
-                context.setModel(result.model());
-                tabDataMap.put(tab, context);
-
-                if (data instanceof TableLikeData tableLikeData) {
-                    tab.setContent(FXUtils.loadFXML(TableDataController.class, "table", controller -> {
-                        controller.setData(tableLikeData);
-                        context.setController(controller);
-                    }));
-                } else {
-                    log.error("Failed to load file: unexpected data type {}", data.getClass());
-                    tab.setContent(new Label(bundle.getString("label.failed_load_file")));
-                    new ExceptionAlert(rootPane.getScene().getWindow(), new IllegalStateException("Unexpected data type: " + data.getClass())).showAndWait();
-                }
-            });
-
-            FXUtils.start(task);
+        task.setOnFailed(evt -> {
+            log.error("Failed to load file", task.getException());
+            tab.setContent(new Label(bundle.getString("label.failed_load_file")));
+            new ExceptionAlert(rootPane.getScene().getWindow(), task.getException()).showAndWait();
         });
+
+        task.setOnSucceeded(evt -> {
+            val data = task.getValue();
+
+            if (data == null) {
+                log.error("Failed to load file: null data");
+                tab.setContent(new Label(bundle.getString("label.failed_load_file")));
+                new ExceptionAlert(rootPane.getScene().getWindow(), new NullPointerException("Null data")).showAndWait();
+            }
+
+            val context = new TabData();
+            context.setModel(result.model());
+            context.setFile(result.file());
+            context.setFileContent(result.fileContent());
+            tabDataMap.put(tab, context);
+
+            if (data instanceof TableLikeData tableLikeData) {
+                tab.setContent(FXUtils.loadFXML(TableDataController.class, "table", controller -> {
+                    controller.setData(tableLikeData);
+                    context.setController(controller);
+                }));
+            } else {
+                log.error("Failed to load file: unexpected data type {}", data.getClass());
+                tab.setContent(new Label(bundle.getString("label.failed_load_file")));
+                new ExceptionAlert(rootPane.getScene().getWindow(), new IllegalStateException("Unexpected data type: " + data.getClass())).showAndWait();
+            }
+        });
+
+        FXUtils.start(task);
+    }
+
+    /**
+     * Handler for the edit settings data menu item
+     */
+    public void handleEditSettings() {
+        new EditSettingsDialog(rootPane.getScene().getWindow(),
+                tabDataMap.get(tabPane.getSelectionModel().getSelectedItem())).showAndWait()
+                .ifPresent(this::loadTab);
     }
 }

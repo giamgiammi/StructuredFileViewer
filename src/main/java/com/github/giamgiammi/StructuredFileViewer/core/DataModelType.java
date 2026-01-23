@@ -2,8 +2,14 @@ package com.github.giamgiammi.StructuredFileViewer.core;
 
 import com.github.giamgiammi.StructuredFileViewer.model.csv.CsvSettings;
 import com.github.giamgiammi.StructuredFileViewer.model.fixed.FixedWidthSettings;
+import com.github.giamgiammi.StructuredFileViewer.ui.csv.CsvSettingsController;
+import com.github.giamgiammi.StructuredFileViewer.ui.inteface.SettingsController;
+import com.github.giamgiammi.StructuredFileViewer.utils.FXUtils;
+import javafx.scene.Node;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
+
+import java.util.function.Consumer;
 
 /**
  * Represents the types of data models supported by the application.
@@ -31,5 +37,19 @@ public enum DataModelType {
      */
     public boolean canLoadStrings() {
         return canLoadStrings;
+    }
+
+    public Node loadSettingsNode(Consumer<SettingsController<?>> callback) {
+        final Class<? extends SettingsController<?>> clazz;
+        final String fmxlPath;
+        switch (this) {
+            case CSV_LIKE -> {
+                clazz = CsvSettingsController.class;
+                fmxlPath = "csv_settings";
+            }
+            default -> throw new IllegalStateException("Unexpected value: " + this);
+        }
+
+        return FXUtils.loadFXML((Class<SettingsController<?>>) clazz, fmxlPath, callback);
     }
 }

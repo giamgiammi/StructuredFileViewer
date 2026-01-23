@@ -22,9 +22,9 @@
               <MenuItem mnemonicParsing="false" onAction="#handleCloseApp" text="%label.close" />
             </items>
           </Menu>
-            <Menu fx:id="dataMenu" mnemonicParsing="false" text="Data menu" visible="false">
+            <Menu fx:id="dataMenu" mnemonicParsing="false" text="%label.data_menu" visible="false">
               <items>
-                <MenuItem mnemonicParsing="false" text="Action 1" />
+                <MenuItem mnemonicParsing="false" onAction="#handleEditSettings" text="%label.data_edit_settings" />
               </items>
             </Menu>
           <Menu mnemonicParsing="false" text="%label.help_menu">

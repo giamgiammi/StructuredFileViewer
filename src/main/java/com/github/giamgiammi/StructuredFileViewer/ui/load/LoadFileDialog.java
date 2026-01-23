@@ -6,10 +6,8 @@ import com.github.giamgiammi.StructuredFileViewer.core.DataModelType;
 import com.github.giamgiammi.StructuredFileViewer.core.csv.CsvDataModelFactory;
 import com.github.giamgiammi.StructuredFileViewer.model.LoadResult;
 import com.github.giamgiammi.StructuredFileViewer.model.ModelChoice;
-import com.github.giamgiammi.StructuredFileViewer.ui.csv.CsvSettingsController;
 import com.github.giamgiammi.StructuredFileViewer.ui.exception.ExceptionAlert;
 import com.github.giamgiammi.StructuredFileViewer.ui.inteface.SettingsController;
-import com.github.giamgiammi.StructuredFileViewer.utils.FXUtils;
 import com.github.giamgiammi.StructuredFileViewer.utils.SettingsUtils;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
@@ -205,19 +203,10 @@ public class LoadFileDialog extends Dialog<LoadResult<?>> {
      * @return The UI Node for the settings
      */
     private Node getSettingsNodeByType(DataModelType type) {
-        Node settingsNode;
-        switch (type) {
-            case CSV_LIKE -> {
-                settingsNode = FXUtils.loadFXML(CsvSettingsController.class, "csv_settings", controller -> {
-                    this.settingsController = controller;
-                    this.factory = new CsvDataModelFactory();
-                });
-            }
-            default -> {
-                throw new IllegalStateException("Unexpected value: " + type);
-            }
-        }
-        return settingsNode;
+        return type.loadSettingsNode(controller -> {
+            this.settingsController = controller;
+            this.factory = new CsvDataModelFactory();
+        });
     }
 
     /**
