@@ -57,6 +57,8 @@ public class MainViewController implements Initializable {
         });
 
         if (OSUtils.isMac()) menuBar.useSystemMenuBarProperty().set(true);
+
+        FXUtils.runLater(this::handleNewTab, 500);
     }
 
     /**
