@@ -23,6 +23,7 @@ import java.util.prefs.Preferences;
 @Slf4j
 public class App extends Application {
     public static final String ACCEPTED_LICENSE_KEY = "accepted_license";
+    private static final String MAXIMIZED_KEY = "last_maximized";
     private static ResourceBundle bundle;
     private static HostServices hostServices;
     private static Image logo;
@@ -104,6 +105,12 @@ public class App extends Application {
         });
         stage.getIcons().add(getLogo(stage));
         stage.show();
+
+        if (Preferences.userNodeForPackage(App.class).getBoolean(MAXIMIZED_KEY, false)) {
+            stage.setMaximized(true);
+        }
+
+        stage.maximizedProperty().addListener((obs, oldVal, newVal) -> Preferences.userNodeForPackage(App.class).putBoolean(MAXIMIZED_KEY, newVal));
     }
 
     private static Image getLogo(Stage stage) {
