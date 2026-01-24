@@ -1,14 +1,11 @@
 package com.github.giamgiammi.StructuredFileViewer;
 
-import com.github.giamgiammi.StructuredFileViewer.ui.about.AboutDialog;
 import com.github.giamgiammi.StructuredFileViewer.ui.exception.ExceptionAlert;
 import com.github.giamgiammi.StructuredFileViewer.ui.main.MainViewController;
 import com.github.giamgiammi.StructuredFileViewer.utils.FXUtils;
 import javafx.application.Application;
 import javafx.application.HostServices;
 import javafx.scene.Scene;
-import javafx.scene.control.ButtonBar;
-import javafx.scene.control.Label;
 import javafx.scene.image.Image;
 import javafx.stage.Stage;
 import lombok.extern.slf4j.Slf4j;
@@ -68,16 +65,16 @@ public class App extends Application {
 
     @Override
     public void start(Stage stage) throws IOException {
-        val acceptedLicense = Preferences.userNodeForPackage(App.class).getBoolean(ACCEPTED_LICENSE_KEY, false);
-        if (!acceptedLicense) {
-            startAcceptLicenseStage(stage);
-        } else {
+        //val acceptedLicense = Preferences.userNodeForPackage(App.class).getBoolean(ACCEPTED_LICENSE_KEY, false);
+        //if (!acceptedLicense) {
+        //    startAcceptLicenseStage(stage);
+        //} else {
             startMainStage(stage);
-        }
+        //}
         hostServices = getHostServices();
     }
 
-    private static void startAcceptLicenseStage(Stage stage) {
+    /*private static void startAcceptLicenseStage(Stage stage) {
         stage.setScene(new Scene(new Label(), 500, 400));
         stage.getIcons().add(getLogo(stage));
         stage.setTitle(getBundle().getString("title"));
@@ -94,7 +91,7 @@ public class App extends Application {
                 }
             });
         }, 500);
-    }
+    }*/
 
     private static void startMainStage(Stage stage) {
         log.info("Starting main stage");
