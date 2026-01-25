@@ -3,7 +3,6 @@ package com.github.giamgiammi.StructuredFileViewer.ui.load;
 import com.github.giamgiammi.StructuredFileViewer.App;
 import com.github.giamgiammi.StructuredFileViewer.core.DataModelFactory;
 import com.github.giamgiammi.StructuredFileViewer.core.DataModelType;
-import com.github.giamgiammi.StructuredFileViewer.core.csv.CsvDataModelFactory;
 import com.github.giamgiammi.StructuredFileViewer.model.LoadResult;
 import com.github.giamgiammi.StructuredFileViewer.ui.exception.ExceptionAlert;
 import com.github.giamgiammi.StructuredFileViewer.ui.inteface.SettingsController;
@@ -213,7 +212,7 @@ public class LoadFileDialog extends Dialog<LoadResult<?>> {
     private Node getSettingsNodeByType(DataModelType type) {
         return type.loadSettingsNode(controller -> {
             this.settingsController = controller;
-            this.factory = new CsvDataModelFactory();
+            this.factory = type.getFactory();
         });
     }
 }

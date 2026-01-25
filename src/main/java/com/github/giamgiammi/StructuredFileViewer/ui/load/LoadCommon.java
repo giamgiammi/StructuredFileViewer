@@ -128,6 +128,10 @@ public class LoadCommon {
                 new ModelChoice(
                         DataModelType.CSV_LIKE,
                         bundle.getString("model.csv")
+                ),
+                new ModelChoice(
+                        DataModelType.FIXED_WIDTH,
+                        bundle.getString("model.fixed")
                 )
         );
     }

@@ -1,8 +1,11 @@
 package com.github.giamgiammi.StructuredFileViewer.core;
 
+import com.github.giamgiammi.StructuredFileViewer.core.csv.CsvDataModelFactory;
+import com.github.giamgiammi.StructuredFileViewer.core.fixed.FixedWidthDataModelFactory;
 import com.github.giamgiammi.StructuredFileViewer.model.csv.CsvSettings;
 import com.github.giamgiammi.StructuredFileViewer.model.fixed.FixedWidthSettings;
 import com.github.giamgiammi.StructuredFileViewer.ui.csv.CsvSettingsController;
+import com.github.giamgiammi.StructuredFileViewer.ui.fixed.FixedWidthSettingsController;
 import com.github.giamgiammi.StructuredFileViewer.ui.inteface.SettingsController;
 import com.github.giamgiammi.StructuredFileViewer.utils.FXUtils;
 import javafx.scene.Node;
@@ -25,11 +28,12 @@ public enum DataModelType {
      * Represent a CSV-LIKE structured data.
      * CSV, TSV, and other character-separated formats can be parsed with this
      */
-    CSV_LIKE(CsvSettings.class, CsvSettingsController.class, "csv_settings", true),
-    FIXED_WIDTH(FixedWidthSettings.class, null, null, true);
+    CSV_LIKE(CsvSettings.class, CsvDataModelFactory.class, CsvSettingsController.class, "csv_settings", true),
+    FIXED_WIDTH(FixedWidthSettings.class, FixedWidthDataModelFactory.class, FixedWidthSettingsController.class, "fixed", true);
 
     @Getter
     private final Class<?> settingsClass;
+    private final Class<?> factoryClass;
     private final Class<?> settingsControllerClass;
     private final String fxmlPath;
     private final boolean canLoadStrings;
@@ -43,5 +47,13 @@ public enum DataModelType {
 
     public Node loadSettingsNode(Consumer<SettingsController<?>> callback) {
         return FXUtils.loadFXML((Class<SettingsController<?>>) settingsControllerClass, fxmlPath, callback);
+    }
+
+    public DataModelFactory<?, ?> getFactory() {
+        try {
+            return (DataModelFactory<?, ?>) factoryClass.getConstructor().newInstance();
+        } catch (Exception e) {
+            throw new RuntimeException("Cannot load factory class", e);
+        }
     }
 }
