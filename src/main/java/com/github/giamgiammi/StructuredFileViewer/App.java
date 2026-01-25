@@ -1,10 +1,13 @@
 package com.github.giamgiammi.StructuredFileViewer;
 
+import com.github.giamgiammi.StructuredFileViewer.model.InstanceMessage;
+import com.github.giamgiammi.StructuredFileViewer.service.SingleInstanceService;
 import com.github.giamgiammi.StructuredFileViewer.ui.exception.ExceptionAlert;
 import com.github.giamgiammi.StructuredFileViewer.ui.main.MainViewController;
 import com.github.giamgiammi.StructuredFileViewer.utils.FXUtils;
 import javafx.application.Application;
 import javafx.application.HostServices;
+import javafx.application.Platform;
 import javafx.scene.Scene;
 import javafx.scene.image.Image;
 import javafx.stage.Stage;
@@ -32,6 +35,7 @@ public class App extends Application {
     private static HostServices hostServices;
     private static Image logo;
     private static Path[] filesToOpen;
+    private static SingleInstanceService singleInstanceService;
 
     /**
      * Open a link in the default browser
@@ -102,6 +106,16 @@ public class App extends Application {
     private static void startMainStage(Stage stage) {
         log.info("Starting main stage");
         val scene = new Scene(FXUtils.loadFXML(MainViewController.class, "main", ctrl -> {
+            if (singleInstanceService != null ) {
+                singleInstanceService.setMessageHandler(message -> Platform.runLater(() -> {
+                    if (message.filesToOpen() != null) {
+                        ctrl.openFiles(message.filesToOpen());
+                    } else {
+                        ctrl.handleNewTab();
+                    }
+                }));
+            }
+
             if (filesToOpen == null) {
                 FXUtils.runLater(ctrl::handleNewTab, 500);
             } else {
@@ -165,6 +179,24 @@ public class App extends Application {
             log.info("Found files to open: {}", Arrays.toString(filesToOpen));
         }
 
+        try {
+            singleInstanceService = new SingleInstanceService();
+        } catch (Exception e) {
+            log.error("Failed to start single instance service", e);
+        }
+
+        try {
+            if (singleInstanceService != null && singleInstanceService.isClient()) {
+                log.info("Another instance of the app is already running, sendimg message");
+                val message = new InstanceMessage(filesToOpen);
+                singleInstanceService.sendMessage(message);
+                System.exit(0);
+            }
+        } catch (Exception e) {
+            log.error("Failed to send message to other instance", e);
+        }
+
+        log.info("Starting app");
         launch();
     }
 
