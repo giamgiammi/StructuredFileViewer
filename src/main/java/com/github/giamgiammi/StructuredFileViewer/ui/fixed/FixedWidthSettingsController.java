@@ -56,8 +56,6 @@ public class FixedWidthSettingsController implements SettingsController<FixedWid
             }
         });
 
-        //table.getItems().add(new FixedWidthColumn("test", 10, true));
-
         charset.getItems().setAll(TextUtils.commonCharsets());
         charset.getSelectionModel().select(0);
     }
