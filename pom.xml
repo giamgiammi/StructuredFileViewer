@@ -12,6 +12,7 @@
         <apache-common.csv.version>1.14.1</apache-common.csv.version>
         <jackson.version>3.0.0</jackson.version>
         <slf4j.version>2.0.17</slf4j.version>
+        <antlr.version>4.13.2</antlr.version>
     </properties>
     <dependencies>
 <!--        <dependency>-->
@@ -49,6 +50,11 @@
             <groupId>tools.jackson.core</groupId>
             <artifactId>jackson-databind</artifactId>
             <version>${jackson.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.antlr</groupId>
+            <artifactId>antlr4-runtime</artifactId>
+            <version>${antlr.version}</version>
         </dependency>
     </dependencies>
     <build>
@@ -150,6 +156,20 @@
                             <projectName>Structured File Viewer</projectName>
                             <licenseFile>LICENSE.txt</licenseFile>
                         </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+            <plugin>
+                <groupId>org.antlr</groupId>
+                <artifactId>antlr4-maven-plugin</artifactId>
+                <version>${antlr.version}</version>
+                <executions>
+                    <execution>
+                        <id>antlr</id>
+                        <phase>generate-sources</phase>
+                        <goals>
+                            <goal>antlr4</goal>
+                        </goals>
                     </execution>
                 </executions>
             </plugin>

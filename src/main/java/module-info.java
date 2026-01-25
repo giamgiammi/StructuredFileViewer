@@ -9,6 +9,7 @@ module com.github.giamgiammi.StructuredFileViewer {
     requires org.apache.commons.csv;
     requires tools.jackson.databind;
     requires java.logging;
+    requires org.antlr.antlr4.runtime;
 
     opens com.github.giamgiammi.StructuredFileViewer to javafx.fxml;
     opens com.github.giamgiammi.StructuredFileViewer.ui.main to javafx.fxml;
