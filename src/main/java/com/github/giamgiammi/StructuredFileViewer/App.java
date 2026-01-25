@@ -189,6 +189,7 @@ public class App extends Application {
                     .filter(Objects::nonNull)
                     .filter(s -> !s.isBlank())
                     .map(Path::of)
+                    .map(Path::toAbsolutePath)
                     .filter(Files::isRegularFile)
                     .filter(Files::isReadable)
                     .toArray(Path[]::new);
