@@ -70,6 +70,17 @@ public class LoadCommon {
         Preferences.userNodeForPackage(getClass()).put("model_last_dir", dir.getAbsolutePath());
     }
 
+    /**
+     * Loads settings from a file chosen by the user via a file chooser dialog. The method uses
+     * the previously stored initial directory for the file chooser, if available, and updates
+     * the initial directory based on the file selected by the user.
+     *
+     * @param owner    The owner window for the file chooser dialog. Typically, the primary
+     *                 application window or parent window from which this dialog is invoked.
+     * @param callback A {@code Consumer<File>} that will be invoked with the selected file as
+     *                 an argument. This callback can be used to process the contents of the
+     *                 selected file.
+     */
     public void loadSettingsTofile(Window owner, Consumer<File> callback) {
         val fc = new FileChooser();
         fc.setInitialDirectory(getModelInitialDirectory());
@@ -81,6 +92,20 @@ public class LoadCommon {
         }
     }
 
+    /**
+     * Saves the application settings to a file selected by the user using a file chooser dialog.
+     * The method uses the specified owner window to display the dialog and provides a callback
+     * to process the selected file after saving. The initial directory of the file chooser
+     * is set based on the stored user preference for the model file directory. If the user
+     * specifies a file name without a `.json` extension, the extension is automatically appended.
+     * The chosen file is then passed to the provided callback for further processing.
+     *
+     * @param owner    The owner window for the file chooser dialog. Typically, this is the parent
+     *                 window from which the dialog is invoked.
+     * @param callback A {@code Consumer<File>} that will be invoked with the selected file
+     *                 after the save operation. This callback can be used to handle the file
+     *                 as needed (e.g., saving data to the file).
+     */
     public void saveSettingsTofile(Window owner, Consumer<File> callback) {
         val fc = new FileChooser();
         fc.setInitialDirectory(getModelInitialDirectory());
