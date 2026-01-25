@@ -25,11 +25,13 @@ public enum DataModelType {
      * Represent a CSV-LIKE structured data.
      * CSV, TSV, and other character-separated formats can be parsed with this
      */
-    CSV_LIKE(CsvSettings.class, true),
-    FIXED_WIDTH(FixedWidthSettings.class, true);
+    CSV_LIKE(CsvSettings.class, CsvSettingsController.class, "csv_settings", true),
+    FIXED_WIDTH(FixedWidthSettings.class, null, null, true);
 
     @Getter
     private final Class<?> settingsClass;
+    private final Class<?> settingsControllerClass;
+    private final String fxmlPath;
     private final boolean canLoadStrings;
 
     /**
@@ -40,16 +42,6 @@ public enum DataModelType {
     }
 
     public Node loadSettingsNode(Consumer<SettingsController<?>> callback) {
-        final Class<? extends SettingsController<?>> clazz;
-        final String fmxlPath;
-        switch (this) {
-            case CSV_LIKE -> {
-                clazz = CsvSettingsController.class;
-                fmxlPath = "csv_settings";
-            }
-            default -> throw new IllegalStateException("Unexpected value: " + this);
-        }
-
-        return FXUtils.loadFXML((Class<SettingsController<?>>) clazz, fmxlPath, callback);
+        return FXUtils.loadFXML((Class<SettingsController<?>>) settingsControllerClass, fxmlPath, callback);
     }
 }
