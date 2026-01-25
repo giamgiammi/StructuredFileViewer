@@ -51,18 +51,17 @@ import java.util.function.Consumer;
 @Slf4j
 public class SingleInstanceService {
     private final ObjectMapper mapper = new ObjectMapper();
-    private final Path tmpPath = Path.of(System.getProperty("java.io.tmpdir"));
-    private final FileChannel lockFileChannel;
 
-    private UnixDomainSocketAddress socketAddress;
+    private final UnixDomainSocketAddress socketAddress;
     private ServerSocketChannel serverSocketChannel;
     @Getter
-    private boolean server;
+    private final boolean server;
 
     @Setter
     private Consumer<InstanceMessage> messageHandler;
 
     public SingleInstanceService() throws IOException {
+        val tmpPath = Path.of(System.getProperty("java.io.tmpdir"));
         if (!Files.isWritable(tmpPath) || !Files.isDirectory(tmpPath)) {
             log.error("Cannot write to temporary directory: {}", tmpPath);
             throw new IOException("Cannot write to temporary directory");
@@ -76,7 +75,7 @@ public class SingleInstanceService {
         val lockFile = folder.resolve("app.lock");
         if (!Files.exists(lockFile)) Files.createFile(lockFile);
 
-        lockFileChannel = FileChannel.open(lockFile, StandardOpenOption.WRITE);
+        val lockFileChannel = FileChannel.open(lockFile, StandardOpenOption.WRITE);
 
         val socketFile = folder.resolve("app.socket");
 
