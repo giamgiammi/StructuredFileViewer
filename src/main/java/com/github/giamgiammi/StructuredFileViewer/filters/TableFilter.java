@@ -8,6 +8,7 @@ import org.antlr.v4.runtime.CharStreams;
 import org.antlr.v4.runtime.CommonTokenStream;
 import org.antlr.v4.runtime.DiagnosticErrorListener;
 
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -21,9 +22,10 @@ public interface TableFilter {
      * indicating whether the record satisfies the condition.
      *
      * @param record the record to evaluate; must not be null
+     * @param rowIndex the index of the record in the table-like data structure
      * @return {@code true} if the record satisfies the condition, {@code false} otherwise
      */
-    boolean test(TableLikeData.Record record);
+    boolean test(TableLikeData.Record record, int rowIndex);
 
     /**
      * Filters a list of {@code TableLikeData.Record} objects based on the condition
@@ -33,7 +35,11 @@ public interface TableFilter {
      * @return a new list containing only the records that satisfy the condition defined by the {@code test} method
      */
     default List<TableLikeData.Record> filter(List<TableLikeData.Record> records) {
-        return records.stream().filter(this::test).toList();
+        val list = new ArrayList<TableLikeData.Record>();
+        for (int i = 0; i < records.size(); i++) {
+            if (test(records.get(i), i)) list.add(records.get(i));
+        }
+        return list;
     }
 
     /**
@@ -41,7 +47,7 @@ public interface TableFilter {
      * @return a filter that always returns {@code true}
      */
     static TableFilter empty() {
-        return record -> true;
+        return (r, i) -> true;
     }
 
     static TableFilter parse(String query, Iterable<String> columnNames) {
