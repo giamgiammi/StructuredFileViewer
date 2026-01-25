@@ -17,10 +17,7 @@ import lombok.val;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.util.Arrays;
-import java.util.Locale;
-import java.util.Objects;
-import java.util.ResourceBundle;
+import java.util.*;
 import java.util.logging.LogManager;
 import java.util.prefs.Preferences;
 
@@ -31,6 +28,7 @@ import java.util.prefs.Preferences;
 public class App extends Application {
     public static final String ACCEPTED_LICENSE_KEY = "accepted_license";
     private static final String MAXIMIZED_KEY = "last_maximized";
+    private static final List<MainViewController> controllers = new ArrayList<>();
     private static ResourceBundle bundle;
     private static HostServices hostServices;
     private static Image logo;
@@ -106,15 +104,13 @@ public class App extends Application {
     private static void startMainStage(Stage stage) {
         log.info("Starting main stage");
         val scene = new Scene(FXUtils.loadFXML(MainViewController.class, "main", ctrl -> {
-            if (singleInstanceService != null ) {
-                singleInstanceService.setMessageHandler(message -> Platform.runLater(() -> {
-                    if (message.filesToOpen() != null) {
-                        ctrl.openFiles(message.filesToOpen());
-                    } else {
-                        ctrl.handleNewTab();
-                    }
-                }));
-            }
+            controllers.forEach(c -> c.setIsMainView(false));
+            controllers.add(ctrl);
+            stage.setOnHidden(evt -> {
+                if (ctrl.isMainView() && controllers.size() > 1) controllers.getLast().setIsMainView(true);
+                controllers.remove(ctrl);
+            });
+            ctrl.setControllers(controllers);
 
             if (filesToOpen == null) {
                 FXUtils.runLater(ctrl::handleNewTab, 500);
@@ -181,19 +177,27 @@ public class App extends Application {
 
         try {
             singleInstanceService = new SingleInstanceService();
-        } catch (Exception e) {
-            log.error("Failed to start single instance service", e);
-        }
-
-        try {
-            if (singleInstanceService != null && singleInstanceService.isClient()) {
-                log.info("Another instance of the app is already running, sending message");
-                val message = new InstanceMessage(filesToOpen);
-                singleInstanceService.sendMessage(message);
-                System.exit(0);
+            try {
+                if (singleInstanceService.isClient()) {
+                    log.info("Another instance of the app is already running, sending message");
+                    val message = new InstanceMessage(filesToOpen);
+                    singleInstanceService.sendMessage(message);
+                    System.exit(0);
+                } else {
+                    singleInstanceService.setMessageHandler(message -> {
+                        val mainCtrl = controllers.stream()
+                                .filter(MainViewController::isMainView)
+                                .findFirst()
+                                .orElse(controllers.get(0));
+                        if (message.filesToOpen() != null) Platform.runLater(() -> mainCtrl.openFiles(message.filesToOpen()));
+                        else Platform.runLater(mainCtrl::handleNewTab);
+                    });
+                }
+            } catch (Exception e) {
+                log.error("Failed to send message to other instance", e);
             }
         } catch (Exception e) {
-            log.error("Failed to send message to other instance", e);
+            log.error("Failed to start single instance service", e);
         }
 
         log.info("Starting app");

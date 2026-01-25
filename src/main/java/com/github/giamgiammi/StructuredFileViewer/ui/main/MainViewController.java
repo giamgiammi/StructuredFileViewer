@@ -15,12 +15,15 @@ import com.github.giamgiammi.StructuredFileViewer.ui.tab.CloseTabAlert;
 import com.github.giamgiammi.StructuredFileViewer.ui.table.TableDataController;
 import com.github.giamgiammi.StructuredFileViewer.utils.FXUtils;
 import com.github.giamgiammi.StructuredFileViewer.utils.OSUtils;
+import javafx.beans.property.BooleanProperty;
+import javafx.beans.property.SimpleBooleanProperty;
 import javafx.concurrent.Task;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.*;
 import javafx.scene.layout.BorderPane;
 import lombok.NonNull;
+import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 
@@ -28,6 +31,7 @@ import java.io.IOException;
 import java.net.URL;
 import java.nio.file.Path;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.ResourceBundle;
 
@@ -39,6 +43,10 @@ import java.util.ResourceBundle;
 public class MainViewController implements Initializable {
     private final ResourceBundle bundle = App.getBundle();
     private final Map<Tab, TabData> tabDataMap = new HashMap<>();
+    private final BooleanProperty isMainView = new SimpleBooleanProperty(true);
+
+    @Setter
+    private List<MainViewController> controllers;
 
     @FXML
     private BorderPane rootPane;
@@ -52,6 +60,9 @@ public class MainViewController implements Initializable {
     @FXML
     private Menu dataMenu;
 
+    @FXML
+    private CheckMenuItem mainViewMenuItem;
+
     @Override
     public void initialize(URL location, ResourceBundle resources) {
         tabPane.getSelectionModel().selectedItemProperty().addListener((obs, oldTab, newTab) -> {
@@ -59,6 +70,14 @@ public class MainViewController implements Initializable {
         });
 
         if (OSUtils.isMac()) menuBar.useSystemMenuBarProperty().set(true);
+        mainViewMenuItem.selectedProperty().bindBidirectional(isMainView);
+        mainViewMenuItem.setOnAction(evt -> {
+            if (isMainView.get()) controllers.stream().filter(c -> c != this).forEach(c -> c.setIsMainView(false));
+            else {
+                val others = controllers.stream().filter(c -> c != this).toList();
+                if (!others.isEmpty()) controllers.getLast().setIsMainView(true);
+            }
+        });
     }
 
     /**
@@ -170,5 +189,13 @@ public class MainViewController implements Initializable {
         for (val file: files) {
             new LoadFileDialog(rootPane.getScene().getWindow(), file).showAndWait().ifPresent(this::loadTab);
         }
+    }
+
+    public boolean isMainView() {
+        return isMainView.get();
+    }
+
+    public void setIsMainView(boolean mainView) {
+        isMainView.set(mainView);
     }
 }
