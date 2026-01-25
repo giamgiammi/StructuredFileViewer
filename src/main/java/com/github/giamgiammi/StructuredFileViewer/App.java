@@ -187,7 +187,7 @@ public class App extends Application {
 
         try {
             if (singleInstanceService != null && singleInstanceService.isClient()) {
-                log.info("Another instance of the app is already running, sendimg message");
+                log.info("Another instance of the app is already running, sending message");
                 val message = new InstanceMessage(filesToOpen);
                 singleInstanceService.sendMessage(message);
                 System.exit(0);
