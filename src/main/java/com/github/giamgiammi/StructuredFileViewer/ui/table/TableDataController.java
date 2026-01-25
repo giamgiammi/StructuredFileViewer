@@ -213,7 +213,7 @@ public class TableDataController implements DataController {
 
                 val field = new TextField(value);
                 field.setEditable(false);
-                field.setPrefColumnCount(value.length());
+                field.setPrefColumnCount(Math.min(value.length(), 100));
 
                 val copy = new MenuItem(bundle.getString("label.copy"));
                 copy.setOnAction(evt -> {
