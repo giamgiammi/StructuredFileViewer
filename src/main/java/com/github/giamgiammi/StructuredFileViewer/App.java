@@ -155,26 +155,7 @@ public class App extends Application {
         }
     }
 
-    public static void main(String[] args) {
-        loadLoggingProperties();
-        val pref = Preferences.userNodeForPackage(App.class);
-        if (pref.get("locale", null) != null) {
-            val locale = Locale.of(pref.get("locale", null));
-            Locale.setDefault(locale);
-        }
-
-        if (args.length > 0) {
-            log.info("Found command line arguments: {}", Arrays.toString(args));
-            filesToOpen = Arrays.stream(args)
-                    .filter(Objects::nonNull)
-                    .filter(s -> !s.isBlank())
-                    .map(Path::of)
-                    .filter(Files::isRegularFile)
-                    .filter(Files::isReadable)
-                    .toArray(Path[]::new);
-            log.info("Found files to open: {}", Arrays.toString(filesToOpen));
-        }
-
+    private static void initSingleInstanceService() {
         try {
             singleInstanceService = new SingleInstanceService();
             try {
@@ -199,6 +180,35 @@ public class App extends Application {
         } catch (Exception e) {
             log.error("Failed to start single instance service", e);
         }
+    }
+
+    private static void findFilesToOpen(String[] args) {
+        if (args.length > 0) {
+            log.info("Found command line arguments: {}", Arrays.toString(args));
+            filesToOpen = Arrays.stream(args)
+                    .filter(Objects::nonNull)
+                    .filter(s -> !s.isBlank())
+                    .map(Path::of)
+                    .filter(Files::isRegularFile)
+                    .filter(Files::isReadable)
+                    .toArray(Path[]::new);
+            log.info("Found files to open: {}", Arrays.toString(filesToOpen));
+        }
+    }
+
+    private static void setLocale() {
+        val pref = Preferences.userNodeForPackage(App.class);
+        if (pref.get("locale", null) != null) {
+            val locale = Locale.of(pref.get("locale", null));
+            Locale.setDefault(locale);
+        }
+    }
+
+    public static void main(String[] args) {
+        loadLoggingProperties();
+        setLocale();
+        findFilesToOpen(args);
+        initSingleInstanceService();
 
         log.info("Starting app");
         launch();
