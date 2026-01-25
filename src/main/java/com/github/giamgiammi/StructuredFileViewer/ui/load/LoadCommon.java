@@ -1,5 +1,10 @@
 package com.github.giamgiammi.StructuredFileViewer.ui.load;
 
+import com.github.giamgiammi.StructuredFileViewer.App;
+import com.github.giamgiammi.StructuredFileViewer.core.DataModelType;
+import com.github.giamgiammi.StructuredFileViewer.model.ModelChoice;
+import javafx.collections.FXCollections;
+import javafx.collections.ObservableList;
 import javafx.stage.FileChooser;
 import javafx.stage.Window;
 import lombok.val;
@@ -87,5 +92,18 @@ public class LoadCommon {
             setModelInitialDirectory(file.getParentFile());
             callback.accept(file);
         }
+    }
+
+    /**
+     * Returns the list of supported data models for the selection ComboBox.
+     */
+    public ObservableList<ModelChoice> getModelChoices() {
+        val bundle = App.getBundle();
+        return FXCollections.observableArrayList(
+                new ModelChoice(
+                        DataModelType.CSV_LIKE,
+                        bundle.getString("model.csv")
+                )
+        );
     }
 }

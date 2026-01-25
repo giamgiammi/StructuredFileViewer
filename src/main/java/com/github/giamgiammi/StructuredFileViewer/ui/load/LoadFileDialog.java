@@ -5,12 +5,9 @@ import com.github.giamgiammi.StructuredFileViewer.core.DataModelFactory;
 import com.github.giamgiammi.StructuredFileViewer.core.DataModelType;
 import com.github.giamgiammi.StructuredFileViewer.core.csv.CsvDataModelFactory;
 import com.github.giamgiammi.StructuredFileViewer.model.LoadResult;
-import com.github.giamgiammi.StructuredFileViewer.model.ModelChoice;
 import com.github.giamgiammi.StructuredFileViewer.ui.exception.ExceptionAlert;
 import com.github.giamgiammi.StructuredFileViewer.ui.inteface.SettingsController;
 import com.github.giamgiammi.StructuredFileViewer.utils.SettingsUtils;
-import javafx.collections.FXCollections;
-import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.scene.Node;
 import javafx.scene.control.*;
@@ -68,7 +65,7 @@ public class LoadFileDialog extends Dialog<LoadResult<?>> {
 
         val grid = new GridPane(5, 5);
 
-        val modelCombo = new ComboBox<>(getModelChoices());
+        val modelCombo = new ComboBox<>(common.getModelChoices());
         grid.add(modelCombo, 0, 0);
 
         // Button to import model settings (delimiters, charsets, etc.) from a JSON file
@@ -194,17 +191,5 @@ public class LoadFileDialog extends Dialog<LoadResult<?>> {
             this.settingsController = controller;
             this.factory = new CsvDataModelFactory();
         });
-    }
-
-    /**
-     * Returns the list of supported data models for the selection ComboBox.
-     */
-    private ObservableList<ModelChoice> getModelChoices() {
-        return FXCollections.observableArrayList(
-                new ModelChoice(
-                        DataModelType.CSV_LIKE,
-                        bundle.getString("model.csv")
-                )
-        );
     }
 }
