@@ -20,11 +20,13 @@ import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.*;
 import javafx.scene.layout.BorderPane;
+import lombok.NonNull;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 
 import java.io.IOException;
 import java.net.URL;
+import java.nio.file.Path;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.ResourceBundle;
@@ -57,8 +59,6 @@ public class MainViewController implements Initializable {
         });
 
         if (OSUtils.isMac()) menuBar.useSystemMenuBarProperty().set(true);
-
-        FXUtils.runLater(this::handleNewTab, 500);
     }
 
     /**
@@ -164,5 +164,11 @@ public class MainViewController implements Initializable {
         new EditSettingsDialog(rootPane.getScene().getWindow(),
                 tabDataMap.get(tabPane.getSelectionModel().getSelectedItem())).showAndWait()
                 .ifPresent(this::loadTab);
+    }
+
+    public void openFiles(@NonNull Path...files) {
+        for (val file: files) {
+            new LoadFileDialog(rootPane.getScene().getWindow(), file).showAndWait().ifPresent(this::loadTab);
+        }
     }
 }

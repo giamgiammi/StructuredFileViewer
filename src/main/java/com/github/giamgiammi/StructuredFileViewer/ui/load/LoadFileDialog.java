@@ -18,6 +18,7 @@ import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 
 import java.nio.file.Path;
+import java.text.MessageFormat;
 import java.util.ResourceBundle;
 
 /**
@@ -47,6 +48,8 @@ public class LoadFileDialog extends Dialog<LoadResult<?>> {
     private Path file;
     private String fileContent;
 
+    private Path preselectedFile;
+
     /**
      * Constructs a new LoadFileDialog.
      * Initializes the layout, combo boxes for model selection, and action buttons.
@@ -54,14 +57,22 @@ public class LoadFileDialog extends Dialog<LoadResult<?>> {
      * @param owner The parent window for this dialog
      */
     public LoadFileDialog(Window owner) {
+        this(owner, null);
+    }
+
+
+    public LoadFileDialog(Window owner, Path preselectedFile) {
         initOwner(owner);
 
         setResizable(true);
         setWidth(700);
         setHeight(700);
 
+        this.preselectedFile = preselectedFile;
+
         setTitle(bundle.getString("load_file.title"));
-        setHeaderText(bundle.getString("load_file.header"));
+        if (preselectedFile != null) setHeaderText(new MessageFormat(bundle.getString("load_file.header_file")).format(new Object[]{preselectedFile.getFileName()}));
+        else setHeaderText(bundle.getString("load_file.header"));
 
         val grid = new GridPane(5, 5);
 
@@ -128,6 +139,7 @@ public class LoadFileDialog extends Dialog<LoadResult<?>> {
 
         // Action for selecting a file from the local filesystem
         getDialogPane().lookupButton(openFileBtn).addEventFilter(ActionEvent.ACTION, evt -> {
+            if (preselectedFile != null) return;
             val fc = new FileChooser();
             fc.setInitialDirectory(common.getInitialDirectory());
             val file = fc.showOpenDialog(getDialogPane().getScene().getWindow());
@@ -153,6 +165,14 @@ public class LoadFileDialog extends Dialog<LoadResult<?>> {
         // Transform the dialog button clicks into a LoadResult object
         setResultConverter(btn -> {
             if (btn == openFileBtn) {
+                if (preselectedFile != null) {
+                    return new LoadResult<>(
+                            modelCombo.getValue().type(),
+                            DataModelFactory.create(factory, settingsController.getSettings()),
+                            preselectedFile,
+                            null
+                    );
+                }
                 return new LoadResult<>(
                         modelCombo.getValue().type(),
                         DataModelFactory.create(factory, settingsController.getSettings()),
@@ -169,6 +189,10 @@ public class LoadFileDialog extends Dialog<LoadResult<?>> {
             }
             return null;
         });
+
+        if (preselectedFile != null) {
+            getDialogPane().lookupButton(pasteBtn).setVisible(false);
+        }
     }
 
     /**
