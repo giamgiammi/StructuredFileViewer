@@ -18,8 +18,6 @@
                      <accelerator>
                         <KeyCodeCombination alt="UP" code="W" control="DOWN" meta="UP" shift="UP" shortcut="UP" />
                      </accelerator></MenuItem>
-                  <CheckMenuItem fx:id="mainViewMenuItem" mnemonicParsing="false" text="%label.main_view_check" />
-                  <MenuItem mnemonicParsing="false" onAction="#handleChangeLanguage" text="%change_language.title" />
               <MenuItem mnemonicParsing="false" onAction="#handleCloseApp" text="%label.close" />
             </items>
           </Menu>
@@ -27,6 +25,12 @@
               <items>
                 <MenuItem mnemonicParsing="false" onAction="#handleEditSettings" text="%label.data_edit_settings" />
               </items>
+            </Menu>
+            <Menu mnemonicParsing="false" text="%label.settings_menu">
+               <items>
+                  <CheckMenuItem fx:id="mainViewMenuItem" mnemonicParsing="false" text="%label.main_view_check" />
+                  <MenuItem mnemonicParsing="false" onAction="#handleChangeLanguage" text="%change_language.title" />
+               </items>
             </Menu>
           <Menu mnemonicParsing="false" text="%label.help_menu">
             <items>
