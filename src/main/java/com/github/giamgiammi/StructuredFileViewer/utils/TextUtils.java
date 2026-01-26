@@ -78,4 +78,55 @@ public class TextUtils {
         if (end > string.length()) end = string.length();
         return string.substring(start, end);
     }
+
+    /**
+     * Compares two strings in a null-safe manner.
+     * If both strings are {@code null}, they are considered equal.
+     * If only one string is {@code null}, it is considered less than the non-null string.
+     * If both strings are non-null, their natural ordering is used for comparison.
+     *
+     * @param a the first string to compare, may be {@code null}
+     * @param b the second string to compare, may be {@code null}
+     * @return a negative integer if {@code a} is less than {@code b}, zero if {@code a} equals {@code b},
+     *         and a positive integer if {@code a} is greater than {@code b}
+     */
+    public static int safeCompare(String a, String b) {
+        if (a == null) {
+            if (b == null) return 0;
+            return -1;
+        }
+        if (b == null) return 1;
+        return a.compareTo(b);
+    }
+
+    /**
+     * Checks whether the specified pattern exists within the given value.
+     * If the pattern is {@code null}, the method checks whether the value is also {@code null}.
+     * If the pattern is not {@code null}, it checks if the value contains the pattern as a substring.
+     *
+     * @param pattern the substring to search for, may be {@code null}
+     * @param value the string in which to search for the pattern, may be {@code null}
+     * @return {@code true} if the pattern is found within the value, or if both are {@code null};
+     *         otherwise {@code false}
+     */
+    public static boolean contains(String pattern, String value) {
+        if (pattern == null) {
+            return value == null;
+        }
+        return value.contains(pattern);
+    }
+
+    /**
+     * Checks whether the specified pattern exists within the given value in a case-insensitive manner.
+     * If the pattern is {@code null}, the method checks whether the value is also {@code null}.
+     * If the pattern is not {@code null}, it checks if the value contains the pattern as a substring, ignoring case differences.
+     *
+     * @param pattern the substring to search for, may be {@code null}
+     * @param value the string in which to search for the pattern, may be {@code null}
+     * @return {@code true} if the pattern (case-insensitively) is found within the value,
+     *         or if both are {@code null}; otherwise {@code false}
+     */
+    public static boolean containsIgnoreCase(String pattern, String value) {
+        return contains(pattern == null ? null : pattern.toLowerCase(), value == null ? null : value.toLowerCase());
+    }
 }

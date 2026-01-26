@@ -59,8 +59,7 @@ public interface TableFilter {
         parser.addErrorListener(new DiagnosticErrorListener());
 
         val tree = parser.expr();
-        //todo read tree, probably using a visitor
-
-        return empty();
+        val visitor = new TableFilterVisitor(columnNames);
+        return visitor.visit(tree);
     }
 }

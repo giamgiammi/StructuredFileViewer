@@ -170,6 +170,10 @@
                         <goals>
                             <goal>antlr4</goal>
                         </goals>
+                        <configuration>
+                            <visitor>true</visitor>
+                            <outputDirectory>${project.basedir}/target/generated-sources/antlr4/com/github/giamgiammi/StructuredFileViewer/filters/generated/</outputDirectory>
+                        </configuration>
                     </execution>
                 </executions>
             </plugin>

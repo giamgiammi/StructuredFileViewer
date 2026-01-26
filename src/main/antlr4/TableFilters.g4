@@ -67,6 +67,7 @@ primary
 // Simple comparison: <column> <operator> <value>
 comparison
     : column op value
+    | column op column
     ;
 
 // Column reference:
@@ -88,6 +89,10 @@ value
 op
     : EQ
     | NEQ          // <>
+    | GT
+    | GE
+    | LT
+    | LE
     | LIKE
     | ILIKE
     | REGEX
@@ -112,6 +117,10 @@ REGEX : [Rr][Ee][Gg][Ee][Xx];
 // Symbolic comparison operators
 EQ  : '=';     // equals
 NEQ : '<>';    // not equals
+GT : '>';
+GE : '>=';
+LT : '<';
+LE : '<=';
 
 // --- Positional column reference: $n with n >= 0 ---
 // Accepts one or more digits after $
