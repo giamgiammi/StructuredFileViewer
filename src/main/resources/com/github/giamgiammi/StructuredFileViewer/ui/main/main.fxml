@@ -34,6 +34,7 @@
             </Menu>
           <Menu mnemonicParsing="false" text="%label.help_menu">
             <items>
+                  <MenuItem mnemonicParsing="false" onAction="#handleOpenLogFolder" text="%label.open_log_folder" />
               <MenuItem mnemonicParsing="false" onAction="#handleAbout" text="%label.about_menu_item" />
             </items>
           </Menu>

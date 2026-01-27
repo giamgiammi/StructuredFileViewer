@@ -198,4 +198,8 @@ public class MainViewController implements Initializable {
     public void setIsMainView(boolean mainView) {
         isMainView.set(mainView);
     }
+
+    public void handleOpenLogFolder() {
+        App.openLogFolder();
+    }
 }
