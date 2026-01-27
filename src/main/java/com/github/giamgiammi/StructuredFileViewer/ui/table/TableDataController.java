@@ -66,6 +66,7 @@ public class TableDataController implements DataController, Initializable {
                 updateByFilter();
             }
         });
+        runQueryButton.setTooltip(new Tooltip(bundle.getString("label.run_query")));
     }
 
     public void setData(@NonNull TableLikeData data) {
