@@ -72,7 +72,7 @@ public class TableFilterVisitor extends TableFiltersBaseVisitor<TableFilter> {
     @Override
     public TableFilter visitComparison(TableFiltersParser.ComparisonContext ctx) {
         val value = extractValue(ctx.value());
-        if (value != null) {
+        if (valueIsNotNull(ctx.value())) {
             val op = ctx.op().getText().toUpperCase();
             val col = ctx.column(0);
             val colIndex = extractColumn(col);
@@ -153,11 +153,16 @@ public class TableFilterVisitor extends TableFiltersBaseVisitor<TableFilter> {
 
     private String extractValue(TableFiltersParser.ValueContext ctx) {
         if (ctx == null) return null;
+        if (ctx.NULL() != null) return null;
         var text = ctx.STRING().getText();
         text = text.substring(1, text.length() - 1);
         text = text.replace("\\'", "'");
         text = text.replace("\\\\", "\\");
         return text;
+    }
+
+    private boolean valueIsNotNull(TableFiltersParser.ValueContext ctx) {
+        return ctx != null && (ctx.STRING() != null || ctx.NULL() != null);
     }
 
     static void main() {

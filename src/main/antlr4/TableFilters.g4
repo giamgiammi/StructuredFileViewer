@@ -80,9 +80,10 @@ column
     | DOLLAR_INDEX
     ;
 
-// Compared value: always a single-quoted string
+// Compared value: always a single-quoted string (or null)
 value
     : STRING
+    | NULL
     ;
 
 // Allowed comparison operators
@@ -121,6 +122,9 @@ GT : '>';
 GE : '>=';
 LT : '<';
 LE : '<=';
+
+// --- Null value ---
+NULL: [Nn][Uu][Ll][Ll];
 
 // --- Positional column reference: $n with n >= 0 ---
 // Accepts one or more digits after $

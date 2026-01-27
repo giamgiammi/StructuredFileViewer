@@ -36,4 +36,20 @@ class TableFilterTest {
         val result = filter.filter(data.getRecords());
         assertEquals(expected.getRecords(), result);
     }
+
+    @Test
+    void nullTest() {
+        val query = "$2 = NULL";
+        val data = new SimpleTableData(List.of("col1", "col2"), List.of(
+                new String[] {"a", "aaaa"},
+                new String[] {"b", null},
+                new String[] {"c", "ccccc"}
+        ));
+        val filter = TableFilter.parse(query, data.getColumnNames());
+        val result = filter.filter(data.getRecords());
+        val expected = new SimpleTableData(data.getColumnNames(), List.of(
+                new String[][] {new String[] {"b", null}}
+        ));
+        assertEquals(expected.getRecords(), result);
+    }
 }
