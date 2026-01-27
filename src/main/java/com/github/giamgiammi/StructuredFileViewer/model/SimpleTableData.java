@@ -37,7 +37,7 @@ public final class SimpleTableData implements TableLikeData {
     public SimpleTableData(@NonNull List<String> columnNames, @NonNull List<String[]> records) {
         this.columnNames = List.copyOf(columnNames);
         this.records = records.stream()
-                .map(CsvRecord::new)
+                .map(SimpleRecord::new)
                 .map(TableLikeData.Record.class::cast)
                 .toList();
     }
@@ -49,10 +49,10 @@ public final class SimpleTableData implements TableLikeData {
 
     @Getter
     @EqualsAndHashCode
-    private final class CsvRecord implements TableLikeData.Record {
+    private final class SimpleRecord implements TableLikeData.Record {
         private final String[] values;
 
-        public CsvRecord(@NonNull String[] values) {
+        public SimpleRecord(@NonNull String[] values) {
             this.values = values;
         }
 
@@ -67,11 +67,18 @@ public final class SimpleTableData implements TableLikeData {
             val b = new StringBuilder()
                     .append(getClass().getSimpleName())
                     .append('{');
-            for (int i = 0; i < columnNames.size(); i++) {
-                b.append(columnNames.get(i))
-                        .append('=')
-                        .append(values[i]);
-                if (i < columnNames.size() - 1) b.append(", ");
+            if (!columnNames.isEmpty()) {
+                for (int i = 0; i < columnNames.size(); i++) {
+                    b.append(columnNames.get(i))
+                            .append('=')
+                            .append(values[i]);
+                    if (i < columnNames.size() - 1) b.append(", ");
+                }
+            } else {
+                for (int i = 0; i < values.length; i++) {
+                    b.append(values[i]);
+                    if (i < values.length - 1) b.append(", ");
+                }
             }
             return b.append('}').toString();
         }
