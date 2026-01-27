@@ -10,6 +10,7 @@ module com.github.giamgiammi.StructuredFileViewer {
     requires tools.jackson.databind;
     requires java.logging;
     requires org.antlr.antlr4.runtime;
+    requires org.girod.javafx.svgimage;
 
     opens com.github.giamgiammi.StructuredFileViewer to javafx.fxml;
     opens com.github.giamgiammi.StructuredFileViewer.ui.main to javafx.fxml;
