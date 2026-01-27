@@ -14,6 +14,7 @@
         <slf4j.version>2.0.17</slf4j.version>
         <antlr.version>4.13.2</antlr.version>
         <junit.version>5.9.1</junit.version>
+        <fxsvgimage.version>1.4</fxsvgimage.version>
     </properties>
     <dependencies>
 <!--        <dependency>-->
@@ -56,6 +57,11 @@
             <groupId>org.antlr</groupId>
             <artifactId>antlr4-runtime</artifactId>
             <version>${antlr.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>com.github.hervegirod</groupId>
+            <artifactId>fxsvgimage</artifactId>
+            <version>${fxsvgimage.version}</version>
         </dependency>
 
         <dependency>
@@ -187,4 +193,11 @@
             </plugin>
         </plugins>
     </build>
+
+    <repositories>
+        <repository>
+            <id>jitpack.io</id>
+            <url>https://jitpack.io</url>
+        </repository>
+    </repositories>
 </project>
