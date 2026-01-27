@@ -1,29 +1,15 @@
 package com.github.giamgiammi.StructuredFileViewer.model;
 
-import java.util.Objects;
+import lombok.Getter;
+import lombok.RequiredArgsConstructor;
 
+@RequiredArgsConstructor
+@Getter
 public enum FilterType {
-    EQUALS {
-        @Override
-        public boolean test(String pattern, String value) {
-            return Objects.equals(pattern, value);
-        }
-    },
-    CONTAINS {
-        @Override
-        public boolean test(String pattern, String value) {
-            if (value == null) return pattern == null;
-            if (pattern == null) return false;
-            return value.contains(pattern);
-        }
-    },
-    DIFFERS {
-        @Override
-        public boolean test(String pattern, String value) {
-            return !Objects.equals(pattern, value);
-        }
-    }
+    EQUALS("="),
+    CONTAINS("LIKE"),
+    DIFFERS("<>")
     ;
 
-    public abstract boolean test(String pattern, String value);
+    private final String code;
 }

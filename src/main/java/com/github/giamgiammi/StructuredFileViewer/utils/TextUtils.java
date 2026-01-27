@@ -60,6 +60,17 @@ public class TextUtils {
     }
 
     /**
+     * Checks if the provided string is null, empty, or contains only whitespace characters.
+     *
+     * @param text the string to check for nullity, emptiness, or consisting only of whitespace
+     * @return {@code true} if the string is null, empty, or contains only whitespace characters;
+     *         {@code false} otherwise
+     */
+    public static boolean isBlank(String text) {
+        return text == null || text.isBlank();
+    }
+
+    /**
      * Extracts a substring from the specified string, starting at the given
      * start index and ending at the given end index. If the input string is
      * {@code null}, returns {@code null}. If the start index is greater than

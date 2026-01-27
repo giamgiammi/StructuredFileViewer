@@ -2,7 +2,7 @@ package com.github.giamgiammi.StructuredFileViewer.ui.table;
 
 import com.github.giamgiammi.StructuredFileViewer.App;
 import com.github.giamgiammi.StructuredFileViewer.core.TableLikeData;
-import com.github.giamgiammi.StructuredFileViewer.model.Filter;
+import com.github.giamgiammi.StructuredFileViewer.filters.TableFilter;
 import com.github.giamgiammi.StructuredFileViewer.model.FilterType;
 import com.github.giamgiammi.StructuredFileViewer.ui.exception.ExceptionAlert;
 import com.github.giamgiammi.StructuredFileViewer.ui.inteface.DataController;
@@ -18,6 +18,8 @@ import javafx.fxml.Initializable;
 import javafx.scene.control.*;
 import javafx.scene.input.Clipboard;
 import javafx.scene.input.ClipboardContent;
+import javafx.scene.input.KeyCode;
+import javafx.scene.input.KeyEvent;
 import javafx.scene.layout.BorderPane;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
@@ -29,17 +31,13 @@ import java.net.URL;
 import java.nio.charset.StandardCharsets;
 import java.text.MessageFormat;
 import java.util.List;
-import java.util.Objects;
 import java.util.ResourceBundle;
-import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
 @Slf4j
 public class TableDataController implements DataController, Initializable {
     private final ResourceBundle bundle = App.getBundle();
     private TableLikeData data;
-
-    private List<Filter> filters;
 
     @FXML
     private BorderPane rootPane;
@@ -63,6 +61,11 @@ public class TableDataController implements DataController, Initializable {
             log.error("Failed to load play icon", e);
             new ExceptionAlert(tableView.getScene().getWindow(), e).showAndWait();
         }
+        queryTextArea.addEventFilter(KeyEvent.KEY_PRESSED, evt -> {
+            if (evt.isControlDown() && evt.getCode() == KeyCode.ENTER) {
+                updateByFilter();
+            }
+        });
     }
 
     public void setData(@NonNull TableLikeData data) {
@@ -88,10 +91,23 @@ public class TableDataController implements DataController, Initializable {
     }
 
     private void addFilter(int column, FilterType type, String pattern) {
-        if (filters == null)
-            filters = IntStream.range(0, data.getColumnNames().size()).mapToObj(i -> (Filter) null).collect(Collectors.toList());
-        var filter = new Filter(type, pattern);
-        filters.set(column, filter);
+        val comp = "$%d %s '%s'".formatted(
+                column + 1,
+                type.getCode(),
+                pattern.replace("\\", "\\\\")
+                        .replace("'", "\\'")
+        );
+        if (TextUtils.isBlank(queryTextArea.getText())) {
+            queryTextArea.setText(comp);
+        } else {
+            var query = queryTextArea.getText();
+            if (query.contains("(") || query.contains(")") || query.toLowerCase().contains("or")) {
+                query = "(" + query + ")" + " AND " + comp;
+            } else {
+                query += " AND " + comp;
+            }
+            queryTextArea.setText(query);
+        }
     }
 
     private void clearFilters() {
@@ -104,7 +120,7 @@ public class TableDataController implements DataController, Initializable {
         alert.getDialogPane().getButtonTypes().setAll(okButton, cancelButton);
         alert.showAndWait().ifPresent(btn -> {
             if (btn == okButton) {
-                filters = null;
+                queryTextArea.setText(null);
                 updateByFilter();
             }
         });
@@ -112,6 +128,8 @@ public class TableDataController implements DataController, Initializable {
 
     private void updateByFilter() {
         rootPane.setDisable(true);
+        val oldContent = runQueryButton.getGraphic();
+        runQueryButton.setGraphic(new ProgressIndicator(ProgressIndicator.INDETERMINATE_PROGRESS));
         val task = new Task<ObservableList<TableLikeData.Record>>() {
             @Override
             protected ObservableList<TableLikeData.Record> call() throws Exception {
@@ -121,26 +139,23 @@ public class TableDataController implements DataController, Initializable {
         task.setOnSucceeded(evt -> {
             tableView.setItems(task.getValue());
             rootPane.setDisable(false);
+            runQueryButton.setGraphic(oldContent);
         });
         task.setOnFailed(evt -> {
             log.error("Failed to update table data by filter", task.getException());
             new ExceptionAlert(tableView.getScene().getWindow(), task.getException()).showAndWait();
             rootPane.setDisable(false);
+            runQueryButton.setGraphic(oldContent);
         });
         FXUtils.start(task);
     }
 
     private ObservableList<TableLikeData.Record> getFilteredRecords() {
-        if (filters == null) return FXCollections.observableArrayList(data.getRecords());
-        var stream = data.getRecords().stream();
-        for (int i = 0; i < filters.size(); i++) {
-            val filter = filters.get(i);
-            if (filter != null) {
-                int finalI = i;
-                stream = stream.filter(record -> filter.type().test(filter.pattern(), Objects.toString(record.get(finalI), null)));
-            }
-        }
-        return stream.collect(Collectors.toCollection(FXCollections::observableArrayList));
+        val query = queryTextArea.getText();
+        if (TextUtils.isBlank(query)) return FXCollections.observableArrayList(data.getRecords());
+
+        val filter = TableFilter.parse(query, data.getColumnNames());
+        return FXCollections.observableArrayList(filter.filter(data.getRecords()));
     }
 
     private void refreshData() {
@@ -149,7 +164,7 @@ public class TableDataController implements DataController, Initializable {
         val task = new Task<TaskResult>() {
             @Override
             protected TaskResult call() throws Exception {
-                filters = null;
+                queryTextArea.setText(null);
                 val columns = IntStream.range(0, data.getColumnNames().size())
                         .mapToObj(columnIndex -> {
                             return getTableColumn(columnIndex);
@@ -208,6 +223,10 @@ public class TableDataController implements DataController, Initializable {
 
         col.setContextMenu(menu);
         return col;
+    }
+
+    public void handleRunQuery() {
+        updateByFilter();
     }
 
     @RequiredArgsConstructor
