@@ -8,6 +8,7 @@ import com.github.giamgiammi.StructuredFileViewer.ui.exception.ExceptionAlert;
 import com.github.giamgiammi.StructuredFileViewer.ui.inteface.DataController;
 import com.github.giamgiammi.StructuredFileViewer.utils.FXUtils;
 import com.github.giamgiammi.StructuredFileViewer.utils.ListUtils;
+import com.github.giamgiammi.StructuredFileViewer.utils.QueryHistory;
 import com.github.giamgiammi.StructuredFileViewer.utils.TextUtils;
 import javafx.beans.property.SimpleObjectProperty;
 import javafx.collections.FXCollections;
@@ -37,6 +38,8 @@ import java.util.stream.IntStream;
 @Slf4j
 public class TableDataController implements DataController, Initializable {
     private final ResourceBundle bundle = App.getBundle();
+    private final QueryHistory queryHistory = new QueryHistory();
+
     private TableLikeData data;
 
     @FXML
@@ -62,9 +65,22 @@ public class TableDataController implements DataController, Initializable {
             new ExceptionAlert(tableView.getScene().getWindow(), e).showAndWait();
         }
         queryTextArea.addEventFilter(KeyEvent.KEY_PRESSED, evt -> {
-            if (evt.isControlDown() && evt.getCode() == KeyCode.ENTER) {
-                updateByFilter();
+            queryHistory.setUpdating(true);
+            try {
+                if (evt.isControlDown() && evt.getCode() == KeyCode.ENTER) {
+                    updateByFilter();
+                } else if (evt.isControlDown() && evt.getCode() == KeyCode.Z) {
+                    queryTextArea.setText(queryHistory.getPrevious());
+                } else if (evt.isControlDown() && evt.getCode() == KeyCode.Y) {
+                    queryTextArea.setText(queryHistory.getNext());
+                }
+            } finally {
+                queryHistory.setUpdating(false);
             }
+        });
+        queryTextArea.textProperty().addListener((obs, oldVal, newVal) -> {
+            if (queryHistory.isUpdating()) return;
+            queryHistory.add(newVal);
         });
         runQueryButton.setTooltip(new Tooltip(bundle.getString("label.run_query")));
     }
