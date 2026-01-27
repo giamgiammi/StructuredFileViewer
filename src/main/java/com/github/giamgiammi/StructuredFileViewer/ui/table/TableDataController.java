@@ -14,14 +14,19 @@ import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.concurrent.Task;
 import javafx.fxml.FXML;
+import javafx.fxml.Initializable;
 import javafx.scene.control.*;
 import javafx.scene.input.Clipboard;
 import javafx.scene.input.ClipboardContent;
+import javafx.scene.layout.BorderPane;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
+import org.girod.javafx.svgimage.SVGLoader;
 
+import java.net.URL;
+import java.nio.charset.StandardCharsets;
 import java.text.MessageFormat;
 import java.util.List;
 import java.util.Objects;
@@ -30,14 +35,35 @@ import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
 @Slf4j
-public class TableDataController implements DataController {
+public class TableDataController implements DataController, Initializable {
     private final ResourceBundle bundle = App.getBundle();
     private TableLikeData data;
 
     private List<Filter> filters;
 
     @FXML
+    private BorderPane rootPane;
+
+    @FXML
+    private Button runQueryButton;
+
+    @FXML
+    private TextArea queryTextArea;
+
+    @FXML
     private TableView<TableLikeData.Record> tableView;
+
+    @Override
+    public void initialize(URL location, ResourceBundle resources) {
+        runQueryButton.setText(null);
+        try (val in = getClass().getResourceAsStream("play-solid-full.svg")) {
+            val svg = SVGLoader.load(new String(in.readAllBytes(), StandardCharsets.UTF_8), 15);
+            runQueryButton.setGraphic(svg);
+        } catch (Exception e) {
+            log.error("Failed to load play icon", e);
+            new ExceptionAlert(tableView.getScene().getWindow(), e).showAndWait();
+        }
+    }
 
     public void setData(@NonNull TableLikeData data) {
         log.info("Loading table data: data={}", data);
@@ -85,7 +111,7 @@ public class TableDataController implements DataController {
     }
 
     private void updateByFilter() {
-        tableView.setDisable(true);
+        rootPane.setDisable(true);
         val task = new Task<ObservableList<TableLikeData.Record>>() {
             @Override
             protected ObservableList<TableLikeData.Record> call() throws Exception {
@@ -94,12 +120,12 @@ public class TableDataController implements DataController {
         };
         task.setOnSucceeded(evt -> {
             tableView.setItems(task.getValue());
-            tableView.setDisable(false);
+            rootPane.setDisable(false);
         });
         task.setOnFailed(evt -> {
             log.error("Failed to update table data by filter", task.getException());
             new ExceptionAlert(tableView.getScene().getWindow(), task.getException()).showAndWait();
-            tableView.setDisable(false);
+            rootPane.setDisable(false);
         });
         FXUtils.start(task);
     }
@@ -118,7 +144,7 @@ public class TableDataController implements DataController {
     }
 
     private void refreshData() {
-        tableView.setDisable(true);
+        rootPane.setDisable(true);
         record TaskResult(List<TableColumn<TableLikeData.Record, Object>> columns, ObservableList<TableLikeData.Record> records) {}
         val task = new Task<TaskResult>() {
             @Override
@@ -137,12 +163,12 @@ public class TableDataController implements DataController {
         task.setOnSucceeded(evt -> {
             tableView.getColumns().setAll(task.getValue().columns);
             tableView.setItems(task.getValue().records);
-            tableView.setDisable(false);
+            rootPane.setDisable(false);
         });
         task.setOnFailed(evt -> {
             log.error("Failed to load table data", task.getException());
             new ExceptionAlert(tableView.getScene().getWindow(), task.getException()).showAndWait();
-            tableView.setDisable(false);
+            rootPane.setDisable(false);
         });
         FXUtils.start(task);
     }
