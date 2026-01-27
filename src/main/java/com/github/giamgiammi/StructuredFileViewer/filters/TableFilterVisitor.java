@@ -6,7 +6,10 @@ import com.github.giamgiammi.StructuredFileViewer.filters.generated.TableFilters
 import com.github.giamgiammi.StructuredFileViewer.utils.TextUtils;
 import lombok.val;
 
-import java.util.*;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Objects;
 import java.util.regex.Pattern;
 
 public class TableFilterVisitor extends TableFiltersBaseVisitor<TableFilter> {
@@ -40,15 +43,13 @@ public class TableFilterVisitor extends TableFiltersBaseVisitor<TableFilter> {
 
     @Override
     public TableFilter visitOrExpr(TableFiltersParser.OrExprContext ctx) {
-        val expressions = new ArrayList<TableFilter>();
-        ctx.andExpr().forEach(e -> expressions.add(visit(e)));
+        val expressions = ctx.andExpr().stream().map(this::visit).toList();
         return (r, i) -> expressions.stream().anyMatch(f -> f.test(r, i));
     }
 
     @Override
     public TableFilter visitAndExpr(TableFiltersParser.AndExprContext ctx) {
-        val expressions = new ArrayList<TableFilter>();
-        ctx.notExpr().forEach(e -> expressions.add(visit(e)));
+        val expressions = ctx.notExpr().stream().map(this::visit).toList();
         return (r, i) -> expressions.stream().allMatch(f -> f.test(r, i));
     }
 
@@ -59,6 +60,13 @@ public class TableFilterVisitor extends TableFiltersBaseVisitor<TableFilter> {
             return (r, i) -> !filter.test(r, i);
         }
         return visit(ctx.primary());
+    }
+
+    @Override
+    public TableFilter visitPrimary(TableFiltersParser.PrimaryContext ctx) {
+        val expr = ctx.expr();
+        if (expr != null) return visit(expr);
+        return visit(ctx.comparison());
     }
 
     @Override
