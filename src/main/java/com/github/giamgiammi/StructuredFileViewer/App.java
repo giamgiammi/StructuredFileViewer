@@ -43,6 +43,11 @@ public class App extends Application {
         hostServices.showDocument(url);
     }
 
+    public static void openLogFolder() {
+        final var path = getLogsPath();
+        hostServices.showDocument("file://" + path.toAbsolutePath());
+    }
+
     /**
      * Get the resource bundle associated with this app
      */
@@ -147,7 +152,22 @@ public class App extends Application {
         return logo;
     }
 
+    private static Path getLogsPath() {
+        val temp = System.getProperty("java.io.tmpdir");
+        return Path.of(temp)
+                .resolve(App.class.getPackageName())
+                .resolve("logs");
+    }
+
     private static void loadLoggingProperties() {
+        //create folders
+        try {
+            Files.createDirectories(getLogsPath());
+        } catch (IOException e) {
+            log.error("Failed to create logs folder", e);
+        }
+
+        //load logging.properties
         try (val in = App.class.getResourceAsStream("logging.properties")) {
             LogManager.getLogManager().readConfiguration(in);
         } catch (Exception e) {
