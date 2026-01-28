@@ -14,7 +14,6 @@ import com.github.giamgiammi.StructuredFileViewer.ui.load.LoadFileDialog;
 import com.github.giamgiammi.StructuredFileViewer.ui.tab.CloseTabAlert;
 import com.github.giamgiammi.StructuredFileViewer.ui.table.TableDataController;
 import com.github.giamgiammi.StructuredFileViewer.utils.FXUtils;
-import com.github.giamgiammi.StructuredFileViewer.utils.OSUtils;
 import javafx.beans.property.BooleanProperty;
 import javafx.beans.property.SimpleBooleanProperty;
 import javafx.concurrent.Task;
@@ -34,6 +33,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.ResourceBundle;
+import java.util.prefs.Preferences;
 
 /**
  * Controller for the main view
@@ -41,6 +41,7 @@ import java.util.ResourceBundle;
  */
 @Slf4j
 public class MainViewController implements Initializable {
+    private static final String SYSTEM_MENU_BAR_KEY = "system.menu.bar";
     private final ResourceBundle bundle = App.getBundle();
     private final Map<Tab, TabData> tabDataMap = new HashMap<>();
     private final BooleanProperty isMainView = new SimpleBooleanProperty(true);
@@ -63,13 +64,19 @@ public class MainViewController implements Initializable {
     @FXML
     private CheckMenuItem mainViewMenuItem;
 
+    @FXML
+    private CheckMenuItem useSystemMenuBarMenuItem;
+
     @Override
     public void initialize(URL location, ResourceBundle resources) {
         tabPane.getSelectionModel().selectedItemProperty().addListener((obs, oldTab, newTab) -> {
             dataMenu.setVisible(newTab != null);
         });
 
-        if (OSUtils.isMac()) menuBar.useSystemMenuBarProperty().set(true);
+        menuBar.setUseSystemMenuBar(Preferences.userNodeForPackage(getClass()).getBoolean(SYSTEM_MENU_BAR_KEY, true));
+        useSystemMenuBarMenuItem.selectedProperty().bindBidirectional(menuBar.useSystemMenuBarProperty());
+        useSystemMenuBarMenuItem.setOnAction(evt -> Preferences.userNodeForPackage(getClass()).putBoolean(SYSTEM_MENU_BAR_KEY, useSystemMenuBarMenuItem.isSelected()));
+
         mainViewMenuItem.selectedProperty().bindBidirectional(isMainView);
         mainViewMenuItem.setOnAction(evt -> {
             if (isMainView.get()) controllers.stream().filter(c -> c != this).forEach(c -> c.setIsMainView(false));

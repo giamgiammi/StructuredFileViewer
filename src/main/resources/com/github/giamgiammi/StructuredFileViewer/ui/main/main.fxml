@@ -29,6 +29,7 @@
             <Menu mnemonicParsing="false" text="%label.settings_menu">
                <items>
                   <CheckMenuItem fx:id="mainViewMenuItem" mnemonicParsing="false" text="%label.main_view_check" />
+                  <CheckMenuItem fx:id="useSystemMenuBarMenuItem" mnemonicParsing="false" text="%label.use_system_menu_bar" />
                   <MenuItem mnemonicParsing="false" onAction="#handleChangeLanguage" text="%change_language.title" />
                </items>
             </Menu>
