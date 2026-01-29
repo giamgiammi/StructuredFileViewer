@@ -26,10 +26,8 @@ import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
-import org.girod.javafx.svgimage.SVGLoader;
 
 import java.net.URL;
-import java.nio.charset.StandardCharsets;
 import java.text.MessageFormat;
 import java.util.List;
 import java.util.ResourceBundle;
@@ -56,14 +54,7 @@ public class TableDataController implements DataController, Initializable {
 
     @Override
     public void initialize(URL location, ResourceBundle resources) {
-        runQueryButton.setText(null);
-        try (val in = getClass().getResourceAsStream("play-solid-full.svg")) {
-            val svg = SVGLoader.load(new String(in.readAllBytes(), StandardCharsets.UTF_8), 15);
-            runQueryButton.setGraphic(svg);
-        } catch (Exception e) {
-            log.error("Failed to load play icon", e);
-            new ExceptionAlert(tableView.getScene().getWindow(), e).showAndWait();
-        }
+
         queryTextArea.addEventFilter(KeyEvent.KEY_PRESSED, evt -> {
             queryHistory.setUpdating(true);
             try {

@@ -13,7 +13,7 @@
       <AnchorPane prefHeight="46.0" prefWidth="500.0" BorderPane.alignment="CENTER">
          <children>
             <TextArea fx:id="queryTextArea" prefHeight="71.0" prefWidth="427.0" promptText="%label.query" wrapText="true" AnchorPane.bottomAnchor="2.0" AnchorPane.leftAnchor="2.0" AnchorPane.rightAnchor="71.0" AnchorPane.topAnchor="2.0" />
-            <Button fx:id="runQueryButton" layoutX="431.0" layoutY="9.0" mnemonicParsing="false" onAction="#handleRunQuery" text="Button" AnchorPane.bottomAnchor="2.0" AnchorPane.rightAnchor="2.0" AnchorPane.topAnchor="2.0" />
+            <Button fx:id="runQueryButton" layoutX="431.0" layoutY="9.0" mnemonicParsing="false" onAction="#handleRunQuery" text="%label.run" AnchorPane.bottomAnchor="2.0" AnchorPane.rightAnchor="2.0" AnchorPane.topAnchor="2.0" />
          </children>
          <BorderPane.margin>
             <Insets />
