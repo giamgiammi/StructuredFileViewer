@@ -14,6 +14,7 @@ import com.github.giamgiammi.StructuredFileViewer.ui.load.LoadFileDialog;
 import com.github.giamgiammi.StructuredFileViewer.ui.tab.CloseTabAlert;
 import com.github.giamgiammi.StructuredFileViewer.ui.table.TableDataController;
 import com.github.giamgiammi.StructuredFileViewer.utils.FXUtils;
+import com.github.giamgiammi.StructuredFileViewer.utils.OSUtils;
 import javafx.beans.property.BooleanProperty;
 import javafx.beans.property.SimpleBooleanProperty;
 import javafx.concurrent.Task;
@@ -73,9 +74,13 @@ public class MainViewController implements Initializable {
             dataMenu.setVisible(newTab != null);
         });
 
-        menuBar.setUseSystemMenuBar(Preferences.userNodeForPackage(getClass()).getBoolean(SYSTEM_MENU_BAR_KEY, true));
-        useSystemMenuBarMenuItem.selectedProperty().bindBidirectional(menuBar.useSystemMenuBarProperty());
-        useSystemMenuBarMenuItem.setOnAction(evt -> Preferences.userNodeForPackage(getClass()).putBoolean(SYSTEM_MENU_BAR_KEY, useSystemMenuBarMenuItem.isSelected()));
+        if (OSUtils.isMac()) {
+            menuBar.setUseSystemMenuBar(Preferences.userNodeForPackage(getClass()).getBoolean(SYSTEM_MENU_BAR_KEY, true));
+            useSystemMenuBarMenuItem.selectedProperty().bindBidirectional(menuBar.useSystemMenuBarProperty());
+            useSystemMenuBarMenuItem.setOnAction(evt -> Preferences.userNodeForPackage(getClass()).putBoolean(SYSTEM_MENU_BAR_KEY, useSystemMenuBarMenuItem.isSelected()));
+        } else {
+            useSystemMenuBarMenuItem.setVisible(false);
+        }
 
         mainViewMenuItem.selectedProperty().bindBidirectional(isMainView);
         mainViewMenuItem.setOnAction(evt -> {

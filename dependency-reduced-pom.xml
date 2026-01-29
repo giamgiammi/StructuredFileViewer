@@ -70,6 +70,9 @@
             </goals>
             <configuration>
               <licensesOutputDirectory>target/legal</licensesOutputDirectory>
+              <errorRemedy>warn</errorRemedy>
+              <forceDownload>true</forceDownload>
+              <includeTransitiveDependencies>true</includeTransitiveDependencies>
             </configuration>
           </execution>
           <execution>
@@ -80,6 +83,7 @@
             </goals>
             <configuration>
               <outputDirectory>target/legal</outputDirectory>
+              <includeTransitiveDependencies>true</includeTransitiveDependencies>
             </configuration>
           </execution>
           <execution>
@@ -98,8 +102,32 @@
           </execution>
         </executions>
       </plugin>
+      <plugin>
+        <groupId>org.antlr</groupId>
+        <artifactId>antlr4-maven-plugin</artifactId>
+        <version>${antlr.version}</version>
+        <executions>
+          <execution>
+            <id>antlr</id>
+            <phase>generate-sources</phase>
+            <goals>
+              <goal>antlr4</goal>
+            </goals>
+            <configuration>
+              <visitor>true</visitor>
+              <outputDirectory>${project.basedir}/target/generated-sources/antlr4/com/github/giamgiammi/StructuredFileViewer/filters/generated/</outputDirectory>
+            </configuration>
+          </execution>
+        </executions>
+      </plugin>
     </plugins>
   </build>
+  <repositories>
+    <repository>
+      <id>jitpack.io</id>
+      <url>https://jitpack.io</url>
+    </repository>
+  </repositories>
   <dependencies>
     <dependency>
       <groupId>org.projectlombok</groupId>
@@ -107,14 +135,37 @@
       <version>1.18.42</version>
       <scope>provided</scope>
     </dependency>
+    <dependency>
+      <groupId>org.junit.jupiter</groupId>
+      <artifactId>junit-jupiter-engine</artifactId>
+      <version>5.9.1</version>
+      <scope>test</scope>
+      <exclusions>
+        <exclusion>
+          <artifactId>junit-platform-engine</artifactId>
+          <groupId>org.junit.platform</groupId>
+        </exclusion>
+        <exclusion>
+          <artifactId>junit-jupiter-api</artifactId>
+          <groupId>org.junit.jupiter</groupId>
+        </exclusion>
+        <exclusion>
+          <artifactId>apiguardian-api</artifactId>
+          <groupId>org.apiguardian</groupId>
+        </exclusion>
+      </exclusions>
+    </dependency>
   </dependencies>
   <properties>
     <maven.compiler.target>25</maven.compiler.target>
     <slf4j.version>2.0.17</slf4j.version>
+    <fxsvgimage.version>1.4</fxsvgimage.version>
     <maven.compiler.source>25</maven.compiler.source>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     <lombok.vesion>1.18.42</lombok.vesion>
+    <junit.version>5.9.1</junit.version>
     <jackson.version>3.0.0</jackson.version>
     <apache-common.csv.version>1.14.1</apache-common.csv.version>
+    <antlr.version>4.13.2</antlr.version>
   </properties>
 </project>
