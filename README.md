@@ -14,10 +14,11 @@ and thought of something that I would be able to use.
 Also, I used AI features, mainly for comments and the antlr4 
 grammar (and for this readme).
 The java code is all mine (and I say this knowing how bad it can be).
-The app logo is also AI-generated (I have no artistic skills).
+The app logo is also AI-generated (I have no art skills).
 
 ## Features
 
+- Supported languages: English, Italian
 - CSV-style parsing with delimiter/quote/charset options.
 - Fixed-width parsing with editable column layouts.
 - Filter/query language with AND/OR/NOT, comparisons, LIKE/ILIKE/REGEX, and
@@ -40,6 +41,11 @@ NOT (status = 'inactive')
 Notes:
 - Values are single-quoted strings.
 - Column names can be bare identifiers, double-quoted, or positional ($1, $2, ...).
+
+## Screenshots
+![table](screenshots/table.png)
+![csv filter](screenshots/csv_config.png)
+![fixed width filter](screenshots/flat_config.png)
 
 ## Requirements
 
