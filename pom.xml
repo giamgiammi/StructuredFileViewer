@@ -96,6 +96,9 @@
                             <launcher>StructuredFileViewer</launcher>
                             <compress>2</compress>
                             <options>--enable-native-access=javafx.graphics</options>
+                            <modulePaths>
+                                <modulePath>${project.build.directory}/modules</modulePath>
+                            </modulePaths>
                         </configuration>
                     </execution>
                 </executions>
@@ -185,6 +188,49 @@
                     </execution>
                 </executions>
             </plugin>
+            <plugin>
+                <groupId>org.moditect</groupId>
+                <artifactId>moditect-maven-plugin</artifactId>
+                <version>1.3.0.Final</version>
+                <executions>
+                    <execution>
+                        <id>add-module-infos</id>
+                        <phase>generate-resources</phase>
+                        <goals>
+                            <goal>add-module-info</goal>
+                        </goals>
+                        <configuration>
+                            <outputDirectory>${project.build.directory}/modules</outputDirectory>
+                            <overwriteExistingFiles>true</overwriteExistingFiles>
+                            <modules>
+                                <module>
+                                    <artifact>
+                                        <groupId>org.antlr</groupId>
+                                        <artifactId>antlr4-runtime</artifactId>
+                                        <version>${antlr.version}</version>
+                                    </artifact>
+                                    <moduleInfo></moduleInfo>
+                                </module>
+                            </modules>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
         </plugins>
     </build>
+
+    <profiles>
+        <profile>
+            <id>force-modular</id>
+            <dependencies>
+                <dependency>
+                    <groupId>org.antlr</groupId>
+                    <artifactId>antlr4-runtime</artifactId>
+                    <version>${antlr.version}</version>
+                    <scope>system</scope>
+                    <systemPath>${project.build.directory}/modules/antlr4-runtime-${antlr.version}.jar</systemPath>
+                </dependency>
+            </dependencies>
+        </profile>
+    </profiles>
 </project>
