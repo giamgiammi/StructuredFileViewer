@@ -1,5 +1,8 @@
+echo Start project build
+call mvnw clean compile
+
 echo Start image build
-call mvnw clean javafx:jlink
+call mvnw javafx:jlink -Pforce-modular
 
 echo Start packaging
 

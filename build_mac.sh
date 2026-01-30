@@ -5,8 +5,11 @@ cd "$DIR" || exit 1
 
 set -e
 
+echo "Start project build"
+./mvnw clean compile
+
 echo "Start image build"
-./mvnw clean javafx:jlink
+./mvnw javafx:jlink -Pforce-modular
 
 echo "Start packaging"
 jpackage -m com.github.giamgiammi.StructuredFileViewer/com.github.giamgiammi.StructuredFileViewer.App \
