@@ -43,7 +43,7 @@ Notes:
 
 ## Requirements
 
-- JDK 25 (see `pom.xml`) with JavaFX included.
+- JDK 25 (see `pom.xml`) with JavaFX included (suggeste Liberica "full" JDK).
 
 ## Run (development)
 
