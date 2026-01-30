@@ -47,33 +47,29 @@ public class TableDataController implements DataController, Initializable {
     private Button runQueryButton;
 
     @FXML
-    private TextArea queryTextArea;
+    private TextField queryTextField;
 
     @FXML
     private TableView<TableLikeData.Record> tableView;
 
     @Override
     public void initialize(URL location, ResourceBundle resources) {
-
-        queryTextArea.addEventFilter(KeyEvent.KEY_PRESSED, evt -> {
+        queryTextField.addEventFilter(KeyEvent.KEY_PRESSED, evt -> {
             queryHistory.setUpdating(true);
             try {
-                if (evt.isControlDown() && evt.getCode() == KeyCode.ENTER) {
-                    updateByFilter();
-                } else if (evt.isControlDown() && evt.getCode() == KeyCode.Z) {
-                    queryTextArea.setText(queryHistory.getPrevious());
-                } else if (evt.isControlDown() && evt.getCode() == KeyCode.Y) {
-                    queryTextArea.setText(queryHistory.getNext());
+                if (evt.isControlDown() && evt.getCode() == KeyCode.Z && !evt.isShiftDown()) {
+                    queryTextField.setText(queryHistory.getPrevious());
+                } else if ((evt.isControlDown() && evt.getCode() == KeyCode.Y) || (evt.isControlDown() && evt.isShiftDown() && evt.getCode() == KeyCode.Z)) {
+                    queryTextField.setText(queryHistory.getNext());
                 }
             } finally {
                 queryHistory.setUpdating(false);
             }
         });
-        queryTextArea.textProperty().addListener((obs, oldVal, newVal) -> {
+        queryTextField.textProperty().addListener((obs, oldVal, newVal) -> {
             if (queryHistory.isUpdating()) return;
             queryHistory.add(newVal);
         });
-        runQueryButton.setTooltip(new Tooltip(bundle.getString("label.run_query")));
     }
 
     public void setData(@NonNull TableLikeData data) {
@@ -105,16 +101,16 @@ public class TableDataController implements DataController, Initializable {
                 pattern.replace("\\", "\\\\")
                         .replace("'", "\\'")
         );
-        if (TextUtils.isBlank(queryTextArea.getText())) {
-            queryTextArea.setText(comp);
+        if (TextUtils.isBlank(queryTextField.getText())) {
+            queryTextField.setText(comp);
         } else {
-            var query = queryTextArea.getText();
+            var query = queryTextField.getText();
             if (query.contains("(") || query.contains(")") || query.toLowerCase().contains("or")) {
                 query = "(" + query + ")" + " AND " + comp;
             } else {
                 query += " AND " + comp;
             }
-            queryTextArea.setText(query);
+            queryTextField.setText(query);
         }
     }
 
@@ -128,7 +124,7 @@ public class TableDataController implements DataController, Initializable {
         alert.getDialogPane().getButtonTypes().setAll(okButton, cancelButton);
         alert.showAndWait().ifPresent(btn -> {
             if (btn == okButton) {
-                queryTextArea.setText(null);
+                queryTextField.setText(null);
                 updateByFilter();
             }
         });
@@ -159,7 +155,7 @@ public class TableDataController implements DataController, Initializable {
     }
 
     private ObservableList<TableLikeData.Record> getFilteredRecords() {
-        val query = queryTextArea.getText();
+        val query = queryTextField.getText();
         if (TextUtils.isBlank(query)) return FXCollections.observableArrayList(data.getRecords());
 
         val filter = TableFilter.parse(query, data.getColumnNames());
@@ -172,7 +168,7 @@ public class TableDataController implements DataController, Initializable {
         val task = new Task<TaskResult>() {
             @Override
             protected TaskResult call() throws Exception {
-                queryTextArea.setText(null);
+                queryTextField.setText(null);
                 val columns = IntStream.range(0, data.getColumnNames().size())
                         .mapToObj(columnIndex -> {
                             return getTableColumn(columnIndex);
