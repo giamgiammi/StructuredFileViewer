@@ -15,7 +15,7 @@
             <Insets />
          </BorderPane.margin>
          <children>
-            <TextField fx:id="queryTextField" maxWidth="1.7976931348623157E308" onAction="#handleRunQuery" HBox.hgrow="ALWAYS" />
+            <TextField fx:id="queryTextField" maxWidth="1.7976931348623157E308" onAction="#handleRunQuery" promptText="%label.query" HBox.hgrow="ALWAYS" />
             <Button fx:id="runQueryButton" mnemonicParsing="false" onAction="#handleRunQuery" text="%label.run_query" />
          </children>
       </HBox>
