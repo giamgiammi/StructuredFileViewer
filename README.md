@@ -43,18 +43,12 @@ Notes:
 
 ## Requirements
 
-- JDK 25 (see `pom.xml`)
+- JDK 25 (see `pom.xml`) with JavaFX included.
 
 ## Run (development)
 
 ```sh
 ./mvnw javafx:run
-```
-
-You can also pass files to open on startup:
-
-```sh
-./mvnw javafx:run -Dargs="path/to/file.csv"
 ```
 
 ## Build and package
