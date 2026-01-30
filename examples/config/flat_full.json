@@ -1,0 +1,36 @@
+{
+  "type" : "FIXED_WIDTH",
+  "settings" : {
+    "columns" : [ {
+      "name" : "ID",
+      "length" : 12,
+      "trim" : true
+    }, {
+      "name" : "Name",
+      "length" : 22,
+      "trim" : true
+    }, {
+      "name" : "Gender",
+      "length" : 7,
+      "trim" : true
+    }, {
+      "name" : "Age",
+      "length" : 3,
+      "trim" : true
+    }, {
+      "name" : "Phone",
+      "length" : 15,
+      "trim" : true
+    }, {
+      "name" : "E-Mail",
+      "length" : 23,
+      "trim" : true
+    }, {
+      "name" : "Word",
+      "length" : 9,
+      "trim" : true
+    } ],
+    "recordEndsWithNewLine" : false,
+    "charset" : "UTF-8"
+  }
+}
