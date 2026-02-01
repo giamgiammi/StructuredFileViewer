@@ -26,6 +26,7 @@ echo "Copying license files"
 cp -r target/legal "target/Structured File Viewer/"
 cp target/classes/LICENSE.txt "target/Structured File Viewer/legal/LICENSE.txt"
 
+mkdir -p cache
 if ! [ -f "cache/appimagetool-x86_64.AppImage" ]; then
   echo "Downloading appimagetool"
   wget https://github.com/AppImage/appimagetool/releases/download/continuous/appimagetool-x86_64.AppImage -O "cache/appimagetool-x86_64.AppImage"
