@@ -1,6 +1,7 @@
 # Table Filter Language Documentation
 
-This language provides a SQL-like syntax to filter tabular data. It supports complex logical branching, pattern matching, and flexible column referencing.
+This language provides a way to filter tabular data. It supports logical operation, pattern matching, and flexible column referencing.
+While it is SQL-inspired, it is a lot simpler and limited. Please check the documentation below.
 
 ## 1. Column Referencing
 
@@ -14,8 +15,8 @@ You can reference columns in three different ways:
 
 ## 2. Values and Literals
 - Strings: All values must be wrapped in single quotes (e.g., 'active').
-  - **All values are considered strings**, numeric types are not handled at this time
-- Escaping: To include a single quote or backslash in a value, use a backslash (e.g., 'O\'Reilly' or 'C:\\Docs').
+  - **All values are considered strings**, numeric types are not handled
+- Escaping: To include a single quote or backslash in a value, use a backslash (e.g., 'O\\'Reilly' or 'C:\\\\Docs').
 - Nulls: The keyword NULL is used to check for missing data
   - Note: Most of the time empty values consist of an empty string (i.e. '')
 
