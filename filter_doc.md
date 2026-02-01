@@ -33,6 +33,12 @@ The language supports standard comparisons between a column and a value, or betw
 | ILIKE    | Case-insensitive contains | Case-insensitive substring match     |
 | REGEX    | Regular Expression        | Matches Java Pattern rules           |
 
+Format:
+- The only combination allowed are:
+  - column *op* value
+  - column *op* column
+- Other combinations, (ex. `value op column`) are not supported
+- All values are treated as strings, event `$0`
 
 ## 4. Logical Operators & Precedence
 
