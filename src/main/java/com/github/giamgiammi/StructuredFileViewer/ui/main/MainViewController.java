@@ -15,6 +15,7 @@ import com.github.giamgiammi.StructuredFileViewer.ui.tab.CloseTabAlert;
 import com.github.giamgiammi.StructuredFileViewer.ui.table.TableDataController;
 import com.github.giamgiammi.StructuredFileViewer.utils.FXUtils;
 import com.github.giamgiammi.StructuredFileViewer.utils.OSUtils;
+import com.github.giamgiammi.StructuredFileViewer.utils.UpdateNotifier;
 import javafx.beans.property.BooleanProperty;
 import javafx.beans.property.SimpleBooleanProperty;
 import javafx.concurrent.Task;
@@ -22,6 +23,7 @@ import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.*;
 import javafx.scene.layout.BorderPane;
+import javafx.scene.layout.GridPane;
 import lombok.NonNull;
 import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
@@ -30,10 +32,8 @@ import lombok.val;
 import java.io.IOException;
 import java.net.URL;
 import java.nio.file.Path;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.ResourceBundle;
+import java.util.*;
+import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.prefs.Preferences;
 
 /**
@@ -43,6 +43,13 @@ import java.util.prefs.Preferences;
 @Slf4j
 public class MainViewController implements Initializable {
     private static final String SYSTEM_MENU_BAR_KEY = "system.menu.bar";
+    private static final String CHECK_FOR_UPDATES_KEY = "check.for.updates";
+
+    private static final BooleanProperty CHECK_FOR_UPADTE = new SimpleBooleanProperty(
+            Preferences.userNodeForPackage(MainViewController.class).getBoolean(CHECK_FOR_UPDATES_KEY, false)
+    );
+    private static final AtomicBoolean firstRun = new AtomicBoolean(true);
+
     private final ResourceBundle bundle = App.getBundle();
     private final Map<Tab, TabData> tabDataMap = new HashMap<>();
     private final BooleanProperty isMainView = new SimpleBooleanProperty(true);
@@ -68,6 +75,9 @@ public class MainViewController implements Initializable {
     @FXML
     private CheckMenuItem useSystemMenuBarMenuItem;
 
+    @FXML
+    private CheckMenuItem checkForUpdatesMenuItem;
+
     @Override
     public void initialize(URL location, ResourceBundle resources) {
         tabPane.getSelectionModel().selectedItemProperty().addListener((obs, oldTab, newTab) -> {
@@ -90,6 +100,19 @@ public class MainViewController implements Initializable {
                 if (!others.isEmpty()) controllers.getLast().setIsMainView(true);
             }
         });
+
+        checkForUpdatesMenuItem.selectedProperty().bindBidirectional(CHECK_FOR_UPADTE);
+        checkForUpdatesMenuItem.setOnAction(evt -> {
+            Preferences.userNodeForPackage(getClass()).putBoolean(CHECK_FOR_UPDATES_KEY, checkForUpdatesMenuItem.isSelected());
+        });
+
+        if (CHECK_FOR_UPADTE.get() && firstRun.compareAndSet(true, false)) {
+            FXUtils.runLater(this::handleCheckForUpdates, 1000);
+        }
+
+        if (Preferences.userNodeForPackage(getClass()).get(CHECK_FOR_UPDATES_KEY, null) == null) {
+            FXUtils.runLater(this::askForCheckingUpdates, 1000);
+        }
     }
 
     /**
@@ -213,5 +236,58 @@ public class MainViewController implements Initializable {
 
     public void handleOpenLogFolder() {
         App.openLogFolder();
+    }
+
+    public void handleCheckForUpdates() {
+        val task = new Task<Optional<String>>() {
+            @Override
+            protected Optional<String> call() throws Exception {
+                return new UpdateNotifier().checkForUpdates();
+            }
+        };
+        task.setOnSucceeded(evt -> {
+            task.getValue().ifPresent(url -> {
+                val alert = new Alert(Alert.AlertType.INFORMATION);
+                alert.initOwner(rootPane.getScene().getWindow());
+                alert.setTitle(bundle.getString("update.title"));
+                alert.setHeaderText(bundle.getString("update.header"));
+
+                val grid = new GridPane(2, 2);
+                grid.add(new Label(bundle.getString("update.msg")), 0, 0);
+                val link = new Hyperlink(url);
+                link.setOnAction(evt1 -> App.openLink(url));
+                grid.add(link, 1, 0);
+
+                alert.getDialogPane().setContent(grid);
+
+                val closeButton = new ButtonType(bundle.getString("label.close"), ButtonBar.ButtonData.CANCEL_CLOSE);
+                alert.getButtonTypes().setAll(closeButton);
+
+                alert.showAndWait();
+            });
+        });
+        FXUtils.start(task);
+    }
+
+    private void askForCheckingUpdates() {
+        val alert = new Alert(Alert.AlertType.CONFIRMATION);
+        alert.initOwner(rootPane.getScene().getWindow());
+        alert.setTitle(bundle.getString("update.ask.title"));
+        alert.setHeaderText(bundle.getString("update.ask.header"));
+        alert.setContentText(bundle.getString("update.ask.content"));
+
+        val yesButton = new ButtonType(bundle.getString("label.yes"), ButtonBar.ButtonData.YES);
+        val noButton = new ButtonType(bundle.getString("label.no"), ButtonBar.ButtonData.NO);
+        alert.getDialogPane().getButtonTypes().setAll(yesButton, noButton);
+
+        alert.showAndWait().ifPresent(btn -> {
+            if (btn == yesButton) {
+                CHECK_FOR_UPADTE.set(true);
+                Preferences.userNodeForPackage(getClass()).putBoolean(CHECK_FOR_UPDATES_KEY, true);
+                handleCheckForUpdates();
+            } else if (btn == noButton) {
+                Preferences.userNodeForPackage(getClass()).putBoolean(CHECK_FOR_UPDATES_KEY, false);
+            }
+        });
     }
 }

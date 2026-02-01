@@ -26,6 +26,7 @@ import java.util.prefs.Preferences;
  */
 @Slf4j
 public class App extends Application {
+    public static final String VERSION = "0.9";
     public static final String ACCEPTED_LICENSE_KEY = "accepted_license";
     private static final String MAXIMIZED_KEY = "last_maximized";
     private static final List<MainViewController> controllers = new ArrayList<>();

@@ -30,12 +30,14 @@
                <items>
                   <CheckMenuItem fx:id="mainViewMenuItem" mnemonicParsing="false" text="%label.main_view_check" />
                   <CheckMenuItem fx:id="useSystemMenuBarMenuItem" mnemonicParsing="false" text="%label.use_system_menu_bar" />
+                  <CheckMenuItem fx:id="checkForUpdatesMenuItem" mnemonicParsing="false" text="%label.check_for_update_startup" />
                   <MenuItem mnemonicParsing="false" onAction="#handleChangeLanguage" text="%change_language.title" />
                </items>
             </Menu>
           <Menu mnemonicParsing="false" text="%label.help_menu">
             <items>
                   <MenuItem mnemonicParsing="false" onAction="#handleOpenLogFolder" text="%label.open_log_folder" />
+                  <MenuItem mnemonicParsing="false" onAction="#handleCheckForUpdates" text="%label.check_for_updates" />
               <MenuItem mnemonicParsing="false" onAction="#handleAbout" text="%label.about_menu_item" />
             </items>
           </Menu>
