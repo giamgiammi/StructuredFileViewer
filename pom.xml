@@ -14,6 +14,8 @@
         <slf4j.version>2.0.17</slf4j.version>
         <antlr.version>4.13.2</antlr.version>
         <junit.version>5.9.1</junit.version>
+
+        <jlink.compress>2</jlink.compress>
     </properties>
     <dependencies>
 <!--        <dependency>-->
@@ -94,7 +96,7 @@
                         <configuration>
                             <mainClass>com.github.giamgiammi.StructuredFileViewer.App</mainClass>
                             <launcher>StructuredFileViewer</launcher>
-                            <compress>2</compress>
+                            <compress>${jlink.compress}</compress>
                             <options>--enable-native-access=javafx.graphics</options>
                             <modulePaths>
                                 <modulePath>${project.build.directory}/modules</modulePath>
