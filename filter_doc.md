@@ -38,7 +38,7 @@ Format:
   - column *op* value
   - column *op* column
 - Other combinations, (ex. `value op column`) are not supported
-- All values are treated as strings, event `$0`
+- All values are treated as strings, even `$0`
 
 ## 4. Logical Operators & Precedence
 
