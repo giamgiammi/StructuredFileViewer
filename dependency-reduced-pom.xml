@@ -30,8 +30,11 @@
             <configuration>
               <mainClass>com.github.giamgiammi.StructuredFileViewer.App</mainClass>
               <launcher>StructuredFileViewer</launcher>
-              <compress>2</compress>
+              <compress>${jlink.compress}</compress>
               <options>--enable-native-access=javafx.graphics</options>
+              <modulePaths>
+                <modulePath>${project.build.directory}/modules</modulePath>
+              </modulePaths>
             </configuration>
           </execution>
         </executions>
@@ -120,14 +123,50 @@
           </execution>
         </executions>
       </plugin>
+      <plugin>
+        <groupId>org.moditect</groupId>
+        <artifactId>moditect-maven-plugin</artifactId>
+        <version>1.3.0.Final</version>
+        <executions>
+          <execution>
+            <id>add-module-infos</id>
+            <phase>generate-resources</phase>
+            <goals>
+              <goal>add-module-info</goal>
+            </goals>
+            <configuration>
+              <outputDirectory>${project.build.directory}/modules</outputDirectory>
+              <overwriteExistingFiles>true</overwriteExistingFiles>
+              <modules>
+                <module>
+                  <artifact>
+                    <groupId>org.antlr</groupId>
+                    <artifactId>antlr4-runtime</artifactId>
+                    <version>${antlr.version}</version>
+                  </artifact>
+                  <moduleInfo />
+                </module>
+              </modules>
+            </configuration>
+          </execution>
+        </executions>
+      </plugin>
     </plugins>
   </build>
-  <repositories>
-    <repository>
-      <id>jitpack.io</id>
-      <url>https://jitpack.io</url>
-    </repository>
-  </repositories>
+  <profiles>
+    <profile>
+      <id>force-modular</id>
+      <dependencies>
+        <dependency>
+          <groupId>org.antlr</groupId>
+          <artifactId>antlr4-runtime</artifactId>
+          <version>${antlr.version}</version>
+          <scope>system</scope>
+          <systemPath>${project.build.directory}/modules/antlr4-runtime-${antlr.version}.jar</systemPath>
+        </dependency>
+      </dependencies>
+    </profile>
+  </profiles>
   <dependencies>
     <dependency>
       <groupId>org.projectlombok</groupId>
@@ -159,9 +198,9 @@
   <properties>
     <maven.compiler.target>25</maven.compiler.target>
     <slf4j.version>2.0.17</slf4j.version>
-    <fxsvgimage.version>1.4</fxsvgimage.version>
     <maven.compiler.source>25</maven.compiler.source>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+    <jlink.compress>2</jlink.compress>
     <lombok.vesion>1.18.42</lombok.vesion>
     <junit.version>5.9.1</junit.version>
     <jackson.version>3.0.0</jackson.version>

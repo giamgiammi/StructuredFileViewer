@@ -46,4 +46,4 @@ echo "Type=Application" >> "target/Structured File Viewer.AppDir/app.desktop"
 echo "Categories=Utility;" >> "target/Structured File Viewer.AppDir/app.desktop"
 
 echo "Packaging AppImage"
-"cache/appimagetool-x86_64.AppImage" "target/Structured File Viewer.AppDir" "target/Structured File Viewer"
+"cache/appimagetool-x86_64.AppImage" "target/Structured File Viewer.AppDir" "target/Structured File Viewer.AppImage"
