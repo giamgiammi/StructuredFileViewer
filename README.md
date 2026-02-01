@@ -42,6 +42,8 @@ Notes:
 - Values are single-quoted strings.
 - Column names can be bare identifiers, double-quoted, or positional ($1, $2, ...).
 
+Check the [filter language doc](filter_doc.md) for more details.
+
 ## Screenshots
 ![table](screenshots/table.png)
 ![csv filter](screenshots/csv_config.png)
