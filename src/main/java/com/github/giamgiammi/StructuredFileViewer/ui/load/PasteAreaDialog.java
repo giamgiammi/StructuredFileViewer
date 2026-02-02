@@ -5,14 +5,12 @@ import javafx.scene.control.ButtonBar;
 import javafx.scene.control.ButtonType;
 import javafx.scene.control.Dialog;
 import javafx.scene.control.TextArea;
-import javafx.stage.StageStyle;
 import javafx.stage.Window;
 import lombok.val;
 
 public class PasteAreaDialog extends Dialog<String> {
     public PasteAreaDialog(Window owner) {
         initOwner(owner);
-        initStyle(StageStyle.UNIFIED);
 
         val bundle = App.getBundle();
 
