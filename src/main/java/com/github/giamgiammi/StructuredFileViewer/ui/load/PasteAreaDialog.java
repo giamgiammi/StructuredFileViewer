@@ -11,6 +11,7 @@ import lombok.val;
 public class PasteAreaDialog extends Dialog<String> {
     public PasteAreaDialog(Window owner) {
         initOwner(owner);
+        setResizable(true);
 
         val bundle = App.getBundle();
 
