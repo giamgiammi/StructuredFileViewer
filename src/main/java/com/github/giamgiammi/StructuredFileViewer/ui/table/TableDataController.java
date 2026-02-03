@@ -170,9 +170,7 @@ public class TableDataController implements DataController, Initializable {
             protected TaskResult call() throws Exception {
                 queryTextField.setText(null);
                 val columns = IntStream.range(0, data.getColumnNames().size())
-                        .mapToObj(columnIndex -> {
-                            return getTableColumn(columnIndex);
-                        }).toList();
+                        .mapToObj(columnIndex -> getTableColumn(columnIndex)).toList();
                 val indexColumn = new TableColumn<TableLikeData.Record, Object>("");
                 indexColumn.setCellFactory(param -> new IndexCell());
                 val records = getFilteredRecords();

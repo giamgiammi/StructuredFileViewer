@@ -12,7 +12,9 @@ import org.apache.commons.csv.CSVFormat;
 
 import java.io.*;
 import java.util.ArrayList;
+import java.util.List;
 import java.util.stream.IntStream;
+import java.util.stream.Stream;
 
 /**
  * A concrete implementation of the {@link DataModel} interface designed
@@ -70,31 +72,25 @@ public class CsvDataModel implements DataModel<CsvSettings, TableLikeData> {
     private TableLikeData parse(Reader reader) throws IOException {
         val parser = format.parse(reader);
 
-        val columns = parser.getHeaderNames();
         val items = new ArrayList<String[]>();
 
-        if (columns.isEmpty()) {
-            for (val record : parser) {
-                val item = new ArrayList<String>();
-                for (val value : record) {
-                    item.add(value);
-                }
-                items.add(item.toArray(String[]::new));
+        for (val record : parser) {
+            val item = new ArrayList<String>();
+            for (val value : record) {
+                item.add(value);
             }
-
-            val n = items.stream().mapToInt(a -> a.length).max().orElse(0);
-            return new SimpleTableData(IntStream.range(0, n).mapToObj(i -> "").toList(), items);
-        } else {
-            for (val record : parser) {
-                val item = new String[columns.size()];
-                for (int i = 0; i < columns.size(); i++) {
-                    item[i] = record.get(i);
-                }
-                items.add(item);
-            }
-
-            return new SimpleTableData(columns, items);
+            items.add(item.toArray(String[]::new));
         }
+
+        val numCols = items.stream().mapToInt(a -> a.length).max().orElse(0);
+        var columns = parser.getHeaderNames();
+        if (columns == null) columns = List.of();
+        if (columns.size() < numCols) columns = Stream.concat(
+                columns.stream(),
+                IntStream.range(0, numCols - columns.size()).mapToObj(i -> "")
+        ).toList();
+
+        return new SimpleTableData(columns, items);
     }
 
     @Override
