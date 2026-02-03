@@ -95,7 +95,9 @@ public class TableDataController implements DataController, Initializable {
     }
 
     private void addFilter(int column, FilterType type, String pattern) {
-        val comp = "$%d %s '%s'".formatted(
+        final String comp;
+        if (pattern == null) comp = "$%d %s NULL".formatted(column + 1, type.getCode());
+        else comp = "$%d %s '%s'".formatted(
                 column + 1,
                 type.getCode(),
                 pattern.replace("\\", "\\\\")
