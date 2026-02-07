@@ -56,6 +56,8 @@ public class SingleInstanceService {
     private ServerSocketChannel serverSocketChannel;
     @Getter
     private final boolean server;
+    @SuppressWarnings("FieldCanBeLocal")//must stay open
+    private final FileChannel lockFileChannel;
 
     @Setter
     private Consumer<InstanceMessage> messageHandler;
@@ -75,7 +77,7 @@ public class SingleInstanceService {
         val lockFile = folder.resolve("app.lock");
         if (!Files.exists(lockFile)) Files.createFile(lockFile);
 
-        val lockFileChannel = FileChannel.open(lockFile, StandardOpenOption.WRITE);
+        lockFileChannel = FileChannel.open(lockFile, StandardOpenOption.WRITE);
 
         val socketFile = folder.resolve("app.socket");
 
