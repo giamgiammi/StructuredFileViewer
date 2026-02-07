@@ -7,6 +7,7 @@ import com.github.giamgiammi.StructuredFileViewer.service.SingleInstanceService;
 import com.github.giamgiammi.StructuredFileViewer.ui.exception.ExceptionAlert;
 import com.github.giamgiammi.StructuredFileViewer.ui.main.MainViewController;
 import com.github.giamgiammi.StructuredFileViewer.utils.FXUtils;
+import com.github.giamgiammi.StructuredFileViewer.utils.OSUtils;
 import javafx.application.Application;
 import javafx.application.HostServices;
 import javafx.application.Platform;
@@ -48,7 +49,16 @@ public class App extends Application {
 
     public static void openLogFolder() {
         final var path = getLogsPath();
-        hostServices.showDocument("file://" + path.toAbsolutePath());
+        if (OSUtils.isMac()) {
+            // file:// does not work anymore in tahoe
+            try {
+                new ProcessBuilder("open", path.toAbsolutePath().toString()).start();
+            } catch (IOException e) {
+                log.error("Failed to open log folder", e);
+            }
+        } else {
+            hostServices.showDocument("file://" + path.toAbsolutePath());
+        }
     }
 
     /**
