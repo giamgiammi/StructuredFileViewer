@@ -192,7 +192,7 @@ public class App extends Application {
                     singleInstanceService.sendMessage(message);
                     System.exit(0);
                 } else {
-                    log.info("This is the first instance of the app, starting as server");
+                    log.info("This is the first instance of the app, starting as server and reloading logging configuration");
                     System.setProperty("app.main", "true");
                     resetLoggers();
                     singleInstanceService.setMessageHandler(message -> {
