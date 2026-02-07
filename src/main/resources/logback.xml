@@ -1,0 +1,64 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE configuration>
+<configuration>
+    <property name="LOG_DIR"
+              value="${java.io.tmpdir}/com.github.giamgiammi.StructuredFileViewer/logs"/>
+
+    <property name="IS_MAIN" value="${app.main:-false}"/>
+    <property name="PATTERN" value="%d{HH:mm:ss.SSS} [%thread] %-5level %logger{36} -%kvp- %msg%n"/>
+
+    <appender name="CONSOLE" class="ch.qos.logback.core.ConsoleAppender">
+        <encoder>
+            <pattern>${PATTERN}</pattern>
+        </encoder>
+    </appender>
+
+    <appender name="MAIN_FILE"
+              class="ch.qos.logback.core.rolling.RollingFileAppender">
+        <file>${LOG_DIR}/app.log</file>
+        <append>true</append>
+
+        <rollingPolicy
+                class="ch.qos.logback.core.rolling.SizeAndTimeBasedRollingPolicy">
+            <fileNamePattern>
+                ${LOG_DIR}/app.%d{yyyy-MM-dd}.%i.log.gz
+            </fileNamePattern>
+            <maxFileSize>10MB</maxFileSize>
+            <maxHistory>2</maxHistory>
+        </rollingPolicy>
+
+        <encoder>
+            <pattern>${PATTERN}</pattern>
+        </encoder>
+    </appender>
+
+    <appender name="SHARED_FILE"
+              class="ch.qos.logback.core.FileAppender">
+        <file>${LOG_DIR}/app_shared.log</file>
+        <append>true</append>
+        <prudent>true</prudent>
+
+        <encoder>
+            <pattern>${PATTERN}</pattern>
+        </encoder>
+    </appender>
+
+    <condition class="ch.qos.logback.core.boolex.PropertyEqualityCondition">
+        <key>IS_MAIN</key>
+        <value>true</value>
+    </condition>
+    <if>
+        <then>
+            <root level="INFO">
+                <appender-ref ref="CONSOLE"/>
+                <appender-ref ref="MAIN_FILE"/>
+            </root>
+        </then>
+        <else>
+            <root level="INFO">
+                <appender-ref ref="CONSOLE"/>
+                <appender-ref ref="SHARED_FILE"/>
+            </root>
+        </else>
+    </if>
+</configuration>

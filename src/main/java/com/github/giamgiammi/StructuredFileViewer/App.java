@@ -1,5 +1,7 @@
 package com.github.giamgiammi.StructuredFileViewer;
 
+import ch.qos.logback.classic.LoggerContext;
+import ch.qos.logback.classic.util.ContextInitializer;
 import com.github.giamgiammi.StructuredFileViewer.model.InstanceMessage;
 import com.github.giamgiammi.StructuredFileViewer.service.SingleInstanceService;
 import com.github.giamgiammi.StructuredFileViewer.ui.exception.ExceptionAlert;
@@ -13,12 +15,12 @@ import javafx.scene.image.Image;
 import javafx.stage.Stage;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
+import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.*;
-import java.util.logging.LogManager;
 import java.util.prefs.Preferences;
 
 /**
@@ -160,19 +162,23 @@ public class App extends Application {
                 .resolve("logs");
     }
 
-    private static void loadLoggingProperties() {
+    private static void prepareLogging() {
         //create folders
         try {
             Files.createDirectories(getLogsPath());
         } catch (IOException e) {
             log.error("Failed to create logs folder", e);
         }
+    }
 
-        //load logging.properties
-        try (val in = App.class.getResourceAsStream("logging.properties")) {
-            LogManager.getLogManager().readConfiguration(in);
+    private static void resetLoggers() {
+        try {
+            val context = (LoggerContext) LoggerFactory.getILoggerFactory();
+            context.reset();
+            val ci = new ContextInitializer(context);
+            ci.autoConfig();
         } catch (Exception e) {
-            log.error("Failed to load logging.properties", e);
+            log.error("Failed to reset loggers", e);
         }
     }
 
@@ -186,6 +192,9 @@ public class App extends Application {
                     singleInstanceService.sendMessage(message);
                     System.exit(0);
                 } else {
+                    log.info("This is the first instance of the app, starting as server");
+                    System.setProperty("app.main", "true");
+                    resetLoggers();
                     singleInstanceService.setMessageHandler(message -> {
                         val mainCtrl = controllers.stream()
                                 .filter(MainViewController::isMainView)
@@ -227,7 +236,7 @@ public class App extends Application {
     }
 
     public static void main(String[] args) {
-        loadLoggingProperties();
+        prepareLogging();
         setLocale();
         findFilesToOpen(args);
         initSingleInstanceService();
