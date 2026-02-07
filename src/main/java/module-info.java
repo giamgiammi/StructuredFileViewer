@@ -8,7 +8,6 @@ module com.github.giamgiammi.StructuredFileViewer {
     requires java.desktop;
     requires org.apache.commons.csv;
     requires tools.jackson.databind;
-    requires java.logging;
     requires org.antlr.antlr4.runtime;
     requires java.net.http;
     requires ch.qos.logback.core;
