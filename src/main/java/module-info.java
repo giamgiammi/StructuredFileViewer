@@ -5,12 +5,11 @@ module com.github.giamgiammi.StructuredFileViewer {
     requires java.prefs;
     requires org.slf4j;
     requires ch.qos.logback.classic;
-    requires java.desktop;
+    requires ch.qos.logback.core;
     requires org.apache.commons.csv;
     requires tools.jackson.databind;
     requires org.antlr.antlr4.runtime;
     requires java.net.http;
-    requires ch.qos.logback.core;
 
     opens com.github.giamgiammi.StructuredFileViewer to javafx.fxml;
     opens com.github.giamgiammi.StructuredFileViewer.ui.main to javafx.fxml;
