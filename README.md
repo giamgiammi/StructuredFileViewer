@@ -51,7 +51,7 @@ Check the [filter language doc](filter_doc.md) for more details.
 
 ## Requirements
 
-- JDK 25 (see `pom.xml`) with JavaFX included (suggeste Liberica "full" JDK).
+- JDK 25 (see `pom.xml`) with JavaFX included (suggested Liberica "full" JDK).
 
 ## Run (development)
 
