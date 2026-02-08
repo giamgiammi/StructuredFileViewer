@@ -1,6 +1,5 @@
 package com.github.giamgiammi.StructuredFileViewer.utils;
 
-import com.github.giamgiammi.StructuredFileViewer.App;
 import com.github.giamgiammi.StructuredFileViewer.model.updater.ReleaseDto;
 import com.github.giamgiammi.StructuredFileViewer.model.updater.Version;
 import lombok.extern.slf4j.Slf4j;
@@ -14,6 +13,7 @@ import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
 import java.time.Duration;
 import java.util.Optional;
+import java.util.Properties;
 
 @Slf4j
 public class UpdateNotifier {
@@ -43,8 +43,26 @@ public class UpdateNotifier {
         throw new IOException("Failed to retrieve latest release");
     }
 
+    public Version getAppVersion() {
+        val props = new Properties();
+
+        try (val in = ClassLoader.getSystemClassLoader().getResourceAsStream("app.properties")) {
+            props.load(in);
+        } catch (Exception e) {
+            throw new IllegalStateException("Failed to load app.properties", e);
+        }
+
+        val version = props.getProperty("version");
+        if (version == null) throw new IllegalStateException("Missing version property in app.properties");
+        return new Version(version);
+    }
+
     public Optional<String> checkForUpdates() throws IOException, InterruptedException {
         log.info("Checking for updates");
+
+        val version = getAppVersion();
+        log.info("Current version: {}", version);
+
         val release = getLatestRelease();
         final Version releaseVersion;
         try {
@@ -52,8 +70,6 @@ public class UpdateNotifier {
         } catch (Exception e) {
             throw new IOException("Failed to parse release version", e);
         }
-
-        val version = new Version(App.VERSION);
 
         if (version.compareTo(releaseVersion) < 0) {
             log.info("New version available: {}", releaseVersion);

@@ -266,6 +266,7 @@ public class MainViewController implements Initializable {
                 alert.showAndWait();
             });
         });
+        task.setOnFailed(evt -> log.error("Failed to check for updates", task.getException()));
         FXUtils.start(task);
     }
 
