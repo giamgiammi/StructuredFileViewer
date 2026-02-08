@@ -11,10 +11,17 @@ echo "Start project build"
 echo "Start image build"
 ./mvnw javafx:jlink -Pforce-modular
 
+VERSION="$(cat target/classes/version.txt)"
+echo "Detected version: $VERSION"
+
+ARCH="$(uname -m)"
+echo "Detected architecture: $ARCH"
+
 echo "Start packaging"
 jpackage -m com.github.giamgiammi.StructuredFileViewer/com.github.giamgiammi.StructuredFileViewer.App \
              --runtime-image target/image \
-             --name 'Structured File Viewer' \
+             --name "StructuredFileViewer-$VERSION-$ARCH" \
+             --app-version "$VERSION" \
              --dest target/ \
              --type dmg \
              --icon logo.icns \
