@@ -3,8 +3,17 @@
   <modelVersion>4.0.0</modelVersion>
   <groupId>com.github.giamgiammi.StructuredFileViewer</groupId>
   <artifactId>structured-file-viewer</artifactId>
-  <version>1.0.3</version>
+  <version>1.0.4</version>
   <build>
+    <resources>
+      <resource>
+        <directory>src/main/resources</directory>
+      </resource>
+      <resource>
+        <filtering>true</filtering>
+        <directory>src/main/resources-filtered</directory>
+      </resource>
+    </resources>
     <plugins>
       <plugin>
         <artifactId>maven-compiler-plugin</artifactId>
@@ -76,6 +85,8 @@
               <errorRemedy>warn</errorRemedy>
               <forceDownload>true</forceDownload>
               <includeTransitiveDependencies>true</includeTransitiveDependencies>
+              <licensesConfigFile>src/main/license/license-config.xml</licensesConfigFile>
+              <forceDownload>false</forceDownload>
             </configuration>
           </execution>
           <execution>
@@ -87,6 +98,7 @@
             <configuration>
               <outputDirectory>target/legal</outputDirectory>
               <includeTransitiveDependencies>true</includeTransitiveDependencies>
+              <overrideUrl>file:src/main/license/override-THIRD-PARTY.properties</overrideUrl>
             </configuration>
           </execution>
           <execution>
