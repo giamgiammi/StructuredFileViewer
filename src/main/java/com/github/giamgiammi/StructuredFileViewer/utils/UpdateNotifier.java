@@ -43,9 +43,7 @@ public class UpdateNotifier {
     }
 
     public Version getAppVersion() {
-        val props = PropertyUtils.APP_PROPERTIES;
-
-        val version = props.getProperty("version");
+        val version = PropertyUtils.getAppProperty("version");
         if (version == null) throw new IllegalStateException("Missing version property in app.properties");
         return new Version(version);
     }

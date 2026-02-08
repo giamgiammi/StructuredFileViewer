@@ -14,6 +14,7 @@ import javafx.stage.Window;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 
+import java.text.MessageFormat;
 import java.util.ResourceBundle;
 import java.util.prefs.Preferences;
 
@@ -54,9 +55,15 @@ public class AboutDialog extends Alert {
         val grid = new GridPane();
         grid.setHgap(5);
         grid.setVgap(5);
+
+        val version = new Text(new MessageFormat(bundle.getString("about.version")).format(new Object[]{getVersion(owner)}));
+        version.setWrappingWidth(WRAPPING_WIDTH);
+        grid.add(version, 0, 0);
+
+
         val contentStart = new Text(bundle.getString("about.content_start"));
         contentStart.setWrappingWidth(WRAPPING_WIDTH);
-        grid.add(contentStart, 0, 0);
+        grid.add(contentStart, 0, 1);
 
         val flow = new TextFlow();
         val contentText = new Text(bundle.getString("about.content_link"));
@@ -69,10 +76,11 @@ public class AboutDialog extends Alert {
         });
         flow.getChildren().add(link);
 
-        grid.add(flow, 0, 1);
+        grid.add(flow, 0, 2);
+
         val notice = new Text(bundle.getString("about.notice"));
         notice.setWrappingWidth(WRAPPING_WIDTH);
-        grid.add(notice, 0, 2);
+        grid.add(notice, 0, 3);
 
         getDialogPane().setContent(grid);
         getDialogPane().setExpandableContent(new LicenseArea());
@@ -97,12 +105,22 @@ public class AboutDialog extends Alert {
     }
 
     private String getSourceUrl(Window owner) {
-        val url = PropertyUtils.APP_PROPERTIES.getProperty("url");
+        val url = PropertyUtils.getAppProperty("url");
         if (url == null) {
             log.error("Missing url property in app.properties");
             new ExceptionAlert(owner, new IllegalStateException("Missing url property in app.properties")).showAndWait();
             return "";
         }
         return url;
+    }
+
+    private String getVersion(Window owner) {
+        val version = PropertyUtils.getAppProperty("version");
+        if (version == null) {
+            log.error("Missing version property in app.properties");
+            new ExceptionAlert(owner, new IllegalStateException("Missing version property in app.properties")).showAndWait();
+            return "";
+        }
+        return version;
     }
 }
