@@ -20,11 +20,12 @@ echo "Detected architecture: $ARCH"
 echo "Start packaging"
 jpackage -m com.github.giamgiammi.StructuredFileViewer/com.github.giamgiammi.StructuredFileViewer.App \
              --runtime-image target/image \
-             --name "StructuredFileViewer-$VERSION-$ARCH" \
+             --name "StructuredFileViewer" \
              --app-version "$VERSION" \
              --dest target/ \
              --type dmg \
              --icon logo.icns \
              --java-options "--enable-native-access=javafx.graphics" \
              --mac-dmg-content target/legal,target/classes/LICENSE.txt
+mv "target/StructuredFileViewer-$VERSION.dmg" "target/StructuredFileViewer-$VERSION-$ARCH.dmg"
 
