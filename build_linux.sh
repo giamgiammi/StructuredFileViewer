@@ -12,10 +12,14 @@ echo "Start image build"
 # Note: AppImage compression seems to work better than jlink one
 ./mvnw -Djlink.compress=0 javafx:jlink -Pforce-modular
 
+VERSION="$(cat target/classes/version.txt)"
+echo "Detected version: $VERSION"
+
 echo "Start packaging"
 jpackage -m com.github.giamgiammi.StructuredFileViewer/com.github.giamgiammi.StructuredFileViewer.App \
              --runtime-image target/image \
-             --name 'Structured File Viewer' \
+             --name 'StructuredFileViewer' \
+             --app-version "$VERSION" \
              --dest target/ \
              --type app-image \
              --icon src/main/resources/com/github/giamgiammi/StructuredFileViewer/logo.png \
@@ -23,29 +27,36 @@ jpackage -m com.github.giamgiammi.StructuredFileViewer/com.github.giamgiammi.Str
 
 
 echo "Copying license files"
-cp -r target/legal "target/Structured File Viewer/"
-cp target/classes/LICENSE.txt "target/Structured File Viewer/legal/LICENSE.txt"
+cp -r target/legal "target/StructuredFileViewer/"
+cp target/classes/LICENSE.txt "target/StructuredFileViewer/legal/LICENSE.txt"
+
+ARCH="$(uname -m)"
+echo "Detected architecture: $ARCH"
 
 mkdir -p cache
-if ! [ -f "cache/appimagetool-x86_64.AppImage" ]; then
-  echo "Downloading appimagetool"
-  wget https://github.com/AppImage/appimagetool/releases/download/continuous/appimagetool-x86_64.AppImage -O "cache/appimagetool-x86_64.AppImage"
-  chmod +x "cache/appimagetool-x86_64.AppImage"
+if ! [ -f "cache/appimagetool-$ARCH.AppImage" ]; then
+  APPIMAGE_TOOL_URL="https://github.com/AppImage/appimagetool/releases/download/continuous/appimagetool-$ARCH.AppImage"
+  echo "Downloading appimagetool: $APPIMAGE_TOOL_URL"
+  wget "$APPIMAGE_TOOL_URL" -O "cache/appimagetool-$ARCH.AppImage"
+  chmod +x "cache/appimagetool-$ARCH.AppImage"
 fi
 
 echo "Preparing AppImage package"
-mv "target/Structured File Viewer" "target/Structured File Viewer.AppDir"
-(cd "target/Structured File Viewer.AppDir" && ln -s "bin/Structured File Viewer" AppRun)
-cp src/main/resources/com/github/giamgiammi/StructuredFileViewer/logo.png "target/Structured File Viewer.AppDir/logo.png"
+mv "target/StructuredFileViewer" "target/StructuredFileViewer.AppDir"
+(cd "target/StructuredFileViewer.AppDir" && ln -s "bin/StructuredFileViewer" AppRun)
+cp src/main/resources/com/github/giamgiammi/StructuredFileViewer/logo.png "target/StructuredFileViewer.AppDir/logo.png"
 
-DESKTOP_FILE="target/Structured File Viewer.AppDir/Structured File Viewer.desktop"
-echo "[Desktop Entry]" >> "$DESKTOP_FILE"
-echo "Name=Structured File Viewer" >> "$DESKTOP_FILE"
-echo "Name[it]=Visualizzatore di file strutturato" >> "$DESKTOP_FILE"
-echo "Exec=AppRun" >> "$DESKTOP_FILE"
-echo "Icon=logo" >> "$DESKTOP_FILE"
-echo "Type=Application" >> "$DESKTOP_FILE"
-echo "Categories=Utility;" >> "$DESKTOP_FILE"
+DESKTOP_FILE="target/StructuredFileViewer.AppDir/StructuredFileViewer.desktop"
+{
+  echo "[Desktop Entry]"
+  echo "Name=Structured File Viewer"
+  echo "Name[it]=Visualizzatore di file strutturato"
+  echo "Exec=AppRun"
+  echo "Icon=logo"
+  echo "Type=Application"
+  echo "Categories=Utility;"
+} > "$DESKTOP_FILE"
+
 
 echo "Packaging AppImage"
-"cache/appimagetool-x86_64.AppImage" "target/Structured File Viewer.AppDir" "target/Structured File Viewer.AppImage"
+"cache/appimagetool-$ARCH.AppImage" "target/StructuredFileViewer.AppDir" "target/StructuredFileViewer-$VERSION-$ARCH.AppImage"
