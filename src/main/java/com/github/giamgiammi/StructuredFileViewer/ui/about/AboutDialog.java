@@ -9,6 +9,7 @@ import javafx.scene.control.ButtonType;
 import javafx.scene.control.Hyperlink;
 import javafx.scene.layout.GridPane;
 import javafx.scene.text.Text;
+import javafx.scene.text.TextFlow;
 import javafx.stage.Window;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
@@ -53,19 +54,25 @@ public class AboutDialog extends Alert {
         val grid = new GridPane();
         grid.setHgap(5);
         grid.setVgap(5);
-        grid.add(new Text(bundle.getString("about.header")), 0, 0);
-        val contentText = new Text(bundle.getString("about.content"));
+        val contentStart = new Text(bundle.getString("about.content_start"));
+        contentStart.setWrappingWidth(WRAPPING_WIDTH);
+        grid.add(contentStart, 0, 0);
+
+        val flow = new TextFlow();
+        val contentText = new Text(bundle.getString("about.content_link"));
         contentText.setWrappingWidth(WRAPPING_WIDTH);
-        grid.add(contentText, 0, 1);
+        flow.getChildren().add(contentText);
 
         val link = new Hyperlink(getSourceUrl(owner));
         link.setOnAction(evt -> {
             App.openLink(link.getText());
         });
-        grid.add(link, 0, 2);
+        flow.getChildren().add(link);
+
+        grid.add(flow, 0, 1);
         val notice = new Text(bundle.getString("about.notice"));
         notice.setWrappingWidth(WRAPPING_WIDTH);
-        grid.add(notice, 0, 3);
+        grid.add(notice, 0, 2);
 
         getDialogPane().setContent(grid);
         getDialogPane().setExpandableContent(new LicenseArea());
