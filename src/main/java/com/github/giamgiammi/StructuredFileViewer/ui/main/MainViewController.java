@@ -7,6 +7,7 @@ import com.github.giamgiammi.StructuredFileViewer.model.TabData;
 import com.github.giamgiammi.StructuredFileViewer.task.ParseFileTask;
 import com.github.giamgiammi.StructuredFileViewer.task.ParseStringTask;
 import com.github.giamgiammi.StructuredFileViewer.ui.about.AboutDialog;
+import com.github.giamgiammi.StructuredFileViewer.ui.about.DebugInfoDialog;
 import com.github.giamgiammi.StructuredFileViewer.ui.exception.ExceptionAlert;
 import com.github.giamgiammi.StructuredFileViewer.ui.lang.ChangeLanguageDialog;
 import com.github.giamgiammi.StructuredFileViewer.ui.load.EditSettingsDialog;
@@ -290,5 +291,9 @@ public class MainViewController implements Initializable {
                 Preferences.userNodeForPackage(getClass()).putBoolean(CHECK_FOR_UPDATES_KEY, false);
             }
         });
+    }
+
+    public void handleShowDebugInfo() {
+        new DebugInfoDialog(rootPane.getScene().getWindow()).showAndWait();
     }
 }

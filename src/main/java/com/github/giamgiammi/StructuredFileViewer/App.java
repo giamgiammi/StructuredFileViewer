@@ -165,10 +165,14 @@ public class App extends Application {
     }
 
     private static Path getLogsPath() {
+        return getTmpAppPath()
+                .resolve("logs");
+    }
+
+    public static Path getTmpAppPath() {
         val temp = System.getProperty("java.io.tmpdir");
         return Path.of(temp)
-                .resolve(App.class.getPackageName())
-                .resolve("logs");
+                .resolve(App.class.getPackageName());
     }
 
     private static void prepareLogging() {

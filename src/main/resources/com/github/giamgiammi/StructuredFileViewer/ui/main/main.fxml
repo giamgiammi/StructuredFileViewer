@@ -38,6 +38,7 @@
             <items>
                   <MenuItem mnemonicParsing="false" onAction="#handleOpenLogFolder" text="%label.open_log_folder" />
                   <MenuItem mnemonicParsing="false" onAction="#handleCheckForUpdates" text="%label.check_for_updates" />
+                  <MenuItem mnemonicParsing="false" onAction="#handleShowDebugInfo" text="%label.debug_info_menu_item" />
               <MenuItem mnemonicParsing="false" onAction="#handleAbout" text="%label.about_menu_item" />
             </items>
           </Menu>
