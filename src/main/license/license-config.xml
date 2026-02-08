@@ -1,0 +1,32 @@
+<licenseSummary>
+    <dependencies>
+        <dependency>
+            <groupId>ch.qos.logback</groupId>
+            <artifactId>logback-classic</artifactId>
+<!--            <matchLicenses>-->
+<!--                <license>-->
+<!--                    <name>\QLGPL\E</name>-->
+<!--                </license>-->
+<!--            </matchLicenses>-->
+            <licenses>
+                <license>
+                    <name>Eclipse Public License - v 1.0</name>
+                </license>
+            </licenses>
+        </dependency>
+        <dependency>
+            <groupId>ch.qos.logback</groupId>
+            <artifactId>logback-core</artifactId>
+            <!--            <matchLicenses>-->
+            <!--                <license>-->
+            <!--                    <name>\QLGPL\E</name>-->
+            <!--                </license>-->
+            <!--            </matchLicenses>-->
+            <licenses>
+                <license>
+                    <name>Eclipse Public License - v 1.0</name>
+                </license>
+            </licenses>
+        </dependency>
+    </dependencies>
+</licenseSummary>
