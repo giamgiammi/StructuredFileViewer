@@ -23,7 +23,7 @@
             <fileNamePattern>
                 ${LOG_DIR}/app.%d{yyyy-MM-dd}.%i.log.gz
             </fileNamePattern>
-            <maxFileSize>10MB</maxFileSize>
+            <maxFileSize>2MB</maxFileSize>
             <maxHistory>2</maxHistory>
         </rollingPolicy>
 
@@ -37,6 +37,14 @@
         <file>${LOG_DIR}/app_shared.log</file>
         <append>true</append>
         <prudent>true</prudent>
+
+        <rollingPolicy
+                class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
+            <fileNamePattern>
+                ${LOG_DIR}/app.%d{yyyy-MM-dd_HH}.log.gz
+            </fileNamePattern>
+            <maxHistory>2</maxHistory>
+        </rollingPolicy>
 
         <encoder>
             <pattern>${PATTERN}</pattern>
