@@ -197,7 +197,6 @@
   </dependencies>
   <properties>
     <maven.compiler.target>25</maven.compiler.target>
-    <slf4j.version>2.0.17</slf4j.version>
     <maven.compiler.source>25</maven.compiler.source>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     <jlink.compress>2</jlink.compress>
@@ -206,5 +205,6 @@
     <jackson.version>3.0.0</jackson.version>
     <apache-common.csv.version>1.14.1</apache-common.csv.version>
     <antlr.version>4.13.2</antlr.version>
+    <logback.version>1.5.27</logback.version>
   </properties>
 </project>
