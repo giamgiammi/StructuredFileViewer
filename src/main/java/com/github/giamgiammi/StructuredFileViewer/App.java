@@ -164,7 +164,7 @@ public class App extends Application {
         return logo;
     }
 
-    private static Path getLogsPath() {
+    public static Path getLogsPath() {
         return getTmpAppPath()
                 .resolve("logs");
     }
