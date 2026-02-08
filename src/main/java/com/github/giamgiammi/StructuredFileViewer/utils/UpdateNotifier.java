@@ -13,7 +13,6 @@ import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
 import java.time.Duration;
 import java.util.Optional;
-import java.util.Properties;
 
 @Slf4j
 public class UpdateNotifier {
@@ -44,13 +43,7 @@ public class UpdateNotifier {
     }
 
     public Version getAppVersion() {
-        val props = new Properties();
-
-        try (val in = ClassLoader.getSystemClassLoader().getResourceAsStream("app.properties")) {
-            props.load(in);
-        } catch (Exception e) {
-            throw new IllegalStateException("Failed to load app.properties", e);
-        }
+        val props = PropertyUtils.APP_PROPERTIES;
 
         val version = props.getProperty("version");
         if (version == null) throw new IllegalStateException("Missing version property in app.properties");

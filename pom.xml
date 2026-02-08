@@ -4,6 +4,7 @@
     <groupId>com.github.giamgiammi.StructuredFileViewer</groupId>
     <artifactId>structured-file-viewer</artifactId>
     <version>1.0.4</version>
+    <url>https://github.com/giamgiammi/StructuredFileViewer</url>
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <maven.compiler.source>25</maven.compiler.source>

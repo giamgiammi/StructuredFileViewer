@@ -1,6 +1,8 @@
 package com.github.giamgiammi.StructuredFileViewer.ui.about;
 
 import com.github.giamgiammi.StructuredFileViewer.App;
+import com.github.giamgiammi.StructuredFileViewer.ui.exception.ExceptionAlert;
+import com.github.giamgiammi.StructuredFileViewer.utils.PropertyUtils;
 import javafx.scene.control.Alert;
 import javafx.scene.control.ButtonBar;
 import javafx.scene.control.ButtonType;
@@ -33,7 +35,7 @@ import java.util.prefs.Preferences;
  */
 @Slf4j
 public class AboutDialog extends Alert {
-    private static final String SOURCE_URL = "https://github.com/giamgiammi/StructuredFileViewer";
+    private static final int WRAPPING_WIDTH = 500;
 
     public AboutDialog(Window owner) {
         this(owner, false);
@@ -46,19 +48,24 @@ public class AboutDialog extends Alert {
         val bundle = App.getBundle();
 
         setTitle(bundle.getString("about.title"));
-        setHeaderText(bundle.getString("about.header"));
+        setHeaderText(bundle.getString("title"));
 
         val grid = new GridPane();
         grid.setHgap(5);
         grid.setVgap(5);
-        grid.add(new Text(bundle.getString("about.content")), 0, 0);
+        grid.add(new Text(bundle.getString("about.header")), 0, 0);
+        val contentText = new Text(bundle.getString("about.content"));
+        contentText.setWrappingWidth(WRAPPING_WIDTH);
+        grid.add(contentText, 0, 1);
 
-        val link = new Hyperlink(SOURCE_URL);
+        val link = new Hyperlink(getSourceUrl(owner));
         link.setOnAction(evt -> {
             App.openLink(link.getText());
         });
-        grid.add(link, 0, 1);
-        grid.add(new Text(bundle.getString("about.notice")), 0, 2);
+        grid.add(link, 0, 2);
+        val notice = new Text(bundle.getString("about.notice"));
+        notice.setWrappingWidth(WRAPPING_WIDTH);
+        grid.add(notice, 0, 3);
 
         getDialogPane().setContent(grid);
         getDialogPane().setExpandableContent(new LicenseArea());
@@ -80,5 +87,15 @@ public class AboutDialog extends Alert {
             }
             return btn;
         });
+    }
+
+    private String getSourceUrl(Window owner) {
+        val url = PropertyUtils.APP_PROPERTIES.getProperty("url");
+        if (url == null) {
+            log.error("Missing url property in app.properties");
+            new ExceptionAlert(owner, new IllegalStateException("Missing url property in app.properties")).showAndWait();
+            return "";
+        }
+        return url;
     }
 }
