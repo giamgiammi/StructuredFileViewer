@@ -33,7 +33,7 @@
     </appender>
 
     <appender name="SHARED_FILE"
-              class="ch.qos.logback.core.FileAppender">
+              class="ch.qos.logback.core.rolling.RollingFileAppender">
         <file>${LOG_DIR}/app_shared.log</file>
         <append>true</append>
         <prudent>true</prudent>
