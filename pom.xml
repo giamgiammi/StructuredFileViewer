@@ -17,6 +17,7 @@
         <junit.version>5.9.1</junit.version>
 
         <jlink.compress>2</jlink.compress>
+        <launcher.args>--enable-native-access=javafx.graphics</launcher.args>
     </properties>
     <dependencies>
 <!--        <dependency>-->
@@ -109,7 +110,7 @@
                             <mainClass>com.github.giamgiammi.StructuredFileViewer.App</mainClass>
                             <launcher>StructuredFileViewer</launcher>
                             <compress>${jlink.compress}</compress>
-                            <options>--enable-native-access=javafx.graphics</options>
+                            <options>${launcher.args}</options>
                             <modulePaths>
                                 <modulePath>${project.build.directory}/modules</modulePath>
                             </modulePaths>

@@ -17,6 +17,12 @@ echo "Detected version: $VERSION"
 ARCH="$(uname -m)"
 echo "Detected architecture: $ARCH"
 
+ARGS="$(cat target/classes/launcher-args.txt)"
+echo "Detected args: $ARGS"
+
+ARGS="$ARGS -Dapp.deploy=DMG"
+echo "Extended args: $ARGS"
+
 echo "Start packaging"
 jpackage -m com.github.giamgiammi.StructuredFileViewer/com.github.giamgiammi.StructuredFileViewer.App \
              --runtime-image target/image \
@@ -25,7 +31,7 @@ jpackage -m com.github.giamgiammi.StructuredFileViewer/com.github.giamgiammi.Str
              --dest target/ \
              --type dmg \
              --icon logo.icns \
-             --java-options "--enable-native-access=javafx.graphics" \
+             --java-options "$ARGS" \
              --mac-dmg-content target/legal,target/classes/LICENSE.txt
 mv "target/StructuredFileViewer-$VERSION.dmg" "target/StructuredFileViewer-$VERSION-$ARCH.dmg"
 

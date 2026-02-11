@@ -15,6 +15,12 @@ echo "Start image build"
 VERSION="$(cat target/classes/version.txt)"
 echo "Detected version: $VERSION"
 
+ARGS="$(cat target/classes/launcher-args.txt)"
+echo "Detected args: $ARGS"
+
+ARGS="$ARGS -Dapp.deploy=APPIMAGE"
+echo "Extended args: $ARGS"
+
 echo "Start packaging"
 jpackage -m com.github.giamgiammi.StructuredFileViewer/com.github.giamgiammi.StructuredFileViewer.App \
              --runtime-image target/image \
@@ -23,7 +29,7 @@ jpackage -m com.github.giamgiammi.StructuredFileViewer/com.github.giamgiammi.Str
              --dest target/ \
              --type app-image \
              --icon src/main/resources/com/github/giamgiammi/StructuredFileViewer/logo.png \
-             --java-options "--enable-native-access=javafx.graphics"
+             --java-options "$ARGS"
 
 
 echo "Copying license files"

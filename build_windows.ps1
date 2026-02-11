@@ -12,6 +12,12 @@ Write-Host "Detected version: $version"
 $arch = [System.Runtime.InteropServices.RuntimeInformation]::OSArchitecture
 Write-Host "Detected architecture: $arch"
 
+$args = Get-Content "target/classes/launcher-args.txt"
+Write-Host "Detected args: $args"
+
+$args = "$args -Dapp.DEPLOY=ZIP"
+Write-Host "Extended args: $args"
+
 jpackage `
   -m com.github.giamgiammi.StructuredFileViewer/com.github.giamgiammi.StructuredFileViewer.App `
   --runtime-image target/image `
@@ -19,7 +25,7 @@ jpackage `
   --dest target/ `
   --type app-image `
   --icon logo.ico `
-  --java-options "--enable-native-access=javafx.graphics"
+  --java-options "$args"
 
 Write-Host "Copying license files"
 robocopy "target\legal" "target\StructuredFileViewer\legal" /E
