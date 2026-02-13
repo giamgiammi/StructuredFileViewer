@@ -6,10 +6,10 @@ import com.github.giamgiammi.StructuredFileViewer.model.InstanceMessage;
 import com.github.giamgiammi.StructuredFileViewer.service.SingleInstanceService;
 import com.github.giamgiammi.StructuredFileViewer.ui.exception.ExceptionAlert;
 import com.github.giamgiammi.StructuredFileViewer.ui.main.MainViewController;
+import com.github.giamgiammi.StructuredFileViewer.utils.AppProperty;
+import com.github.giamgiammi.StructuredFileViewer.utils.DesktopUtils;
 import com.github.giamgiammi.StructuredFileViewer.utils.FXUtils;
-import com.github.giamgiammi.StructuredFileViewer.utils.OSUtils;
 import javafx.application.Application;
-import javafx.application.HostServices;
 import javafx.application.Platform;
 import javafx.scene.Scene;
 import javafx.scene.image.Image;
@@ -33,32 +33,11 @@ public class App extends Application {
     private static final String MAXIMIZED_KEY = "last_maximized";
     private static final List<MainViewController> controllers = new ArrayList<>();
     private static ResourceBundle bundle;
-    private static HostServices hostServices;
     private static Image logo;
     private static Path[] filesToOpen;
+    @SuppressWarnings("FieldCanBeLocal")//must stay open
     private static SingleInstanceService singleInstanceService;
 
-    /**
-     * Open a link in the default browser
-     * @param url the URL to open
-     */
-    public static void openLink(String url) {
-        hostServices.showDocument(url);
-    }
-
-    public static void openLogFolder() {
-        final var path = getLogsPath();
-        if (OSUtils.isMac()) {
-            // file:// does not work anymore in tahoe
-            try {
-                new ProcessBuilder("open", path.toAbsolutePath().toString()).start();
-            } catch (IOException e) {
-                log.error("Failed to open log folder", e);
-            }
-        } else {
-            hostServices.showDocument("file://" + path.toAbsolutePath());
-        }
-    }
 
     /**
      * Get the resource bundle associated with this app
@@ -96,7 +75,7 @@ public class App extends Application {
         //} else {
             startMainStage(stage);
         //}
-        hostServices = getHostServices();
+        DesktopUtils.setHostServices(getHostServices());
     }
 
     /*private static void startAcceptLicenseStage(Stage stage) {
@@ -164,21 +143,11 @@ public class App extends Application {
         return logo;
     }
 
-    public static Path getLogsPath() {
-        return getTmpAppPath()
-                .resolve("logs");
-    }
-
-    public static Path getTmpAppPath() {
-        val temp = System.getProperty("java.io.tmpdir");
-        return Path.of(temp)
-                .resolve(App.class.getPackageName());
-    }
-
     private static void prepareLogging() {
         //create folders
         try {
-            Files.createDirectories(getLogsPath());
+            val path = Path.of(System.getProperty(AppProperty.LOG_DIR));
+            Files.createDirectories(path);
         } catch (IOException e) {
             log.error("Failed to create logs folder", e);
         }
@@ -206,7 +175,7 @@ public class App extends Application {
                     System.exit(0);
                 } else {
                     log.info("This is the first instance of the app, starting as server and reloading logging configuration");
-                    System.setProperty("app.main", "true");
+                    System.setProperty(AppProperty.IS_MAIN, "true");
                     resetLoggers();
                     singleInstanceService.setMessageHandler(message -> {
                         val mainCtrl = controllers.stream()
@@ -248,7 +217,39 @@ public class App extends Application {
         }
     }
 
+    private static void loadAppProperties() {
+        try (val in = ClassLoader.getSystemClassLoader().getResourceAsStream("app.properties")) {
+            System.getProperties().load(in);
+        } catch (Exception e) {
+            throw new IllegalStateException("Failed to load app.properties", e);
+        }
+    }
+
+    private static void setAppProperties() {
+        val tmp = Objects.requireNonNull(System.getProperty("java.io.tmpdir"), "java.io.tmpdir system property not set");
+        final Path tmpDir;
+        if (System.getProperty(AppProperty.TMP_DIR) == null) {
+            tmpDir = Path.of(tmp).resolve(App.class.getPackageName());
+            System.setProperty(AppProperty.TMP_DIR, tmpDir.toString());
+            log.info("Setting tmp dir to {}", tmpDir);
+        } else {
+            tmpDir = Path.of(System.getProperty(AppProperty.TMP_DIR));
+            log.info("Using tmp dir {}", tmpDir);
+        }
+
+        if (System.getProperty(AppProperty.LOG_DIR) == null) {
+            val logDir = tmpDir.resolve("logs");
+            System.setProperty(AppProperty.LOG_DIR, logDir.toString());
+            log.info("Setting log dir to {}", logDir);
+        } else {
+            val logDir = Path.of(System.getProperty(AppProperty.LOG_DIR));
+            log.info("Using log dir {}", logDir);
+        }
+    }
+
     public static void main(String[] args) {
+        loadAppProperties();
+        setAppProperties();
         prepareLogging();
         setLocale();
         findFilesToOpen(args);

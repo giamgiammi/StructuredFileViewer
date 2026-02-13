@@ -2,7 +2,6 @@ package com.github.giamgiammi.StructuredFileViewer.ui.about;
 
 import com.github.giamgiammi.StructuredFileViewer.App;
 import com.github.giamgiammi.StructuredFileViewer.ui.exception.ExceptionAlert;
-import com.github.giamgiammi.StructuredFileViewer.utils.PropertyUtils;
 import javafx.scene.control.*;
 import javafx.scene.input.Clipboard;
 import javafx.scene.input.ClipboardContent;
@@ -14,6 +13,7 @@ import lombok.val;
 import java.io.File;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
+import java.util.TreeMap;
 
 @Slf4j
 public class DebugInfoDialog extends Alert {
@@ -34,26 +34,11 @@ public class DebugInfoDialog extends Alert {
         val sep = "-".repeat(80) + "\n";
         txt.append("DEBUG INFO\n");
         txt.append(sep);
-        txt.append("\nAPP PROPERTIES\n");
+        txt.append("\nPROPERTIES\n");
         txt.append(sep);
-        PropertyUtils.getAppPropertiesPairs().forEach(p ->
-                txt.append(p.getKey()).append(": ").append(p.getValue()).append("\n"));
-
-        txt.append(sep);
-        txt.append("\nPATHS\n");
-        txt.append(sep);
-        txt.append("path to app socket: ");
-        txt.append(App.getTmpAppPath().toAbsolutePath());
-        txt.append("\n");
-        txt.append("path to logs: ");
-        txt.append(App.getLogsPath().toAbsolutePath());
-        txt.append("\n");
-
-        txt.append(sep);
-        txt.append("\nSYSTEM PROPERTIES\n");
-        txt.append(sep);
-        PropertyUtils.toPairs(System.getProperties()).forEach(p ->
-                txt.append(p.getKey()).append(": ").append(p.getValue()).append("\n"));
+        val props = new TreeMap<String, String>();
+        System.getProperties().forEach((k, v) -> props.put(k.toString(), v.toString()));
+        props.forEach((k, v) -> txt.append(k).append(": ").append(v).append("\n"));
 
         area.setText(txt.toString());
         getDialogPane().setContent(area);

@@ -14,9 +14,7 @@ import com.github.giamgiammi.StructuredFileViewer.ui.load.EditSettingsDialog;
 import com.github.giamgiammi.StructuredFileViewer.ui.load.LoadFileDialog;
 import com.github.giamgiammi.StructuredFileViewer.ui.tab.CloseTabAlert;
 import com.github.giamgiammi.StructuredFileViewer.ui.table.TableDataController;
-import com.github.giamgiammi.StructuredFileViewer.utils.FXUtils;
-import com.github.giamgiammi.StructuredFileViewer.utils.OSUtils;
-import com.github.giamgiammi.StructuredFileViewer.utils.UpdateNotifier;
+import com.github.giamgiammi.StructuredFileViewer.utils.*;
 import javafx.beans.property.BooleanProperty;
 import javafx.beans.property.SimpleBooleanProperty;
 import javafx.concurrent.Task;
@@ -236,7 +234,8 @@ public class MainViewController implements Initializable {
     }
 
     public void handleOpenLogFolder() {
-        App.openLogFolder();
+        val lodDir = Path.of(System.getProperty(AppProperty.LOG_DIR));
+        DesktopUtils.openFolder(lodDir);
     }
 
     public void handleCheckForUpdates() {
@@ -256,7 +255,7 @@ public class MainViewController implements Initializable {
                 val grid = new GridPane(2, 2);
                 grid.add(new Label(bundle.getString("update.msg")), 0, 0);
                 val link = new Hyperlink(url);
-                link.setOnAction(evt1 -> App.openLink(url));
+                link.setOnAction(evt1 -> DesktopUtils.openLink(url));
                 grid.add(link, 1, 0);
 
                 alert.getDialogPane().setContent(grid);

@@ -1,7 +1,7 @@
 package com.github.giamgiammi.StructuredFileViewer.service;
 
-import com.github.giamgiammi.StructuredFileViewer.App;
 import com.github.giamgiammi.StructuredFileViewer.model.InstanceMessage;
+import com.github.giamgiammi.StructuredFileViewer.utils.AppProperty;
 import lombok.Getter;
 import lombok.NonNull;
 import lombok.Setter;
@@ -63,14 +63,7 @@ public class SingleInstanceService {
     private Consumer<InstanceMessage> messageHandler;
 
     public SingleInstanceService() throws IOException {
-        val tmpPath = Path.of(System.getProperty("java.io.tmpdir"));
-        if (!Files.isWritable(tmpPath) || !Files.isDirectory(tmpPath)) {
-            log.error("Cannot write to temporary directory: {}", tmpPath);
-            throw new IOException("Cannot write to temporary directory");
-        }
-
-        val folderName = App.class.getPackageName();
-        val folder = tmpPath.resolve(folderName);
+        val folder = Path.of(System.getProperty(AppProperty.TMP_DIR));
 
         Files.createDirectories(folder);
 

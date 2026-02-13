@@ -12,18 +12,32 @@ import java.net.http.HttpClient;
 import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
 import java.time.Duration;
+import java.util.Objects;
 import java.util.Optional;
+import java.util.regex.Pattern;
 
 @Slf4j
 public class UpdateNotifier {
     private final ObjectMapper mapper = new ObjectMapper();
     private final HttpClient client = HttpClient.newHttpClient();
 
+    private String getApiUrl() {
+        val url = Objects.requireNonNull(System.getProperty(AppProperty.URL), "app url system property not set");
+        val matcher = Pattern.compile("https?://github\\.com/(?<username>[^/]+)/(?<reponame>[^/#?]+)")
+                .matcher(url);
+        if (!matcher.matches()) throw new IllegalStateException("Invalid app url: " + url);
+        val username = matcher.group("username");
+        if (username == null || username.isEmpty()) throw new IllegalStateException("Cannot extract username from app url");
+        val repoName = matcher.group("reponame");
+        if (repoName == null || repoName.isEmpty()) throw new IllegalStateException("Cannot extract repo name from app url");
+        return String.format("https://api.github.com/repos/%s/%s/releases/latest", username, repoName);
+    }
+
     private ReleaseDto getLatestRelease() throws IOException, InterruptedException {
         log.info("Retrieving latest release from GitHub API");
         val req = HttpRequest
                 .newBuilder()
-                .uri(URI.create("https://api.github.com/repos/giamgiammi/StructuredFileViewer/releases/latest"))
+                .uri(URI.create(getApiUrl()))
                 .header("Accept", "application/vnd.github+json")
                 .header("X-GitHub-Api-Version", "2022-11-28")
                 .timeout(Duration.ofSeconds(30))
@@ -43,8 +57,7 @@ public class UpdateNotifier {
     }
 
     public Version getAppVersion() {
-        val version = PropertyUtils.getAppProperty("version");
-        if (version == null) throw new IllegalStateException("Missing version property in app.properties");
+        val version = Objects.requireNonNull(System.getProperty(AppProperty.VERSION), "app version system property not set");
         return new Version(version);
     }
 

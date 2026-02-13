@@ -2,7 +2,8 @@ package com.github.giamgiammi.StructuredFileViewer.ui.about;
 
 import com.github.giamgiammi.StructuredFileViewer.App;
 import com.github.giamgiammi.StructuredFileViewer.ui.exception.ExceptionAlert;
-import com.github.giamgiammi.StructuredFileViewer.utils.PropertyUtils;
+import com.github.giamgiammi.StructuredFileViewer.utils.AppProperty;
+import com.github.giamgiammi.StructuredFileViewer.utils.DesktopUtils;
 import javafx.scene.control.Alert;
 import javafx.scene.control.ButtonBar;
 import javafx.scene.control.ButtonType;
@@ -72,7 +73,7 @@ public class AboutDialog extends Alert {
 
         val link = new Hyperlink(getSourceUrl(owner));
         link.setOnAction(evt -> {
-            App.openLink(link.getText());
+            DesktopUtils.openLink(link.getText());
         });
         flow.getChildren().add(link);
 
@@ -105,7 +106,7 @@ public class AboutDialog extends Alert {
     }
 
     private String getSourceUrl(Window owner) {
-        val url = PropertyUtils.getAppProperty("url");
+        val url = System.getProperty(AppProperty.URL);
         if (url == null) {
             log.error("Missing url property in app.properties");
             new ExceptionAlert(owner, new IllegalStateException("Missing url property in app.properties")).showAndWait();
@@ -115,7 +116,7 @@ public class AboutDialog extends Alert {
     }
 
     private String getVersion(Window owner) {
-        val version = PropertyUtils.getAppProperty("version");
+        val version = System.getProperty(AppProperty.VERSION);
         if (version == null) {
             log.error("Missing version property in app.properties");
             new ExceptionAlert(owner, new IllegalStateException("Missing version property in app.properties")).showAndWait();
