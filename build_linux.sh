@@ -15,10 +15,13 @@ echo "Start image build"
 VERSION="$(cat target/classes/version.txt)"
 echo "Detected version: $VERSION"
 
+ARCH="$(uname -m)"
+echo "Detected architecture: $ARCH"
+
 ARGS="$(cat target/classes/launcher-args.txt)"
 echo "Detected args: $ARGS"
 
-ARGS="$ARGS -Dapp.deploy=APPIMAGE"
+ARGS="$ARGS -Dapp.deploy=APPIMAGE -Dapp.os=LINUX -Dapp.arch=$ARCH"
 echo "Extended args: $ARGS"
 
 echo "Start packaging"
@@ -35,9 +38,6 @@ jpackage -m com.github.giamgiammi.StructuredFileViewer/com.github.giamgiammi.Str
 echo "Copying license files"
 cp -r target/legal "target/StructuredFileViewer/"
 cp target/classes/LICENSE.txt "target/StructuredFileViewer/legal/LICENSE.txt"
-
-ARCH="$(uname -m)"
-echo "Detected architecture: $ARCH"
 
 mkdir -p cache
 if ! [ -f "cache/appimagetool-$ARCH.AppImage" ]; then

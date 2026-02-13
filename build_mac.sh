@@ -20,7 +20,7 @@ echo "Detected architecture: $ARCH"
 ARGS="$(cat target/classes/launcher-args.txt)"
 echo "Detected args: $ARGS"
 
-ARGS="$ARGS -Dapp.deploy=DMG"
+ARGS="$ARGS -Dapp.deploy=DMG -Dapp.os=MAC -Dapp.arch=$ARCH"
 echo "Extended args: $ARGS"
 
 echo "Start packaging"

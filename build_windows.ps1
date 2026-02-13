@@ -15,7 +15,7 @@ Write-Host "Detected architecture: $arch"
 $args = Get-Content "target/classes/launcher-args.txt"
 Write-Host "Detected args: $args"
 
-$args = "$args -Dapp.DEPLOY=ZIP"
+$args = "$args -Dapp.DEPLOY=ZIP -Dapp.os=WIN -Dapp.arch=$arch"
 Write-Host "Extended args: $args"
 
 jpackage `
