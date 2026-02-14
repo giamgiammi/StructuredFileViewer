@@ -49,19 +49,11 @@ fi
 
 echo "Preparing AppImage package"
 mv "target/StructuredFileViewer" "target/StructuredFileViewer.AppDir"
-(cd "target/StructuredFileViewer.AppDir" && ln -s "bin/StructuredFileViewer" AppRun)
+cp build-resources/linux/appimage_run.sh target/StructuredFileViewer.AppDir/AppRun
+chmod +x target/StructuredFileViewer.AppDir/AppRun
 cp src/main/resources/com/github/giamgiammi/StructuredFileViewer/logo.png "target/StructuredFileViewer.AppDir/logo.png"
 
-DESKTOP_FILE="target/StructuredFileViewer.AppDir/StructuredFileViewer.desktop"
-{
-  echo "[Desktop Entry]"
-  echo "Name=Structured File Viewer"
-  echo "Name[it]=Visualizzatore di file strutturato"
-  echo "Exec=AppRun"
-  echo "Icon=logo"
-  echo "Type=Application"
-  echo "Categories=Utility;"
-} > "$DESKTOP_FILE"
+cp build-resources/linux/appimage.desktop target/StructuredFileViewer.AppDir/StructuredFileViewer.desktop
 
 
 echo "Packaging AppImage"

@@ -1,0 +1,7 @@
+[Desktop Entry]
+Name=Structured File Viewer
+Name[it]=Visualizzatore di file strutturato
+Exec=AppRun
+Icon=logo
+Type=Application
+Categories=Utility;
