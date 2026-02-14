@@ -39,6 +39,10 @@ public class DebugInfoDialog extends Alert {
         val props = new TreeMap<String, String>();
         System.getProperties().forEach((k, v) -> props.put(k.toString(), v.toString()));
         props.forEach((k, v) -> txt.append(k).append(": ").append(v).append("\n"));
+        txt.append(sep);
+        txt.append("\nENVIRONMENT\n");
+        txt.append(sep);
+        new TreeMap<>(System.getenv()).forEach((k, v) -> txt.append(k).append(": ").append(v).append("\n"));
 
         area.setText(txt.toString());
         getDialogPane().setContent(area);
