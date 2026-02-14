@@ -14,6 +14,7 @@ import lombok.NonNull;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 
+import java.util.concurrent.Callable;
 import java.util.concurrent.ThreadFactory;
 import java.util.function.Consumer;
 
@@ -88,6 +89,31 @@ public class FXUtils {
     }
 
     /**
+     * Creates and returns a new {@link Task} with the specified name and callable action.
+     * The task's {@code call} method executes the provided callable, and the task's
+     * {@code toString} method returns a string formatted with the specified name.
+     *
+     * @param <T> the result type of the task
+     * @param name the name of the task; must not be null
+     * @param callable the callable action to be executed by the task; must not be null
+     * @return a new {@code Task} configured with the specified name and callable
+     * @throws NullPointerException if {@code name} or {@code callable} is null
+     */
+    public static <T> Task<T> task(@NonNull String name, @NonNull Callable<T> callable) {
+        return new Task<T>() {
+            @Override
+            protected T call() throws Exception {
+                return callable.call();
+            }
+
+            @Override
+            public String toString() {
+                return "Task[%s]".formatted(name);
+            }
+        };
+    }
+
+    /**
      * Start a task with the default thread factory.
      * @param task the task to start
      * @throws NullPointerException if task is null
@@ -105,13 +131,10 @@ public class FXUtils {
      * @throws NullPointerException if the {@code runnable} is null
      */
     public static void runLater(@NonNull Runnable runnable, long milliseconds) {
-        val task = new Task<Void>() {
-            @Override
-            protected Void call() throws InterruptedException {
-                Thread.sleep(milliseconds);
-                return null;
-            }
-        };
+        val task = task("RunLater{%d}".formatted(milliseconds), () -> {
+            Thread.sleep(milliseconds);
+            return null;
+        });
         task.setOnSucceeded(e -> runnable.run());
         start(task);
     }

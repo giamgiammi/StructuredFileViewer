@@ -31,7 +31,10 @@ import lombok.val;
 import java.io.IOException;
 import java.net.URL;
 import java.nio.file.Path;
-import java.util.*;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.ResourceBundle;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.prefs.Preferences;
 
@@ -239,12 +242,7 @@ public class MainViewController implements Initializable {
     }
 
     public void handleCheckForUpdates() {
-        val task = new Task<Optional<String>>() {
-            @Override
-            protected Optional<String> call() throws Exception {
-                return new UpdateNotifier().checkForUpdates();
-            }
-        };
+        val task = FXUtils.task("CheckForUpdates", () -> new UpdateNotifier().checkForUpdates());
         task.setOnSucceeded(evt -> {
             task.getValue().ifPresent(url -> {
                 val alert = new Alert(Alert.AlertType.INFORMATION);

@@ -13,7 +13,6 @@ import com.github.giamgiammi.StructuredFileViewer.utils.TextUtils;
 import javafx.beans.property.SimpleObjectProperty;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
-import javafx.concurrent.Task;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.*;
@@ -136,12 +135,7 @@ public class TableDataController implements DataController, Initializable {
         rootPane.setDisable(true);
         val oldContent = runQueryButton.getGraphic();
         runQueryButton.setGraphic(new ProgressIndicator(ProgressIndicator.INDETERMINATE_PROGRESS));
-        val task = new Task<ObservableList<TableLikeData.Record>>() {
-            @Override
-            protected ObservableList<TableLikeData.Record> call() throws Exception {
-                return getFilteredRecords();
-            }
-        };
+        val task = FXUtils.task("GetFiltreredRecords", this::getFilteredRecords);
         task.setOnSucceeded(evt -> {
             tableView.setItems(task.getValue());
             rootPane.setDisable(false);
@@ -167,18 +161,15 @@ public class TableDataController implements DataController, Initializable {
     private void refreshData() {
         rootPane.setDisable(true);
         record TaskResult(List<TableColumn<TableLikeData.Record, Object>> columns, ObservableList<TableLikeData.Record> records) {}
-        val task = new Task<TaskResult>() {
-            @Override
-            protected TaskResult call() throws Exception {
-                queryTextField.setText(null);
-                val columns = IntStream.range(0, data.getColumnNames().size())
-                        .mapToObj(columnIndex -> getTableColumn(columnIndex)).toList();
-                val indexColumn = new TableColumn<TableLikeData.Record, Object>("");
-                indexColumn.setCellFactory(param -> new IndexCell());
-                val records = getFilteredRecords();
-                return new TaskResult(ListUtils.concat(List.of(indexColumn), columns), records);
-            }
-        };
+        val task = FXUtils.task("LoadData", () -> {
+            queryTextField.setText(null);
+            val columns = IntStream.range(0, data.getColumnNames().size())
+                    .mapToObj(this::getTableColumn).toList();
+            val indexColumn = new TableColumn<TableLikeData.Record, Object>("");
+            indexColumn.setCellFactory(param -> new IndexCell());
+            val records = getFilteredRecords();
+            return new TaskResult(ListUtils.concat(List.of(indexColumn), columns), records);
+        });
         task.setOnSucceeded(evt -> {
             tableView.getColumns().setAll(task.getValue().columns);
             tableView.setItems(task.getValue().records);
