@@ -24,4 +24,4 @@ fi
 
 DIR="$(dirname "$0")"
 
-exec "$DIR/bin/StructuredFileViewer"
+exec "$DIR/bin/StructuredFileViewer" "$@"
