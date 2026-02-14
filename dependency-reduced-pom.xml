@@ -3,7 +3,8 @@
   <modelVersion>4.0.0</modelVersion>
   <groupId>com.github.giamgiammi.StructuredFileViewer</groupId>
   <artifactId>structured-file-viewer</artifactId>
-  <version>1.0.4</version>
+  <version>1.0.5</version>
+  <url>https://github.com/giamgiammi/StructuredFileViewer</url>
   <build>
     <resources>
       <resource>
@@ -12,6 +13,9 @@
       <resource>
         <filtering>true</filtering>
         <directory>src/main/resources-filtered</directory>
+      </resource>
+      <resource>
+        <directory>target/legal</directory>
       </resource>
     </resources>
     <plugins>
@@ -40,7 +44,7 @@
               <mainClass>com.github.giamgiammi.StructuredFileViewer.App</mainClass>
               <launcher>StructuredFileViewer</launcher>
               <compress>${jlink.compress}</compress>
-              <options>--enable-native-access=javafx.graphics</options>
+              <options>${launcher.args}</options>
               <modulePaths>
                 <modulePath>${project.build.directory}/modules</modulePath>
               </modulePaths>
@@ -209,6 +213,7 @@
   </dependencies>
   <properties>
     <maven.compiler.target>25</maven.compiler.target>
+    <launcher.args>--enable-native-access=javafx.graphics</launcher.args>
     <maven.compiler.source>25</maven.compiler.source>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     <jlink.compress>2</jlink.compress>
