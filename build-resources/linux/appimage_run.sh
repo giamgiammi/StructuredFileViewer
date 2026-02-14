@@ -7,14 +7,14 @@ if [ -z "$JAVA_FOLLOW_ENV" ]; then
 fi
 
 if [ "$JAVA_FOLLOW_ENV" = "1" ]; then
-    if [ -d "$HOME" ]; then
+    if [ -n "$HOME" ] && [ -d "$HOME" ]; then
         echo "Replacing user.home with: $HOME"
-        _JAVA_OPTIONS="$_JAVA_OPTIONS -Duser.home='$HOME'"
+        _JAVA_OPTIONS="$_JAVA_OPTIONS -Duser.home=\"$HOME\""
     fi
 
-    if [ -d "$TMPDIR" ]; then
+    if [ -n "$TMPDIR" ] && [ -d "$TMPDIR" ]; then
         echo "Replacing java.io.tmpdir with: $TMPDIR"
-        _JAVA_OPTIONS="$_JAVA_OPTIONS -Djava.io.tmpdir='$TMPDIR'"
+        _JAVA_OPTIONS="$_JAVA_OPTIONS -Djava.io.tmpdir=\"$TMPDIR\""
     fi
 fi
 
