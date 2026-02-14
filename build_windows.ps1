@@ -24,7 +24,7 @@ jpackage `
   --name "StructuredFileViewer" `
   --dest target/ `
   --type app-image `
-  --icon logo.ico `
+  --icon build-resources/windows/logo.ico `
   --java-options "$args"
 
 Write-Host "Copying license files"

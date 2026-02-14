@@ -30,7 +30,7 @@ jpackage -m com.github.giamgiammi.StructuredFileViewer/com.github.giamgiammi.Str
              --app-version "$VERSION" \
              --dest target/ \
              --type dmg \
-             --icon logo.icns \
+             --icon build-resources/mac/logo.icns \
              --java-options "$ARGS" \
              --mac-dmg-content target/legal,target/classes/LICENSE.txt
 mv "target/StructuredFileViewer-$VERSION.dmg" "target/StructuredFileViewer-$VERSION-$ARCH.dmg"
