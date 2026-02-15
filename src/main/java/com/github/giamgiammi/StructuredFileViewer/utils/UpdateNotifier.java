@@ -76,6 +76,7 @@ public class UpdateNotifier {
         } catch (Exception e) {
             throw new IOException("Failed to parse release version", e);
         }
+        log.info("Latest release version: {}", releaseVersion);
 
         if (version.compareTo(releaseVersion) < 0) {
             log.info("New version available: {}", releaseVersion);
