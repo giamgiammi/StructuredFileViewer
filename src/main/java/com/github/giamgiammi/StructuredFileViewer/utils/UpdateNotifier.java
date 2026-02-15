@@ -35,9 +35,11 @@ public class UpdateNotifier {
 
     private ReleaseDto getLatestRelease() throws IOException, InterruptedException {
         log.info("Retrieving latest release from GitHub API");
+        val url = getApiUrl();
+        log.info("Requesting {}", url);
         val req = HttpRequest
                 .newBuilder()
-                .uri(URI.create(getApiUrl()))
+                .uri(URI.create(url))
                 .header("Accept", "application/vnd.github+json")
                 .header("X-GitHub-Api-Version", "2022-11-28")
                 .timeout(Duration.ofSeconds(30))
