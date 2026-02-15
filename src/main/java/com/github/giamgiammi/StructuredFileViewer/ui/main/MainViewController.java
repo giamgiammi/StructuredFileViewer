@@ -109,7 +109,7 @@ public class MainViewController implements Initializable {
         });
 
         if (CHECK_FOR_UPADTE.get() && firstRun.compareAndSet(true, false)) {
-            FXUtils.runLater(this::handleCheckForUpdates, 1000);
+            FXUtils.runLater(() -> checkForUpdates(false), 1000);
         }
 
         if (Preferences.userNodeForPackage(getClass()).get(CHECK_FOR_UPDATES_KEY, null) == null) {
@@ -242,9 +242,13 @@ public class MainViewController implements Initializable {
     }
 
     public void handleCheckForUpdates() {
+        checkForUpdates(true);
+    }
+
+    private void checkForUpdates(boolean showResult) {
         val task = FXUtils.task("CheckForUpdates", () -> new UpdateNotifier().checkForUpdates());
         task.setOnSucceeded(evt -> {
-            task.getValue().ifPresent(url -> {
+            task.getValue().ifPresentOrElse(url -> {
                 val alert = new Alert(Alert.AlertType.INFORMATION);
                 alert.initOwner(rootPane.getScene().getWindow());
                 alert.setTitle(bundle.getString("update.title"));
@@ -262,9 +266,20 @@ public class MainViewController implements Initializable {
                 alert.getButtonTypes().setAll(closeButton);
 
                 alert.showAndWait();
+            }, () -> {
+                if (showResult) {
+                    val alert = new Alert(Alert.AlertType.INFORMATION);
+                    alert.initOwner(rootPane.getScene().getWindow());
+                    alert.setTitle(bundle.getString("update.title"));
+                    alert.setHeaderText(bundle.getString("update.no_update"));
+                    alert.showAndWait();
+                }
             });
         });
-        task.setOnFailed(evt -> log.error("Failed to check for updates", task.getException()));
+        task.setOnFailed(evt -> {
+            log.error("Failed to check for updates", task.getException());
+            if (showResult) new ExceptionAlert(rootPane.getScene().getWindow(), task.getException()).showAndWait();
+        });
         FXUtils.start(task);
     }
 
